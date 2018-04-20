@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
+    private Toolbar toolbar;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,15 +22,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         drawerLayout = findViewById(R.id.drawer_layout);
+        toolbar = findViewById(R.id.toolbar);
+        navigationView = findViewById(R.id.nav_view);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionbar = getSupportActionBar();
-        actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_launcher_foreground);
 
-        NavigationView nw = findViewById(R.id.nav_view);
-        nw.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 item.setChecked(true);
