@@ -1,8 +1,10 @@
 package com.example.jg.footballstats;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,39 +29,48 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.nav_view);
 
         setSupportActionBar(toolbar);
-
         ActionBarDrawerToggle menuToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(menuToggle);
         menuToggle.syncState();
 
+        final Intent inner_intent = new Intent(this, InnerActivity.class);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment = null;
-                Class fragmentClass;
-
                 switch (item.getItemId()) {
                     case R.id.nav_camera:
-                        fragmentClass = FirstFragment.class;
-                        try {
-                            fragment = (Fragment) fragmentClass.newInstance();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, fragment,"sraka").commit();
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new FirstFragment(), "fragment1").commit();
+                        itemChecker(item);
+                        break;
+                    case R.id.nav_setting:
+                        onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_camera));
+                        inner_intent.putExtra("caption",item.getTitle());
+                        startActivity(inner_intent);
                         break;
                     default:
-                        fragment = getSupportFragmentManager().findFragmentByTag("sraka");
+                        itemChecker(item);
+                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment1");
                         if (fragment != null)
                             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
                 }
-
-                item.setChecked(true);
-                getSupportActionBar().setTitle(item.getTitle());
                 drawerLayout.closeDrawers();
-
                 return true;
             }
         });
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START))
+            drawerLayout.closeDrawers();
+        else
+            super.onBackPressed();
+    }
+
+    private void itemChecker(MenuItem item){
+        item.setChecked(true);
+        getSupportActionBar().setTitle(item.getTitle());
     }
 }

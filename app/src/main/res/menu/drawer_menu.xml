@@ -12,7 +12,7 @@
             android:icon="@mipmap/ic_launcher_round"
             android:title="Second item" />
     </group>
-    <item android:title="govno">
+    <item android:title="Second group">
         <menu>
             <group
                 android:checkableBehavior="single"
