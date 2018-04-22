@@ -48,11 +48,17 @@ public class MainActivity extends AppCompatActivity {
                         inner_intent.putExtra("caption",item.getTitle());
                         startActivity(inner_intent);
                         break;
+                    case R.id.nav_events:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").commit();
+                        itemChecker(item);
+                        break;
                     default:
                         itemChecker(item);
-                        Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment1");
-                        if (fragment != null)
-                            getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+                        for(Fragment f: getSupportFragmentManager().getFragments())
+                            if (f != null)
+                                getSupportFragmentManager().beginTransaction().remove(f).commit();
+                        //Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment1");
+
                 }
                 drawerLayout.closeDrawers();
                 return true;

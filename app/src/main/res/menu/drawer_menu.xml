@@ -23,9 +23,13 @@
                     android:icon="@mipmap/ic_launcher"
                     android:title="Third item" />
                 <item
+                    android:id="@+id/nav_events"
+                    android:icon="@mipmap/ic_launcher"
+                    android:title="Fourth item" />
+                <item
                     android:id="@+id/nav_logout"
                     android:icon="@mipmap/ic_launcher_round"
-                    android:title="Fourth item" />
+                    android:title="Fifth item" />
             </group>
         </menu>
     </item>
