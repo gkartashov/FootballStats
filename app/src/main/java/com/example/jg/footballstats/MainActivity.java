@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity {
                         itemChecker(item);
                         break;
                     case R.id.nav_setting:
-                        onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_camera));
                         inner_intent.putExtra("caption",item.getTitle());
                         startActivity(inner_intent);
+                        //onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_camera));
                         break;
                     case R.id.nav_events:
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").commit();

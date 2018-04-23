@@ -14,6 +14,8 @@ public class Event {
     public Event(){
         _moneylineCoef = _handicapCoef = _totalCoef = new double[2];
     }
+    public Event(String homeTeam, String awayTeam){_homeTeam = homeTeam;
+        _awayTeam = awayTeam;}
     public Event(String homeTeam, String awayTeam, String handicap, String total, byte homeScore, byte awayScore, double[] moneylineCoef, double[] totalCoef, double[] handicapCoef) {
         _homeTeam = homeTeam;
         _awayTeam = awayTeam;
