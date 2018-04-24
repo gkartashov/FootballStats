@@ -9,12 +9,9 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
 public class EventsFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private android.support.v7.widget.RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
 
     private List<Event> eventList = new ArrayList<>();
 
@@ -35,11 +32,12 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
-        mRecyclerView = rootView.findViewById(R.id.recycler_view_layout_recycler);
+        mRecyclerView = rootView.findViewById(R.id.recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(new EventAdapter(eventList));
+
         /*mRecyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
             @Override
             public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
@@ -69,18 +67,18 @@ public class EventsFragment extends Fragment {
             }
         }));*/
 
-        eventList.add(new Event("team1","team2"));
-        eventList.add(new Event("team3","team4"));
+        eventList.add(new Event("team1 team1 team1 team1","team2 team1 team1"));
+        eventList.add(new Event("team3 team1","team4 team1 team1 team1"));
         eventList.add(new Event("team5","team6"));
-        eventList.add(new Event("team7","team8"));
-        eventList.add(new Event("team9","team10"));
+        eventList.add(new Event("team7 team1 team1","team8"));
+        eventList.add(new Event("team9","team10team1"));
         eventList.add(new Event("team11","team12"));
-        eventList.add(new Event("team13","team14"));
+        eventList.add(new Event("team13 team1","team14"));
         eventList.add(new Event("team15","team16"));
-        eventList.add(new Event("team17","team18"));
-        eventList.add(new Event("team19","team20"));
+        eventList.add(new Event("team17","team18 team1team1"));
+        eventList.add(new Event("team19team1","team20"));
         eventList.add(new Event("team21","team22"));
-        eventList.add(new Event("team23","team24"));
+        eventList.add(new Event("team23","team24team1 team1"));
 
         swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

@@ -1,110 +1,112 @@
 package com.example.jg.footballstats;
 
+import java.util.Date;
+
 public class Event {
-    private String _homeTeam;
-    private String _awayTeam;
-    private String _handicap;
-    private String _total;
-    private byte _homeScore;
-    private byte _awayScore;
-    private double[] _moneylineCoef;
-    private double[] _totalCoef;
-    private double[] _handicapCoef;
+    private String homeTeam;
+    private String awayTeam;
+    private String handicap;
+    private String total;
+    private byte homeScore;
+    private byte awayScore;
+    private double[] moneylineCoef;
+    private double[] totalCoef;
+    private double[] handicapCoef;
 
     public Event(){
-        _moneylineCoef = _handicapCoef = _totalCoef = new double[2];
+        moneylineCoef = handicapCoef = totalCoef = new double[2];
     }
-    public Event(String homeTeam, String awayTeam){_homeTeam = homeTeam;
-        _awayTeam = awayTeam;}
+    public Event(String homeTeam, String awayTeam){ this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;}
     public Event(String homeTeam, String awayTeam, String handicap, String total, byte homeScore, byte awayScore, double[] moneylineCoef, double[] totalCoef, double[] handicapCoef) {
-        _homeTeam = homeTeam;
-        _awayTeam = awayTeam;
-        _handicap = handicap;
-        _total = total;
-        _homeScore = homeScore;
-        _awayScore = awayScore;
-        _moneylineCoef = moneylineCoef;
-        _totalCoef = totalCoef;
-        _handicapCoef = handicapCoef;
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+        this.handicap = handicap;
+        this.total = total;
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
+        this.moneylineCoef = moneylineCoef;
+        this.totalCoef = totalCoef;
+        this.handicapCoef = handicapCoef;
     }
     public String getScore(){
-        return "" + _homeScore + " - " + _awayScore;
+        return "" + homeScore + " - " + awayScore;
     }
     public byte getScore(byte team){
-        return team == 0?_homeScore:_awayScore;
+        return team == 0?homeScore:awayScore;
     }
     public void setScore(byte team, byte score){
         switch(team){
             case 0:
-                _homeScore = score;
+                homeScore = score;
                 break;
             case 1:
-                _awayScore = score;
+                awayScore = score;
                 break;
             default:
                 break;
         }
     }
     public String getHomeTeam() {
-        return _homeTeam;
+        return homeTeam;
     }
 
     public String getAwayTeam() {
-        return _awayTeam;
+        return awayTeam;
     }
 
     public String getHandicap() {
-        return _handicap;
+        return handicap;
     }
 
     public String getTotal() {
-        return _total;
+        return total;
     }
 
     public double[] getMoneylineCoef() {
-        return _moneylineCoef;
+        return moneylineCoef;
     }
     public double getMoneylineCoef(byte team) {
-        return team == 0?_moneylineCoef[0]:_moneylineCoef[1];
+        return team == 0?moneylineCoef[0]:moneylineCoef[1];
     }
 
-    public void setMoneylineCoef(byte team, double _moneylineCoef) {
-        this._moneylineCoef[team] = _moneylineCoef;
+    public void setMoneylineCoef(byte team, double moneylineCoef) {
+        this.moneylineCoef[team] = moneylineCoef;
     }
 
-    public void setMoneylineCoef(double[] _moneylineCoef) {
-        this._moneylineCoef = _moneylineCoef;
+    public void setMoneylineCoef(double[] moneylineCoef) {
+        this.moneylineCoef = moneylineCoef;
     }
 
     public double[] getTotalCoef() {
-        return _totalCoef;
+        return totalCoef;
     }
 
     public double getTotalCoef(byte team) {
-        return team == 0?_totalCoef[0]:_totalCoef[1];
+        return team == 0?totalCoef[0]:totalCoef[1];
     }
 
-    public void setTotalCoef(double[] _totalCoef) {
-        this._totalCoef = _totalCoef;
+    public void setTotalCoef(double[] totalCoef) {
+        this.totalCoef = totalCoef;
     }
 
-    public void setTotalCoef(byte team, double _totalCoef) {
-        this._totalCoef[team] = _totalCoef;
+    public void setTotalCoef(byte team, double totalCoef) {
+        this.totalCoef[team] = totalCoef;
     }
 
     public double[] getHandicapCoef() {
-        return _handicapCoef;
+        return handicapCoef;
     }
 
     public double getHandicapCoef(byte team) {
-        return team == 0?_handicapCoef[0]:_handicapCoef[1];
+        return team == 0?handicapCoef[0]:handicapCoef[1];
     }
 
-    public void setHandicapCoef(double[] _handicapCoef) {
-        this._handicapCoef = _handicapCoef;
+    public void setHandicapCoef(double[] handicapCoef) {
+        this.handicapCoef = handicapCoef;
     }
 
-    public void setHandicapCoef(byte team, double _handicapCoef) {
-        this._handicapCoef[team] = _handicapCoef;
+    public void setHandicapCoef(byte team, double handicapCoef) {
+        this.handicapCoef[team] = handicapCoef;
     }
 }

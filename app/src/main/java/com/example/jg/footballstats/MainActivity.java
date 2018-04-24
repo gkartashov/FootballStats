@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.nav_view);
 
+
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle menuToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
         drawerLayout.addDrawerListener(menuToggle);
@@ -39,26 +40,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
-                    case R.id.nav_camera:
+                    case R.id.nav_logout:
+                        getSupportActionBar().setTitle(item.getTitle());
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new FirstFragment(), "fragment1").commit();
-                        itemChecker(item);
                         break;
-                    case R.id.nav_setting:
+                    case R.id.nav_settings:
+                        getSupportActionBar().setTitle(item.getTitle());
                         inner_intent.putExtra("caption",item.getTitle());
                         startActivity(inner_intent);
-                        //onNavigationItemSelected(navigationView.getMenu().findItem(R.id.nav_camera));
                         break;
                     case R.id.nav_events:
+                        getSupportActionBar().setTitle(item.getTitle());
                         getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").commit();
-                        itemChecker(item);
                         break;
                     default:
-                        itemChecker(item);
+                        getSupportActionBar().setTitle(item.getTitle());
                         for(Fragment f: getSupportFragmentManager().getFragments())
                             if (f != null)
                                 getSupportFragmentManager().beginTransaction().remove(f).commit();
-                        //Fragment fragment = getSupportFragmentManager().findFragmentByTag("fragment1");
-
                 }
                 drawerLayout.closeDrawers();
                 return true;
@@ -73,10 +72,5 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawers();
         else
             super.onBackPressed();
-    }
-
-    private void itemChecker(MenuItem item){
-        item.setChecked(true);
-        getSupportActionBar().setTitle(item.getTitle());
     }
 }

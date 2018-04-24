@@ -4,33 +4,23 @@
         android:checkableBehavior="single"
         android:id="@+id/menu_top">
         <item
-            android:id="@+id/nav_camera"
+            android:id="@+id/nav_events"
             android:icon="@mipmap/ic_launcher"
-            android:title="First item" />
+            android:title="Upcoming games" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_settings"
             android:icon="@mipmap/ic_launcher_round"
-            android:title="Second item" />
+            android:title="Settings"
+            android:checkable="false"/>
     </group>
-    <item android:title="Second group">
-        <menu>
-            <group
-                android:checkableBehavior="single"
-                android:id="@+id/menu_bottom"
-                >
-                <item
-                    android:id="@+id/nav_setting"
-                    android:icon="@mipmap/ic_launcher"
-                    android:title="Third item" />
-                <item
-                    android:id="@+id/nav_events"
-                    android:icon="@mipmap/ic_launcher"
-                    android:title="Fourth item" />
-                <item
-                    android:id="@+id/nav_logout"
-                    android:icon="@mipmap/ic_launcher_round"
-                    android:title="Fifth item" />
-            </group>
-        </menu>
-    </item>
+
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_bottom">
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Log out" />
+    </group>
+
 </menu>
