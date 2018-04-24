@@ -12,4 +12,12 @@ public class EventsViewHolder extends RecyclerView.ViewHolder {
         awayTeam = itemView.findViewById(R.id.awayTeam);
         time = itemView.findViewById(R.id.time);
     }
+    public void bind(final Event item, final IOnItemClickListener listener){
+        itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(item);
+            }
+        });
+    }
 }

@@ -8,13 +8,16 @@ import android.view.View;
 
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
     private ITapListener tapListener;
-    private GestureDetector gestureDetector;
 
     public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ITapListener tapListener) {
         this.tapListener = tapListener;
-        gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
+        GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener(){
             @Override
             public boolean onSingleTapUp(MotionEvent e) {
+                View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                if (child != null && tapListener != null) {
+                    tapListener.onTap(child, recyclerView.indexOfChild(child));
+                }
                 return true;
             }
 

@@ -9,6 +9,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
@@ -28,6 +29,8 @@ public class MainActivity extends AppCompatActivity {
         toolbar = findViewById(R.id.toolbar);
         navigationView = findViewById(R.id.nav_view);
 
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").addToBackStack("events_fragment").commit();
+        navigationView.getMenu().findItem(R.id.nav_events).setChecked(true);
 
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle menuToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.app_name, R.string.app_name);
@@ -41,8 +44,10 @@ public class MainActivity extends AppCompatActivity {
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.nav_logout:
-                        getSupportActionBar().setTitle(item.getTitle());
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new FirstFragment(), "fragment1").commit();
+                        if (getSupportFragmentManager().findFragmentByTag("sample_fragment") != null) {
+                            getSupportActionBar().setTitle(item.getTitle());
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new FirstFragment(), "sample_fragment").addToBackStack("sample_fragment").commit();
+                        }
                         break;
                     case R.id.nav_settings:
                         getSupportActionBar().setTitle(item.getTitle());
@@ -50,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(inner_intent);
                         break;
                     case R.id.nav_events:
-                        getSupportActionBar().setTitle(item.getTitle());
-                        getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").commit();
+                        if (getSupportFragmentManager().findFragmentByTag("sample_fragment") != null) {
+                            getSupportActionBar().setTitle(item.getTitle());
+                            getSupportFragmentManager().beginTransaction().replace(R.id.main_layout, new EventsFragment(), "events_fragment").addToBackStack("events_fragment").commit();
+                        }
                         break;
                     default:
                         getSupportActionBar().setTitle(item.getTitle());
@@ -63,13 +70,16 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             drawerLayout.closeDrawers();
+        //Log.i("Main ", Integer.toString(getSupportFragmentManager().getBackStackEntryCount()));
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0)
+            getSupportFragmentManager().popBackStack();
         else
             super.onBackPressed();
     }

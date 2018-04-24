@@ -11,8 +11,10 @@ import java.util.TimeZone;
 
 public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
     private List<Event> events;
-    public EventAdapter(List<Event> events){
+    private final IOnItemClickListener listener;
+    public EventAdapter(List<Event> events, IOnItemClickListener listener){
         this.events = events;
+        this.listener = listener;
     }
     @NonNull
     @Override
@@ -24,6 +26,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull EventsViewHolder holder, int position) {
+        holder.bind(events.get(position),listener);
         Event event = events.get(position);
         holder.homeTeam.setText(event.getHomeTeam());
         holder.awayTeam.setText(event.getAwayTeam());
