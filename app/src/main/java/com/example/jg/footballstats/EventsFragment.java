@@ -1,14 +1,19 @@
 package com.example.jg.footballstats;
 
 
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +35,7 @@ public class EventsFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
 
@@ -41,10 +46,18 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setAdapter(new EventAdapter(eventList, new IOnItemClickListener() {
             @Override
             public void onItemClick(Event item) {
-                //Log.i("tag ", item.getAwayTeam() + item.getHomeTeam());
-                EventFragment ef = new EventFragment();
-                getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right).replace(R.id.main_layout, ef).addToBackStack(null).commit();
-                //Log.i("Events ", Integer.toString(getActivity().getSupportFragmentManager().getBackStackEntryCount()));
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right)
+                        .replace(R.id.main_layout, new EventFragment(),"event_fragment")
+                        .addToBackStack("event_fragment")
+                        .commit();
+                /*Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+                DrawerLayout drawerLayout = getActivity().findViewById(R.id.drawer_layout);
+                ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.app_name, R.string.app_name);
+                drawerLayout.addDrawerListener(toggle);
+                toggle.getDrawerArrowDrawable();
+                toggle.syncState();*/
+                //((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             }
         }));
 
@@ -83,6 +96,25 @@ public class EventsFragment extends Fragment {
             }
         }));*/
 
+        eventListInitializer();
+
+        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                }, 1000);
+            }
+        });
+        return rootView;
+    }
+
+    private void eventListInitializer() {
         eventList.add(new Event("team1 team1 team1 team1","team2 team1 team1"));
         eventList.add(new Event("team3 team1","team4 team1 team1 team1"));
         eventList.add(new Event("team5","team6"));
@@ -95,21 +127,5 @@ public class EventsFragment extends Fragment {
         eventList.add(new Event("team19team1","team20"));
         eventList.add(new Event("team21","team22"));
         eventList.add(new Event("team23","team24team1 team1"));
-
-        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeRefreshLayout.setRefreshing(false);
-                    }
-                }, 2000);
-            }
-        });
-        return rootView;
     }
-
 }

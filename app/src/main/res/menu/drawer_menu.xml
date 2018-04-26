@@ -21,6 +21,10 @@
             android:id="@+id/nav_logout"
             android:icon="@mipmap/ic_launcher_round"
             android:title="Log out" />
+        <item
+            android:id="@+id/nav_stack"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Backstack" />
     </group>
 
 </menu>
