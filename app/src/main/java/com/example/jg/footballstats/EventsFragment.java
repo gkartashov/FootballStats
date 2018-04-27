@@ -1,6 +1,7 @@
 package com.example.jg.footballstats;
 
 
+import android.animation.ValueAnimator;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.drawable.DrawerArrowDrawable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +30,8 @@ public class EventsFragment extends Fragment {
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
-
+    protected DrawerLayout drawerLayout;
+    protected ActionBarDrawerToggle toolbarDrawerToggle;
     private List<Event> eventList = new ArrayList<>();
 
     public EventsFragment() {
@@ -46,11 +50,21 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setAdapter(new EventAdapter(eventList, new IOnItemClickListener() {
             @Override
             public void onItemClick(Event item) {
+                MainActivity.nextFragment = "EventFragment";
                 getActivity().getSupportFragmentManager().beginTransaction()
                         .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right)
-                        .replace(R.id.main_layout, new EventFragment(),"event_fragment")
+                        .replace(R.id.content_layout, new EventFragment(),"event_fragment")
                         .addToBackStack("event_fragment")
                         .commit();
+                //MainActivity.HamburgerArrowAnimator.startAnimation(drawerLayout,toolbarDrawerToggle, 0.0f,1.0f);
+                //((AppCompatActivity)getActivity()).Too
+                //Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+                //((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+                /*drawerDrawable = new DrawerArrowAnimation.DrawerArrowDrawableToggle(((AppCompatActivity) getActivity()), ((AppCompatActivity) getActivity()).getSupportActionBar().getThemedContext());
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeButtonEnabled(true);
+                ((AppCompatActivity) getActivity()).getSupportActionBar().setHomeAsUpIndicator(drawerDrawable);
+                drawerDrawable.setPosition(1f);*/
                 /*Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
                 DrawerLayout drawerLayout = getActivity().findViewById(R.id.drawer_layout);
                 ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.app_name, R.string.app_name);
@@ -114,6 +128,10 @@ public class EventsFragment extends Fragment {
         return rootView;
     }
 
+    /*public void setUp(ActionBarDrawerToggle toolbarDrawerToggle, DrawerLayout drawerLayout) {
+        this.toolbarDrawerToggle = toolbarDrawerToggle;
+        this.drawerLayout = drawerLayout;
+    }*/
     private void eventListInitializer() {
         eventList.add(new Event("team1 team1 team1 team1","team2 team1 team1"));
         eventList.add(new Event("team3 team1","team4 team1 team1 team1"));
