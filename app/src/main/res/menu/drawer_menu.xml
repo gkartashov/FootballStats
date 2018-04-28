@@ -8,9 +8,9 @@
             android:icon="@mipmap/ic_launcher"
             android:title="Upcoming games" />
         <item
-            android:id="@+id/nav_settings"
+            android:id="@+id/nav_charts"
             android:icon="@mipmap/ic_launcher_round"
-            android:title="Settings"
+            android:title="Charts"
             android:checkable="false"/>
     </group>
 
@@ -25,6 +25,14 @@
             android:id="@+id/nav_stack"
             android:icon="@mipmap/ic_launcher_round"
             android:title="Backstack" />
+    </group>
+    <group
+        android:checkableBehavior="single"
+        android:id="@+id/menu_exit">
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@mipmap/ic_launcher_round"
+            android:title="Exit" />
     </group>
 
 </menu>
