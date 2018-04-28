@@ -4,6 +4,7 @@ package com.example.jg.footballstats;
 import android.app.ActionBar;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -51,6 +52,10 @@ public class EventsFragment extends Fragment {
                         .replace(R.id.main_layout, new EventFragment(),"event_fragment")
                         .addToBackStack("event_fragment")
                         .commit();
+                //((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
+
+                ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white);
                 /*Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
                 DrawerLayout drawerLayout = getActivity().findViewById(R.id.drawer_layout);
                 ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getActivity(), drawerLayout, toolbar, R.string.app_name, R.string.app_name);
