@@ -12,6 +12,17 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import java.io.IOException;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -108,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
@@ -117,11 +129,13 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
     private void setHomeIconEnabled() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24px);
     }
+
     private void setBackStackEmpty(String entryName) {
         int backStackSize = fragmentManager.getBackStackEntryCount();
         while (backStackSize > 0) {

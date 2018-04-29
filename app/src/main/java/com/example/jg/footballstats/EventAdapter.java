@@ -5,14 +5,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
 
 public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
-    private List<Event> events;
+    private List<EventEntry> events = new ArrayList<>();;
     private final IOnItemClickListener listener;
-    public EventAdapter(List<Event> events, IOnItemClickListener listener){
+    public EventAdapter(List<EventEntry> events, IOnItemClickListener listener){
         this.events = events;
         this.listener = listener;
     }
@@ -27,14 +28,23 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull EventsViewHolder holder, int position) {
         holder.bind(events.get(position),listener);
-        Event event = events.get(position);
-        holder.homeTeam.setText(event.getHomeTeam());
-        holder.awayTeam.setText(event.getAwayTeam());
+        EventEntry event = events.get(position);
+        holder.homeTeam.setText(event.getHome());
+        holder.awayTeam.setText(event.getAway());
         holder.time.setText(TimeZone.getDefault().getDisplayName(true,TimeZone.SHORT));
     }
 
     @Override
     public int getItemCount() {
         return events.size();
+    }
+    public void clear() {
+        events.clear();
+        notifyDataSetChanged();
+    }
+
+    public void addAll(List<EventEntry> list) {
+        events.addAll(list);
+        notifyDataSetChanged();
     }
 }
