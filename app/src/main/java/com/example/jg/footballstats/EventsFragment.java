@@ -1,28 +1,22 @@
 package com.example.jg.footballstats;
 
 
-import android.app.ActionBar;
 import android.os.Bundle;
-import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,7 +42,7 @@ public class EventsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
-
+        setHasOptionsMenu(true);
         eventAdapter = new EventAdapter(eventsList, new IOnItemClickListener() {
             @Override
             public void onItemClick(EventEntry item) {
@@ -74,9 +68,25 @@ public class EventsFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(R.drawable.ic_refresh_white_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_refresh:
+                onRefreshListener.onRefresh();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     public OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
         public void onRefresh() {
+            swipeRefreshLayout.setRefreshing(true);
             fetchFixtures();
         }
     };
@@ -107,17 +117,5 @@ public class EventsFragment extends Fragment {
         //eventAdapter.clear();
         eventAdapter.addAll(eventsList.getLeague().get(0).getEvents());
         since = eventsList.getLast();
-        /*eventList.add(new Event("team1 team1 team1 team1","team2 team1 team1"));
-        eventList.add(new Event("team3 team1","team4 team1 team1 team1"));
-        eventList.add(new Event("team5","team6"));
-        eventList.add(new Event("team7 team1 team1","team8"));
-        eventList.add(new Event("team9","team10team1"));
-        eventList.add(new Event("team11","team12"));
-        eventList.add(new Event("team13 team1","team14"));
-        eventList.add(new Event("team15","team16"));
-        eventList.add(new Event("team17","team18 team1team1"));
-        eventList.add(new Event("team19team1","team20"));
-        eventList.add(new Event("team21","team22"));
-        eventList.add(new Event("team23","team24team1 team1"));*/
     }
 }
