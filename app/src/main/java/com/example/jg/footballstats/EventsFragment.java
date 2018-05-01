@@ -112,10 +112,9 @@ public class EventsFragment extends Fragment {
             apiController.getAPI().getFixturesSince(29, since).enqueue(apiCallback);
     }
 
-    private void eventsListInitializer(EventsList eventsList) {
-        //for(League l:eventsList.getLeague())
-        //eventAdapter.clear();
+    private void eventsListInitializer(final EventsList eventsList) {
         eventAdapter.addAll(eventsList.getLeague().get(0).getEvents());
+        eventAdapter.sort();
         since = eventsList.getLast();
     }
 }

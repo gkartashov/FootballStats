@@ -6,12 +6,13 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TimeZone;
 
 
 public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
-    private List<EventEntry> events = new ArrayList<>();;
+    private List<EventEntry> events = new ArrayList<>();
     private final IOnItemClickListener listener;
     public EventAdapter(List<EventEntry> events, IOnItemClickListener listener){
         this.events = events;
@@ -31,7 +32,8 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
         EventEntry event = events.get(position);
         holder.homeTeam.setText(event.getHome());
         holder.awayTeam.setText(event.getAway());
-        holder.time.setText(TimeZone.getDefault().getDisplayName(true,TimeZone.SHORT));
+        holder.date.setText(event.getDate());
+        holder.time.setText(event.getTime());
     }
 
     @Override
@@ -41,6 +43,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
     public void clear() {
         events.clear();
         notifyDataSetChanged();
+    }
+
+    public void sort() {
+        if (events.size() > 0)
+            Collections.sort(events, new Comparator<EventEntry>() {
+                @Override
+                public int compare(EventEntry o1, EventEntry o2) {
+                    return o1.toLocalTime().compareTo(o2.toLocalTime());
+                }
+            });
     }
 
     public void addAll(List<EventEntry> list) {

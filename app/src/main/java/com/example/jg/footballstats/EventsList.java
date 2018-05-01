@@ -1,6 +1,8 @@
 package com.example.jg.footballstats;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -51,4 +53,14 @@ public class EventsList {
         this.league = league;
     }
 
+    public void leaguesSort() {
+        if (league.size() > 0)
+            Collections.sort(league, new Comparator<League>() {
+                @Override
+                public int compare(League o1, League o2) {
+                    int res = String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
+                    return (res != 0) ? res : o1.getName().compareTo(o2.getName());
+                }
+            });
+    }
 }

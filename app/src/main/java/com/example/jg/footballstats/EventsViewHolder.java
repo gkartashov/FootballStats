@@ -5,11 +5,12 @@ import android.view.View;
 import android.widget.TextView;
 
 public class EventsViewHolder extends RecyclerView.ViewHolder {
-    public TextView homeTeam, awayTeam, time;
+    public TextView homeTeam, awayTeam, date, time;
     public EventsViewHolder(View itemView) {
         super(itemView);
         homeTeam = itemView.findViewById(R.id.homeTeam);
         awayTeam = itemView.findViewById(R.id.awayTeam);
+        date = itemView.findViewById(R.id.date);
         time = itemView.findViewById(R.id.time);
     }
     public void bind(final EventEntry item, final IOnItemClickListener listener){

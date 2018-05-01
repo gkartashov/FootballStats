@@ -3,6 +3,11 @@ package com.example.jg.footballstats;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+
 public class EventEntry {
 
     @SerializedName("id")
@@ -133,4 +138,20 @@ public class EventEntry {
         this.altTeaser = altTeaser;
     }
 
+    public DateTime toLocalTime() {
+        return DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .parseDateTime(starts)
+                .withZoneRetainFields(DateTimeZone.UTC)
+                .withZone(DateTimeZone.getDefault());
+    }
+    public String getDate() {
+        DateTime dateTime = toLocalTime().toDateTime();
+        return (dateTime.getDayOfYear() == LocalDate.now().getDayOfYear())?
+                "Today":
+                dateTime.toString("yyyy-MM-dd");
+    }
+
+    public String getTime() {
+        return toLocalTime().toDateTime().toString("HH:mm");
+    }
 }
