@@ -12,8 +12,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 
+import com.example.jg.footballstats.fixtures.EventEntry;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements EventsFragment.OnItemSelectListener {
 
     private DrawerLayout drawerLayout;
     private Toolbar toolbar;
@@ -119,10 +121,30 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @Override
+    public void onItemSelect(EventEntry eventEntry) {
+        EventFragment eventFragment = new EventFragment();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("event",eventEntry);
+        eventFragment.setArguments(bundle);
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right)
+                .replace(R.id.main_layout, eventFragment,"event_fragment")
+                .addToBackStack("event_fragment")
+                .commit();
+        setBackArrowIconEnabled();
+    }
+
     private void setHomeIconEnabled() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_menu_white_24px);
+    }
+
+    private void setBackArrowIconEnabled() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(false);
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white);
     }
 
     private void setBackStackEmpty(String entryName) {

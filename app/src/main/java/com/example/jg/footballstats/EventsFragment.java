@@ -1,11 +1,11 @@
 package com.example.jg.footballstats;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +17,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.jg.footballstats.fixtures.EventEntry;
+import com.example.jg.footballstats.fixtures.EventsList;
+import com.example.jg.footballstats.fixtures.League;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,16 +30,32 @@ import retrofit2.Response;
 
 public class EventsFragment extends Fragment {
 
+    public interface OnItemSelectListener {
+        void onItemSelect(EventEntry eventEntry);
+    }
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
     private EventAdapter eventAdapter;
     private APIController apiController = APIController.getInstance();
+    private OnItemSelectListener onItemSelectListener;
     private long since;
 
     private List<EventEntry> eventsList = new ArrayList<>();
 
     public EventsFragment() {
 
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            onItemSelectListener = (OnItemSelectListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnHeadlineSelectedListener");
+        }
     }
 
     @Override
@@ -46,22 +66,15 @@ public class EventsFragment extends Fragment {
         eventAdapter = new EventAdapter(eventsList, new IOnItemClickListener() {
             @Override
             public void onItemClick(EventEntry item) {
-                getActivity().getSupportFragmentManager().beginTransaction()
-                        .setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left, R.anim.slide_out_right, R.anim.slide_in_right)
-                        .replace(R.id.main_layout, new EventFragment(),"event_fragment")
-                        .addToBackStack("event_fragment")
-                        .commit();
-                ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeButtonEnabled(false);
-                ((AppCompatActivity)getActivity()).getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white);
-
+                onItemSelectListener.onItemSelect(item);
             }
         });
-        mRecyclerView = rootView.findViewById(R.id.recycler_view);
+        mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setAdapter(eventAdapter);
-        swipeRefreshLayout = rootView.findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         swipeRefreshLayout.setRefreshing(true);
         onRefreshListener.onRefresh();
@@ -113,7 +126,8 @@ public class EventsFragment extends Fragment {
     }
 
     private void eventsListInitializer(final EventsList eventsList) {
-        eventAdapter.addAll(eventsList.getLeague().get(0).getEvents());
+        for(League l:eventsList.getLeague())
+            eventAdapter.addAll(l.getEvents());
         eventAdapter.sort();
         since = eventsList.getLast();
     }

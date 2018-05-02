@@ -1,14 +1,10 @@
 package com.example.jg.footballstats;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import com.example.jg.footballstats.fixtures.EventsList;
+import com.example.jg.footballstats.odds.OddsList;
 
-import java.util.List;
-
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
@@ -20,4 +16,7 @@ public interface PinnacleAPI {
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
     @GET("/v1/fixtures")
     Call<EventsList> getFixturesSince(@Query("sportId") int sportId,@Query("since") long since);
+    @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
+    @GET("/v1/fixtures")
+    Call<OddsList> getOdds(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds, @Query("oddsFormat") int oddsFormat);
 }

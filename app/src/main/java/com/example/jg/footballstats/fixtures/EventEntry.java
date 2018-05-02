@@ -1,4 +1,7 @@
-package com.example.jg.footballstats;
+package com.example.jg.footballstats.fixtures;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +11,7 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 
-public class EventEntry {
+public class EventEntry implements Parcelable {
 
     @SerializedName("id")
     @Expose
@@ -154,4 +157,48 @@ public class EventEntry {
     public String getTime() {
         return toLocalTime().toDateTime().toString("HH:mm");
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
+        dest.writeInt(this.parentId);
+        dest.writeString(this.starts);
+        dest.writeString(this.home);
+        dest.writeString(this.away);
+        dest.writeString(this.rotNum);
+        dest.writeInt(this.liveStatus);
+        dest.writeString(this.status);
+        dest.writeInt(this.parlayRestriction);
+        dest.writeByte(this.altTeaser ? (byte) 1 : (byte) 0);
+    }
+
+    protected EventEntry(Parcel in) {
+        this.id = in.readInt();
+        this.parentId = in.readInt();
+        this.starts = in.readString();
+        this.home = in.readString();
+        this.away = in.readString();
+        this.rotNum = in.readString();
+        this.liveStatus = in.readInt();
+        this.status = in.readString();
+        this.parlayRestriction = in.readInt();
+        this.altTeaser = in.readByte() != 0;
+    }
+
+    public static final Parcelable.Creator<EventEntry> CREATOR = new Parcelable.Creator<EventEntry>() {
+        @Override
+        public EventEntry createFromParcel(Parcel source) {
+            return new EventEntry(source);
+        }
+
+        @Override
+        public EventEntry[] newArray(int size) {
+            return new EventEntry[size];
+        }
+    };
 }

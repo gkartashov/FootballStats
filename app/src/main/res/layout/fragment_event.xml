@@ -1,15 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/event_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".EventFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:orientation="horizontal"
+        android:padding="16dp">
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeMaxTextSize="24sp"
+            android:id="@+id/event_home"
+            android:text="Real Madrid Real Real Madrid Real"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textStyle="bold"/>
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeMaxTextSize="24sp"
+            android:id="@+id/event_separator"
+            android:text="–"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textStyle="bold"/>
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="18sp"
+            app:autoSizeMaxTextSize="24sp"
+            android:id="@+id/event_away"
+            android:text="Bayern Munich"
+            android:gravity="center"
+            android:textAlignment="gravity"
+            android:textStyle="bold"/>
+    </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/event_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="govn" />
+        android:scrollbars="vertical"
+        android:orientation="horizontal"
+        android:clipToPadding="false"
+        android:overScrollMode="never"
+        tools:listitem="@layout/event_wager_item"/>
 
 </LinearLayout>

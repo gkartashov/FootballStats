@@ -1,4 +1,4 @@
-package com.example.jg.footballstats;
+package com.example.jg.footballstats.fixtures;
 
 import java.util.ArrayList;
 import java.util.Collections;
