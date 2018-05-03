@@ -39,6 +39,10 @@ public class Away {
         return points;
     }
 
+    public String getStringPoints() {
+        return Double.toString(points);
+    }
+
     public void setPoints(double points) {
         this.points = points;
     }

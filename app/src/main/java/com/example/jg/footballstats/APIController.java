@@ -2,6 +2,7 @@ package com.example.jg.footballstats;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class APIController {
     private static Retrofit retrofit;
@@ -23,9 +24,8 @@ public class APIController {
         return ourInstance;
     }
 
-    public static PinnacleAPI getAPI() {
+    public PinnacleAPI getAPI() {
         return pinnacleAPI;
     }
-
 
 }

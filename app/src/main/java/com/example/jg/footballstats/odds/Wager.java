@@ -4,8 +4,8 @@ import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
 
-public class Wager extends ExpandableGroup<Event> {
-    public Wager(String title, List<Event> items) {
+public class Wager extends ExpandableGroup<Odd> {
+    public Wager(String title, List<Odd> items) {
         super(title, items);
     }
 }

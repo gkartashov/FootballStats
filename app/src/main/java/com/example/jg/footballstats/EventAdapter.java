@@ -77,4 +77,9 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
         events.addAll(list);
         notifyDataSetChanged();
     }
+
+    public void add(EventEntry eventEntry) {
+        events.add(eventEntry);
+        notifyDataSetChanged();
+    }
 }

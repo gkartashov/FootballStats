@@ -43,6 +43,10 @@ public class Home {
         this.points = points;
     }
 
+    public String getStringPoints() {
+        return Double.toString(points);
+    }
+
     public double getOver() {
         return over;
     }

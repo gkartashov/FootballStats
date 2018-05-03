@@ -125,9 +125,43 @@ public class EventsFragment extends Fragment {
             apiController.getAPI().getFixturesSince(29, since).enqueue(apiCallback);
     }
 
-    private void eventsListInitializer(final EventsList eventsList) {
-        for(League l:eventsList.getLeague())
-            eventAdapter.addAll(l.getEvents());
+    private List<EventEntry> eventsFilter(EventsList eventsList) {
+        List<EventEntry> finalList = new ArrayList<EventEntry>();
+        for (League l:eventsList.getLeague()) {
+            List<EventEntry> eventEntries = l.getEvents();
+            List<EventEntry> eventEntriesForRemove = new ArrayList<EventEntry>();
+            for (EventEntry e : eventEntries)
+                for (ExclusionTags ex : ExclusionTags.values())
+                    if (e.getHome().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
+                            e.getAway().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
+                            e.isStarted() && e.getParentId() == 0)// ||
+                            //e.getStatus() == "H")// ||
+                            //e.getParentId() == 0)
+                        eventEntriesForRemove.add(e);
+                    else
+                        e.setLeagueId(l.getId());
+            eventEntries.removeAll(eventEntriesForRemove);
+            l.setEvents(eventEntries);
+            finalList.addAll(eventEntries);
+        }
+        return finalList;
+    }
+
+    private void eventsListRefresh(EventsList eventsList) {
+        List<EventEntry> finalList = eventsFilter(eventsList);
+        //for (EventEntry e:finalList)
+            //this.eventsList.stream().map(Event)
+    }
+    private void eventsListInitializer(EventsList eventsList) {
+        //for(League l:eventsFilter(eventsList).getLeague())
+           // for (EventEntry eventEntry: l.getEvents())
+                //eventAdapter.addAll(l.getEvents());
+                //if (eventEntry.getHome().toLowerCase().contains("real")&&eventEntry.getHome().toLowerCase().contains("madrid")||eventEntry.getAway().toLowerCase().contains("real")&&eventEntry.getAway().toLowerCase().contains("madrid"))
+                /*if (eventEntry.getDate() == "Today") {
+                    eventEntry.setLeagueId(l.getId());
+                    eventAdapter.add(eventEntry);
+                }*/
+        eventAdapter.addAll(eventsFilter(eventsList));
         eventAdapter.sort();
         since = eventsList.getLast();
     }

@@ -11,7 +11,7 @@ public class OddsList {
     private int sportId;
     @SerializedName("last")
     @Expose
-    private int last;
+    private long last;
     @SerializedName("leagues")
     @Expose
     private List<League> leagues = null;
@@ -29,7 +29,7 @@ public class OddsList {
      * @param leagues
      * @param last
      */
-    public OddsList(int sportId, int last, List<League> leagues) {
+    public OddsList(int sportId, long last, List<League> leagues) {
         super();
         this.sportId = sportId;
         this.last = last;
@@ -44,11 +44,11 @@ public class OddsList {
         this.sportId = sportId;
     }
 
-    public int getLast() {
+    public long getLast() {
         return last;
     }
 
-    public void setLast(int last) {
+    public void setLast(long last) {
         this.last = last;
     }
 

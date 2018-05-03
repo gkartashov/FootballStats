@@ -8,7 +8,7 @@ public class Period {
 
     @SerializedName("lineId")
     @Expose
-    private int lineId;
+    private long lineId;
     @SerializedName("number")
     @Expose
     private int number;
@@ -61,7 +61,7 @@ public class Period {
      * @param cutoff
      * @param lineId
      */
-    public Period(int lineId, int number, String cutoff, double maxSpread, double maxMoneyline, double maxTotal, double maxTeamTotal, List<Spread> spreads, Moneyline moneyline, List<Total> totals, TeamTotal teamTotal) {
+    public Period(long lineId, int number, String cutoff, double maxSpread, double maxMoneyline, double maxTotal, double maxTeamTotal, List<Spread> spreads, Moneyline moneyline, List<Total> totals, TeamTotal teamTotal) {
         super();
         this.lineId = lineId;
         this.number = number;
@@ -76,11 +76,11 @@ public class Period {
         this.teamTotal = teamTotal;
     }
 
-    public int getLineId() {
+    public long getLineId() {
         return lineId;
     }
 
-    public void setLineId(int lineId) {
+    public void setLineId(long lineId) {
         this.lineId = lineId;
     }
 

@@ -7,7 +7,7 @@ public class Spread {
 
     @SerializedName("altLineId")
     @Expose
-    private int altLineId;
+    private long altLineId;
     @SerializedName("hdp")
     @Expose
     private double hdp;
@@ -32,7 +32,7 @@ public class Spread {
      * @param hdp
      * @param altLineId
      */
-    public Spread(int altLineId, double hdp, double home, double away) {
+    public Spread(long altLineId, double hdp, double home, double away) {
         super();
         this.altLineId = altLineId;
         this.hdp = hdp;
@@ -40,16 +40,20 @@ public class Spread {
         this.away = away;
     }
 
-    public int getAltLineId() {
+    public long getAltLineId() {
         return altLineId;
     }
 
-    public void setAltLineId(int altLineId) {
+    public void setAltLineId(long altLineId) {
         this.altLineId = altLineId;
     }
 
     public double getHdp() {
         return hdp;
+    }
+
+    public String getStringHdp() {
+        return Double.toString(hdp);
     }
 
     public void setHdp(double hdp) {

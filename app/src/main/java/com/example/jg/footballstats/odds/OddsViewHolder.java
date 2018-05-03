@@ -13,7 +13,8 @@ public class OddsViewHolder extends ChildViewHolder {
         oddType = itemView.findViewById(R.id.odd_type);
         oddCoefficient = itemView.findViewById(R.id.odd_coefficient);
     }
-    public void onBind(Event event) {
-
+    public void onBind(Odd odd) {
+        oddType.setText(odd.getType());
+        oddCoefficient.setText(odd.getStringCoefficient());
     }
 }

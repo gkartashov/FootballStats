@@ -9,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
 public class EventEntry implements Parcelable {
@@ -43,6 +45,8 @@ public class EventEntry implements Parcelable {
     @SerializedName("altTeaser")
     @Expose
     private boolean altTeaser;
+
+    private int leagueId;
 
     public EventEntry() {
     }
@@ -141,6 +145,14 @@ public class EventEntry implements Parcelable {
         this.altTeaser = altTeaser;
     }
 
+    public int getLeagueId() {
+        return leagueId;
+    }
+
+    public void setLeagueId(int leagueId) {
+        this.leagueId = leagueId;
+    }
+
     public DateTime toLocalTime() {
         return DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
                 .parseDateTime(starts)
@@ -158,6 +170,9 @@ public class EventEntry implements Parcelable {
         return toLocalTime().toDateTime().toString("HH:mm");
     }
 
+    public boolean isStarted() {
+        return (toLocalTime().toDateTime().isBefore(LocalDateTime.now().toDateTime()));
+    }
     @Override
     public int describeContents() {
         return 0;
@@ -175,6 +190,7 @@ public class EventEntry implements Parcelable {
         dest.writeString(this.status);
         dest.writeInt(this.parlayRestriction);
         dest.writeByte(this.altTeaser ? (byte) 1 : (byte) 0);
+        dest.writeInt(this.leagueId);
     }
 
     protected EventEntry(Parcel in) {
@@ -188,6 +204,7 @@ public class EventEntry implements Parcelable {
         this.status = in.readString();
         this.parlayRestriction = in.readInt();
         this.altTeaser = in.readByte() != 0;
+        this.leagueId = in.readInt();
     }
 
     public static final Parcelable.Creator<EventEntry> CREATOR = new Parcelable.Creator<EventEntry>() {

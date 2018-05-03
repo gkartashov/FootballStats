@@ -7,7 +7,7 @@ public class Total {
 
     @SerializedName("altLineId")
     @Expose
-    private int altLineId;
+    private long altLineId;
     @SerializedName("points")
     @Expose
     private double points;
@@ -32,7 +32,7 @@ public class Total {
      * @param altLineId
      * @param points
      */
-    public Total(int altLineId, double points, double over, double under) {
+    public Total(long altLineId, double points, double over, double under) {
         super();
         this.altLineId = altLineId;
         this.points = points;
@@ -40,16 +40,20 @@ public class Total {
         this.under = under;
     }
 
-    public int getAltLineId() {
+    public long getAltLineId() {
         return altLineId;
     }
 
-    public void setAltLineId(int altLineId) {
+    public void setAltLineId(long altLineId) {
         this.altLineId = altLineId;
     }
 
     public double getPoints() {
         return points;
+    }
+
+    public String getStringPoints() {
+        return Double.toString(points);
     }
 
     public void setPoints(double points) {

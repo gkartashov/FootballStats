@@ -12,7 +12,7 @@ public class Event implements Parcelable {
 
     @SerializedName("id")
     @Expose
-    private int id;
+    private long id;
     @SerializedName("awayScore")
     @Expose
     private int awayScore;
@@ -45,7 +45,7 @@ public class Event implements Parcelable {
      * @param homeRedCards
      * @param awayScore
      */
-    public Event(int id, int awayScore, int homeScore, int awayRedCards, int homeRedCards, List<Period> periods) {
+    public Event(long id, int awayScore, int homeScore, int awayRedCards, int homeRedCards, List<Period> periods) {
         super();
         this.id = id;
         this.awayScore = awayScore;
@@ -55,11 +55,11 @@ public class Event implements Parcelable {
         this.periods = periods;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -110,7 +110,7 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(this.id);
+        dest.writeLong(this.id);
         dest.writeInt(this.awayScore);
         dest.writeInt(this.homeScore);
         dest.writeInt(this.awayRedCards);
@@ -119,7 +119,7 @@ public class Event implements Parcelable {
     }
 
     protected Event(Parcel in) {
-        this.id = in.readInt();
+        this.id = in.readLong();
         this.awayScore = in.readInt();
         this.homeScore = in.readInt();
         this.awayRedCards = in.readInt();

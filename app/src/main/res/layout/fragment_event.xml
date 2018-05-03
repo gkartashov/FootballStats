@@ -7,12 +7,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".EventFragment">
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp">
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="18sp"
+            android:id="@+id/event_start_time"
+            android:text="28 nov 2018 21:00"
+            android:gravity="center" />
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -49,15 +63,24 @@
             android:gravity="center"
             android:textAlignment="gravity"
             android:textStyle="bold"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="38sp"
+            android:id="@+id/event_score"
+            android:text="0-0"
+            android:textStyle="bold"
+            android:gravity="center" />
     </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scrollbars="vertical"
-        android:orientation="horizontal"
-        android:clipToPadding="false"
-        android:overScrollMode="never"
-        tools:listitem="@layout/event_wager_item"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>
