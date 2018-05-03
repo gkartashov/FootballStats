@@ -5,7 +5,9 @@ public enum ExclusionTags {
     TEST_B(1, "Test B"),
     CORNERS(2, "Corners"),
     TO_ADVANCE(3, "To advance"),
-    BOOKINGS(4, "Bookings");
+    BOOKINGS(4, "Bookings"),
+    AWAY_TEAMS(5,"Away teams"),
+    HOME_TEAMS(5,"Home teams");
 
     private final int code;
     private final String description;

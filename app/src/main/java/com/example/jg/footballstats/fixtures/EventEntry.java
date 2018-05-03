@@ -13,6 +13,8 @@ import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
+import java.util.Objects;
+
 public class EventEntry implements Parcelable {
 
     @SerializedName("id")
@@ -69,8 +71,26 @@ public class EventEntry implements Parcelable {
         return id;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EventEntry that = (EventEntry) o;
+        return id == that.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
+
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Integer getIntegerId() {
+        return id;
     }
 
     public int getParentId() {

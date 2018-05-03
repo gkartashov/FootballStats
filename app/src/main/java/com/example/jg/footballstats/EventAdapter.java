@@ -59,18 +59,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
             });
     }
 
-    public static List<EventEntry> getSortedEventsList(EventsList eventEntries) {
-        List<EventEntry> tmp = new ArrayList<EventEntry>();
-        for (League l:eventEntries.getLeague())
-            tmp.addAll(l.getEvents());
-        if (tmp.size() > 0)
-            Collections.sort(tmp, new Comparator<EventEntry>() {
+    public List<EventEntry> getList() {
+        return events;
+    }
+
+    public static List<EventEntry> sortByTime(List<EventEntry> list) {
+        if (list.size() > 0)
+            Collections.sort(list, new Comparator<EventEntry>() {
                 @Override
                 public int compare(EventEntry o1, EventEntry o2) {
                     return o1.toLocalTime().compareTo(o2.toLocalTime());
                 }
             });
-        return tmp;
+        return list;
+    }
+
+    public static List<EventEntry> sortById(List<EventEntry> list) {
+        if (list.size() > 0)
+            Collections.sort(list, new Comparator<EventEntry>() {
+                @Override
+                public int compare(EventEntry o1, EventEntry o2) {
+                    return o1.getIntegerId().compareTo(o2.getIntegerId());
+                }
+            });
+        return list;
     }
 
     public void addAll(List<EventEntry> list) {
@@ -80,6 +92,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
 
     public void add(EventEntry eventEntry) {
         events.add(eventEntry);
+        notifyDataSetChanged();
+    }
+    public void set(int index, EventEntry eventEntry) {
+        events.set(index,eventEntry);
         notifyDataSetChanged();
     }
 }

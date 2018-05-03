@@ -10,6 +10,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +23,9 @@ import com.example.jg.footballstats.fixtures.EventsList;
 import com.example.jg.footballstats.fixtures.League;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -107,7 +111,10 @@ public class EventsFragment extends Fragment {
     public Callback<EventsList> apiCallback = new Callback<EventsList>() {
         @Override
         public void onResponse(Call<EventsList> call, Response<EventsList> response) {
-            eventsListInitializer(response.body());
+            if (since == 0)
+                eventsListInitializer(response.body());
+            else
+                eventsListRefresh(response.body());
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -126,7 +133,7 @@ public class EventsFragment extends Fragment {
     }
 
     private List<EventEntry> eventsFilter(EventsList eventsList) {
-        List<EventEntry> finalList = new ArrayList<EventEntry>();
+        List<EventEntry> finalList = new ArrayList<>();
         for (League l:eventsList.getLeague()) {
             List<EventEntry> eventEntries = l.getEvents();
             List<EventEntry> eventEntriesForRemove = new ArrayList<EventEntry>();
@@ -149,18 +156,21 @@ public class EventsFragment extends Fragment {
 
     private void eventsListRefresh(EventsList eventsList) {
         List<EventEntry> finalList = eventsFilter(eventsList);
-        //for (EventEntry e:finalList)
-            //this.eventsList.stream().map(Event)
+        List<EventEntry> targetList = eventAdapter.getList();
+        //finalList = EventAdapter.getSortedEventsList(finalList);
+        //this.eventsList = EventAdapter.sortById(eventAdapter.getList());
+        for(EventEntry eventEntry:finalList)
+            if (targetList.contains(eventEntry)) {
+                int index = targetList.indexOf(eventEntry);
+                eventAdapter.set(index,eventEntry);
+            }
+            else
+                eventAdapter.add(eventEntry);
+        eventAdapter.sort();
+        since = eventsList.getLast();
     }
+
     private void eventsListInitializer(EventsList eventsList) {
-        //for(League l:eventsFilter(eventsList).getLeague())
-           // for (EventEntry eventEntry: l.getEvents())
-                //eventAdapter.addAll(l.getEvents());
-                //if (eventEntry.getHome().toLowerCase().contains("real")&&eventEntry.getHome().toLowerCase().contains("madrid")||eventEntry.getAway().toLowerCase().contains("real")&&eventEntry.getAway().toLowerCase().contains("madrid"))
-                /*if (eventEntry.getDate() == "Today") {
-                    eventEntry.setLeagueId(l.getId());
-                    eventAdapter.add(eventEntry);
-                }*/
         eventAdapter.addAll(eventsFilter(eventsList));
         eventAdapter.sort();
         since = eventsList.getLast();
