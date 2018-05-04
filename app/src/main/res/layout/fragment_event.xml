@@ -6,11 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EventFragment">
+    tools:context=".EventFragment"
+    android:background="#EEE">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp">
+        android:background="#000">
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -18,69 +19,81 @@
             android:textSize="18sp"
             android:id="@+id/event_start_time"
             android:text="28 nov 2018 21:00"
-            android:gravity="center" />
+            android:gravity="center"
+            android:textColor="#FFF"/>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
 
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:orientation="horizontal"
+    android:layout_gravity="center"
+    android:background="#111">
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:paddingStart="8dp"
+        >
         <android.support.v7.widget.AppCompatTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="18sp"
-            app:autoSizeMaxTextSize="24sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/event_home"
             android:text="Real Madrid Real Real Madrid Real"
-            android:gravity="center"
-            android:textAlignment="gravity"
-            android:textStyle="bold"/>
+            android:textSize="22sp"
+            android:textColor="#FFF"
+            android:ellipsize="end"
+            android:maxLines="1"/>
+
         <android.support.v7.widget.AppCompatTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="18sp"
-            app:autoSizeMaxTextSize="24sp"
-            android:id="@+id/event_separator"
-            android:text="–"
-            android:gravity="center"
-            android:textAlignment="gravity"
-            android:textStyle="bold"/>
-        <android.support.v7.widget.AppCompatTextView
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            app:autoSizeTextType="uniform"
-            app:autoSizeMinTextSize="18sp"
-            app:autoSizeMaxTextSize="24sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/event_away"
             android:text="Bayern Munich"
-            android:gravity="center"
-            android:textAlignment="gravity"
-            android:textStyle="bold"/>
-
+            android:textSize="22sp"
+            android:textColor="#FFF"
+            android:ellipsize="end"
+            android:maxLines="1"/>
     </LinearLayout>
+
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="18dp">
         <android.support.v7.widget.AppCompatTextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="38sp"
-            android:id="@+id/event_score"
-            android:text="0-0"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:id="@+id/event_home_score"
+            android:text="0"
+            android:textSize="22sp"
+            android:gravity="end"
+            android:textColor="#FFF"/>
+        <android.support.v7.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/event_away_score"
+            android:text="0"
+            android:textSize="22sp"
+            android:gravity="end"
+            android:textColor="#FFF"/>
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/event_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+</LinearLayout>
 
+
+
+    <LinearLayout
+        android:id="@+id/event_recycler_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFF">
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/event_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 </LinearLayout>

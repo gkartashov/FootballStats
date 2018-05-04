@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                 .replace(R.id.main_layout, eventFragment,"event_fragment")
                 .addToBackStack("event_fragment")
                 .commit();
+        toolbar.setTitle("Event details");
         setBackArrowIconEnabled();
     }
 

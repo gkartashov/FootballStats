@@ -7,7 +7,8 @@ public enum ExclusionTags {
     TO_ADVANCE(3, "To advance"),
     BOOKINGS(4, "Bookings"),
     AWAY_TEAMS(5,"Away teams"),
-    HOME_TEAMS(5,"Home teams");
+    HOME_TEAMS(5,"Home teams"),
+    ET_ONLY(6,"ET only");
 
     private final int code;
     private final String description;

@@ -141,7 +141,9 @@ public class EventsFragment extends Fragment {
                 for (ExclusionTags ex : ExclusionTags.values())
                     if (e.getHome().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
                             e.getAway().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
-                            e.isStarted() && e.getParentId() == 0)// ||
+                            e.isStarted() && e.getParentId() == 0 ||
+                            !e.isStarted() && e.getParentId() != 0 ||
+                            e.isFinished())// ||
                             //e.getStatus() == "H")// ||
                             //e.getParentId() == 0)
                         eventEntriesForRemove.add(e);

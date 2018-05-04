@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/event_odd_layout"
+    style="@style/Widget.AppCompat.Button.Colored"
     android:layout_width="match_parent"
-    android:layout_height="45dp"
+    android:layout_height="60dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="?android:attr/selectableItemBackground"
-    android:padding="2dp">
+    android:backgroundTint="#00DD00">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/odd_type"
         android:layout_width="0dp"
-        android:layout_weight="5"
+        android:layout_weight="4"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
         android:text="Handicap"
         android:textSize="20sp"
         android:gravity="center|start" />
-    <TextView
+
+    <android.support.v7.widget.AppCompatTextView
         android:id="@+id/odd_coefficient"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
-        android:text="1.23"
+        android:text="1.234"
         android:textSize="20sp"
-        android:gravity="center|end"/>
+        android:gravity="center|end" />
+
 </LinearLayout>

@@ -193,6 +193,9 @@ public class EventEntry implements Parcelable {
     public boolean isStarted() {
         return (toLocalTime().toDateTime().isBefore(LocalDateTime.now().toDateTime()));
     }
+    public boolean isFinished() {
+        return (toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
+    }
     @Override
     public int describeContents() {
         return 0;

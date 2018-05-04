@@ -18,4 +18,10 @@
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="android:textColorSecondary">@android:color/white</item>
     </style>
+    <style name="WagerTabStyle" parent="AppTheme">
+        <item name="android:colorAccent">#FF0000</item>
+    </style>
+    <style name="OddTabStyle" parent="AppTheme">
+        <item name="android:colorPrimary">#00FF66</item>
+    </style>
 </resources>
