@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.example.jg.footballstats.fixtures.EventEntry;
-import com.example.jg.footballstats.fixtures.EventsList;
-import com.example.jg.footballstats.fixtures.League;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,10 +42,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
     public int getItemCount() {
         return events.size();
     }
-    public void clear() {
-        events.clear();
-        notifyDataSetChanged();
-    }
 
     public  void sort() {
         if (events.size() > 0)
@@ -61,28 +55,6 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
 
     public List<EventEntry> getList() {
         return events;
-    }
-
-    public static List<EventEntry> sortByTime(List<EventEntry> list) {
-        if (list.size() > 0)
-            Collections.sort(list, new Comparator<EventEntry>() {
-                @Override
-                public int compare(EventEntry o1, EventEntry o2) {
-                    return o1.toLocalTime().compareTo(o2.toLocalTime());
-                }
-            });
-        return list;
-    }
-
-    public static List<EventEntry> sortById(List<EventEntry> list) {
-        if (list.size() > 0)
-            Collections.sort(list, new Comparator<EventEntry>() {
-                @Override
-                public int compare(EventEntry o1, EventEntry o2) {
-                    return o1.getIntegerId().compareTo(o2.getIntegerId());
-                }
-            });
-        return list;
     }
 
     public void addAll(List<EventEntry> list) {

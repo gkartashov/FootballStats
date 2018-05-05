@@ -118,6 +118,8 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         if (fragmentManager.findFragmentByTag("event_fragment") != null) {
             setHomeIconEnabled();
         }
+        if (fragmentManager.getBackStackEntryCount() == 1)
+            toolbar.setTitle("Football Stats");
         super.onBackPressed();
     }
 

@@ -2,22 +2,22 @@ package com.example.jg.footballstats;
 
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.jg.footballstats.fixtures.EventEntry;
-import com.example.jg.footballstats.odds.Event;
 import com.example.jg.footballstats.odds.Moneyline;
 import com.example.jg.footballstats.odds.Odd;
 import com.example.jg.footballstats.odds.OddsList;
@@ -44,70 +44,152 @@ public class EventFragment extends Fragment {
     private List<Wager> wagers = new ArrayList<>();
     private RecyclerView recyclerView;
     private WagerAdapter recyclerAdapter;
+    private TextView scoreHome, scoreAway, date, home, away;
+    private View rootView;
+    private EventEntry event;
+    private List<Period> periods = new ArrayList<>();
+    private long since = 0;
     public EventFragment() {
 
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_event, container, false);
+        rootView = inflater.inflate(R.layout.fragment_event, container, false);
+        viewInitialization();
+        getOdds();
+        return rootView;
+    }
 
-        recyclerView = rootView.findViewById(R.id.event_recycler_view);
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(R.drawable.ic_refresh_white_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_refresh:
+                getOdds();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
-
-
-        final EventEntry item = getArguments().getParcelable("event");
-        //((Toolbar) rootView.findViewById(R.id.toolbar)).setTitle("Event details");
-        ((TextView) rootView.findViewById(R.id.event_home)).setText(item.getHome());
-        ((TextView) rootView.findViewById(R.id.event_away)).setText(item.getAway());
-        ((TextView) rootView.findViewById(R.id.event_start_time)).setText(item.getDate() + " " + item.getTime());
-        final TextView scoreHome = rootView.findViewById(R.id.event_home_score);
-        final TextView scoreAway = rootView.findViewById(R.id.event_away_score);
-        apiController.getAPI().getOdds(29, item.getLeagueId(),"Decimal",item.getId()).enqueue(new Callback<OddsList>() {
+    public Callback<OddsList> oddsListCallback = new Callback<OddsList>() {
             @Override
             public void onResponse(Call<OddsList> call, Response<OddsList> response) {
-                if (response.body().getLeagues().size() != 1)
+                OddsList oddsList = response.body();
+                if (oddsList.getLeagues().size() != 1)
                     onFailure(call, new Throwable("Invalid leagues number"));
-                else if (response.body().getLeagues().get(0).getEvents().size() != 1)
+                else if (oddsList.getLeagues().get(0).getEvents().size() != 1)
                     onFailure(call, new Throwable("Invalid events number"));
                 else {
-                    String eventHomeScore = Integer.toString(response.body().getLeagues().get(0).getEvents().get(0).getHomeScore());
-                    String eventAwayScore =  Integer.toString(response.body().getLeagues().get(0).getEvents().get(0).getAwayScore());
-                    scoreHome.setText(eventHomeScore);
-                    scoreAway.setText(eventAwayScore);
-                    refreshData(response.body().getLeagues().get(0).getEvents().get(0));
-                    recyclerAdapter = new WagerAdapter(wagers);
-                    recyclerView.setAdapter(recyclerAdapter);
+                    if (isPeriodsRefreshed(oddsList.getLeagues().get(0).getEvents().get(0).getPeriods(), oddsList.getLast()))
+                        refreshData();
+                    oddsListInitialization(oddsList);
                 }
             }
 
             @Override
             public void onFailure(Call<OddsList> call, Throwable t) {
-                LinearLayout linearLayout = rootView.findViewById(R.id.event_recycler_view_layout);
-                recyclerView.setVisibility(View.GONE);
-                scoreHome.setText("");
-                scoreAway.setText("");
-                TextView textView = new TextView(getContext());
-                textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
-                textView.setText("Bets accepting is temporarily stopped");
-                textView.setGravity(Gravity.CENTER);
-                linearLayout.addView(textView);
-                linearLayout.invalidate();
+                if (since == 0) {
+                    betsAcceptingRestrictionInitialization();
+                }
             }
-        });
-        return rootView;
+    };
+
+    private void viewInitialization() throws NullPointerException {
+        setHasOptionsMenu(true);
+
+        recyclerView = rootView.findViewById(R.id.event_recycler_view);
+        try {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        }
+        catch (NullPointerException e) {
+            throw new NullPointerException("Application context error: unable to get context from main activity.");
+        }
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerAdapter = new WagerAdapter(wagers);
+        recyclerView.setAdapter(recyclerAdapter);
+        try {
+            event = getArguments().getParcelable("event");
+        }
+        catch (NullPointerException e) {
+            throw new NullPointerException("Bundle restoring error: invalid arguments.");
+        }
+        home = rootView.findViewById(R.id.event_home);
+        home.setText(event.getHome());
+        away = rootView.findViewById(R.id.event_away);
+        away.setText(event.getAway());
+        date = rootView.findViewById(R.id.event_start_time);
+        date.setText(event.getStartDateTime());
+        scoreHome = rootView.findViewById(R.id.event_home_score);
+        scoreAway = rootView.findViewById(R.id.event_away_score);
     }
 
-    private void refreshData(Event event) {
+    private void oddsListInitialization(OddsList oddsList) {
+        String eventHomeScore = Integer.toString(oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore());
+        String eventAwayScore =  Integer.toString(oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore());
+        scoreHome.setText(eventHomeScore);
+        scoreAway.setText(eventAwayScore);
+        recyclerView.setVisibility(View.VISIBLE);
+        if (event.isStarted()) {
+            setHasOptionsMenu(false);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    setHasOptionsMenu(true);
+                }
+            }, 5000);
+        }
+        recyclerAdapter = new WagerAdapter(wagers);
+        recyclerView.setAdapter(recyclerAdapter);
+    }
+
+    private void betsAcceptingRestrictionInitialization() {
+        LinearLayout linearLayout = rootView.findViewById(R.id.event_recycler_view_layout);
+        recyclerView.setVisibility(View.GONE);
+        scoreHome.setText("");
+        scoreAway.setText("");
+        TextView textView = new TextView(getContext());
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        textView.setText("Bets accepting is temporarily stopped");
+        textView.setGravity(Gravity.CENTER);
+        linearLayout.addView(textView);
+        linearLayout.invalidate();
+    }
+
+    private void getOdds() {
+        if (since == 0)
+            apiController.getAPI().getOdds(29, event.getLeagueId(),"Decimal",event.getId()).enqueue(oddsListCallback);
+        else
+            apiController.getAPI().getOddsSince(29, event.getLeagueId(),"Decimal", since, event.getId()).enqueue(oddsListCallback);
+    }
+
+    private boolean isPeriodsRefreshed(List<Period> newPeriods, long lastUpdate) {
+        boolean isRefreshed = false;
+        for (Period p: newPeriods)
+            if (periods.contains(p)) {
+                int index = periods.indexOf(p);
+                if (periods.get(index).isOutdated(p.toLocalTime()) || p.getLineId() != periods.get(index).getLineId()) {
+                    isRefreshed = true;
+                    periods.set(index,p);
+                }
+            }
+            else {
+                periods.add(p);
+                isRefreshed = true;
+            }
+        this.since = lastUpdate;
+        return isRefreshed;
+    }
+
+    private void refreshData() {
         String periodString;
-        List<Period> periods = event.getPeriods();
         int periodNumber = 0;
+        wagers.clear();
         for(Period p:periods) {
             Moneyline moneyline = p.getMoneyline();
             List<Spread> handicaps = p.getSpreads();
@@ -156,36 +238,20 @@ public class EventFragment extends Fragment {
                 wagers.add(new Wager(periodString + "Total",totalsList));
             }
             if (teamTotals != null) {
-                List<Odd> firstTeamTotal = new ArrayList<>();
-                firstTeamTotal.add(new Odd("Over " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getOver()));
-                firstTeamTotal.add(new Odd("Under " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getUnder()));
-                wagers.add(new Wager(periodString + "First team total",firstTeamTotal));
-                List<Odd> secondTeamTotal = new ArrayList<>();
-                secondTeamTotal.add(new Odd("Over " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getOver()));
-                secondTeamTotal.add(new Odd("Under " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getUnder()));
-                wagers.add(new Wager(periodString + "Second team total",secondTeamTotal));
+                if (teamTotals.getHome() != null) {
+                    List<Odd> firstTeamTotal = new ArrayList<>();
+                    firstTeamTotal.add(new Odd("Over " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getOver()));
+                    firstTeamTotal.add(new Odd("Under " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getUnder()));
+                    wagers.add(new Wager(periodString + "First team total", firstTeamTotal));
+                }
+                if (teamTotals.getAway() != null) {
+                    List<Odd> secondTeamTotal = new ArrayList<>();
+                    secondTeamTotal.add(new Odd("Over " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getOver()));
+                    secondTeamTotal.add(new Odd("Under " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getUnder()));
+                    wagers.add(new Wager(periodString + "Second team total", secondTeamTotal));
+                }
             }
             ++periodNumber;
         }
     }
-
-    private void setData() {
-        List<Odd> moneyline = new ArrayList<>();
-        moneyline.add(new Odd("First team to win", 1.23));
-        moneyline.add(new Odd("Draw", 4.6));
-        moneyline.add(new Odd("Second team to win", 12.8));
-
-        List<Odd> total = new ArrayList<>();
-        total.add(new Odd("Over 2.5", 1.9));
-        total.add(new Odd("Under 2.5", 1.85));
-
-        List<Odd> handicap = new ArrayList<>();
-        handicap.add(new Odd("First team -1.5", 1.9));
-        handicap.add(new Odd("Second team +1.5", 1.85));
-
-        wagers.add(new Wager("Moneyline",moneyline));
-        wagers.add(new Wager("Total",total));
-        wagers.add(new Wager("Handicap",handicap));
-    }
-
 }

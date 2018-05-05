@@ -10,7 +10,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 
 import java.util.Objects;
@@ -190,9 +189,14 @@ public class EventEntry implements Parcelable {
         return toLocalTime().toDateTime().toString("HH:mm");
     }
 
+    public String getStartDateTime() {
+        return getDate() + " " + getTime();
+    }
+
     public boolean isStarted() {
         return (toLocalTime().toDateTime().isBefore(LocalDateTime.now().toDateTime()));
     }
+
     public boolean isFinished() {
         return (toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
     }

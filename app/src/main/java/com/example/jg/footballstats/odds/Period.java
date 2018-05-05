@@ -1,8 +1,14 @@
 package com.example.jg.footballstats.odds;
 
 import java.util.List;
+import java.util.Objects;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 
 public class Period {
 
@@ -164,4 +170,28 @@ public class Period {
         this.teamTotal = teamTotal;
     }
 
+    public DateTime toLocalTime() {
+        return DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .parseDateTime(cutoff)
+                .withZoneRetainFields(DateTimeZone.UTC)
+                .withZone(DateTimeZone.getDefault());
+    }
+
+    public boolean isOutdated(DateTime cutoff) {
+        return (toLocalTime().toDateTime().isBefore(cutoff));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Period period = (Period) o;
+        return number == period.number;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(number);
+    }
 }
