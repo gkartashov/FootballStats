@@ -19,4 +19,7 @@ public interface PinnacleAPI {
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
     @GET("/v1/odds")
     Call<OddsList> getOdds(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds, @Query("oddsFormat") String oddsFormat, @Query("eventIds") int eventIds);
+    @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
+    @GET("/v1/odds")
+    Call<OddsList> getOddsSince(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds, @Query("oddsFormat") String oddsFormat, @Query("since") long since, @Query("eventIds") int eventIds);
 }

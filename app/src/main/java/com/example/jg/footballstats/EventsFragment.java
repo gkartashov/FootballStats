@@ -10,7 +10,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,9 +22,6 @@ import com.example.jg.footballstats.fixtures.EventsList;
 import com.example.jg.footballstats.fixtures.League;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -80,8 +76,12 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setAdapter(eventAdapter);
         swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-        swipeRefreshLayout.setRefreshing(true);
-        onRefreshListener.onRefresh();
+        swipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                onRefreshListener.onRefresh();
+            }
+        });
         return rootView;
     }
 
@@ -159,8 +159,6 @@ public class EventsFragment extends Fragment {
     private void eventsListRefresh(EventsList eventsList) {
         List<EventEntry> finalList = eventsFilter(eventsList);
         List<EventEntry> targetList = eventAdapter.getList();
-        //finalList = EventAdapter.getSortedEventsList(finalList);
-        //this.eventsList = EventAdapter.sortById(eventAdapter.getList());
         for(EventEntry eventEntry:finalList)
             if (targetList.contains(eventEntry)) {
                 int index = targetList.indexOf(eventEntry);
