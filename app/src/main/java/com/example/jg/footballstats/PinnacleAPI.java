@@ -11,7 +11,7 @@ import retrofit2.http.Query;
 public interface PinnacleAPI {
     //https://api.pinnacle.com/v1/fixtures
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
-    @GET("/v1/fixtures")
+    @GET("/v1/odds")
     Call<EventsList> getFixtures(@Query("sportId") int sportId);
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
     @GET("/v1/fixtures")

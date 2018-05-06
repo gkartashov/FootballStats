@@ -2,17 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.AppCompat.Button.Colored"
     android:orientation="vertical"
     android:layout_height="60dp"
     android:clickable="true"
     android:focusable="true"
-    android:backgroundTint="@color/colorPrimary">
+    android:background="#CCC">
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/league_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="League A"
-        android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="18sp"
+        app:autoSizeMaxTextSize="20sp"
         android:gravity="center" />
 </LinearLayout>

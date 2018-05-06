@@ -4,22 +4,16 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.example.jg.footballstats.fixtures.EventEntry;
+import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
-public class EventViewHolder extends ChildViewHolder {
-    private TextView homeTextView, awayTextView, dateTextView, timeTextView;
+public class EventViewHolder extends AbstractExpandableItemViewHolder {
+    public TextView homeTextView, awayTextView, dateTextView, timeTextView;
     public EventViewHolder(View itemView) {
         super(itemView);
-        itemView.findViewById(R.id.home_team);
-        itemView.findViewById(R.id.away_team);
-        itemView.findViewById(R.id.date);
-        itemView.findViewById(R.id.time);
-    }
-
-    public void onBind(EventEntry eventEntry) {
-        homeTextView.setText(eventEntry.getHome());
-        homeTextView.setText(eventEntry.getAway());
-        dateTextView.setText(eventEntry.getDate());
-        timeTextView.setText(eventEntry.getTime());
+        homeTextView = itemView.findViewById(R.id.home_team);
+        awayTextView = itemView.findViewById(R.id.away_team);
+        dateTextView = itemView.findViewById(R.id.date);
+        timeTextView = itemView.findViewById(R.id.time);
     }
 }

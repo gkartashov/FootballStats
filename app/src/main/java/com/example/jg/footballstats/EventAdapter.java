@@ -1,5 +1,8 @@
 package com.example.jg.footballstats;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,7 +37,16 @@ public class EventAdapter extends RecyclerView.Adapter<EventsViewHolder> {
         EventEntry event = events.get(position);
         holder.homeTeam.setText(event.getHome());
         holder.awayTeam.setText(event.getAway());
-        holder.date.setText(event.getDate());
+        if (event.isStarted()) {
+            holder.date.setText("LIVE");
+            holder.date.setTextColor(Color.RED);
+            holder.date.setTypeface(null, Typeface.BOLD);
+        }
+        else {
+            holder.date.setText(event.getDate());
+            holder.date.setTextColor(holder.time.getTextColors());
+            holder.date.setTypeface(null, Typeface.NORMAL);
+        }
         holder.time.setText(event.getTime());
     }
 
