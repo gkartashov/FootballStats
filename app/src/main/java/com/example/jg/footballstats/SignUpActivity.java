@@ -3,7 +3,9 @@ package com.example.jg.footballstats;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
+
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -24,14 +26,23 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import com.example.jg.footballstats.db.User;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -58,7 +69,7 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
-    private View mLoginFormView;
+    private View mSignUpFormView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,12 +85,14 @@ public class SignUpActivity extends AppCompatActivity {
         mSignUpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(mSignUpFormView.getWindowToken(), 0);
                 attemptSignUp();
             }
         });
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+        mSignUpFormView = findViewById(R.id.sign_up_form);
+        mProgressView = findViewById(R.id.sign_up_progress);
         TextView mLoginLinkView = findViewById(R.id.sign_up_form_link_login);
         mLoginLinkView.setOnClickListener(new OnClickListener() {
             @Override
@@ -144,7 +157,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         // Check for a valid email address.
-        if (!TextUtils.isEmpty(email) && !isEmailValid(password)) {
+        if (!TextUtils.isEmpty(email) && !isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -188,12 +201,12 @@ public class SignUpActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mSignUpFormView.animate().setDuration(shortAnimTime).alpha(
                     show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+                    mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -209,7 +222,7 @@ public class SignUpActivity extends AppCompatActivity {
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
+            mSignUpFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -217,12 +230,14 @@ public class SignUpActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserSignUpTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserSignUpTask extends AsyncTask<Void, Void, User> {
 
         private final String mEmail;
         private final String mPassword;
         private final String mUsername;
         private final String mName;
+        private String mMessage = "";
+        private User mUser = null;
 
         UserSignUpTask(String username, String password, String email, String name) {
             mEmail = email;
@@ -232,42 +247,39 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-
+        protected User doInBackground(Void... params) {
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                Response response = DatabaseAPIController.getInstance().getAPI().register(mUsername, mPassword, mEmail, mName).execute();
+                if (response.body() != null)
+                    mUser = (User) response.body();
+                else
+                    mMessage += response.message();
+            } catch (IOException e) {
+                mMessage += e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1);
+            } finally {
+                return mUser;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            return true;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPostExecute(final User user) {
             mSignUpTask = null;
             showProgress(false);
 
-            if (success) {
+            if (user != null) {
+                startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                 finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            }
+            else {
+                Snackbar mSnackbar = Snackbar.make(mSignUpFormView,mMessage,Snackbar.LENGTH_LONG);
+                mSnackbar.show();
             }
         }
 
         @Override
         protected void onCancelled() {
             mSignUpTask = null;
+            mUser = null;
             showProgress(false);
         }
     }

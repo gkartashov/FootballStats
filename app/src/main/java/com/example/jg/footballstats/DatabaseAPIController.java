@@ -3,29 +3,28 @@ package com.example.jg.footballstats;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class APIController {
+public class DatabaseAPIController {
     private static Retrofit retrofit;
-    private static PinnacleAPI pinnacleAPI;
     private static DatabaseAPI databaseAPI;
-    private static String url = "https://api.pinnacle.com";
-    private static final APIController ourInstance = new APIController();
+    private static String url = "http://192.168.0.10:3000";
+    private static final DatabaseAPIController ourInstance = new DatabaseAPIController();
 
-    private APIController() {
+    private DatabaseAPIController() {
 
     }
 
-    static APIController getInstance() {
+    static DatabaseAPIController getInstance() {
         if (retrofit == null) {
             retrofit = new Retrofit.Builder()
                     .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
-            pinnacleAPI = retrofit.create(PinnacleAPI.class);
+            databaseAPI = retrofit.create(DatabaseAPI.class);
         }
         return ourInstance;
     }
 
-    public PinnacleAPI getAPI() {
-        return pinnacleAPI;
+    public DatabaseAPI getAPI() {
+        return databaseAPI;
     }
 }
