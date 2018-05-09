@@ -6,61 +6,27 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.app.LoaderManager.LoaderCallbacks;
 
-import android.content.CursorLoader;
-import android.content.Loader;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import java.io.IOException;
-import java.net.HttpURLConnection;
 import com.example.jg.footballstats.db.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.Manifest.permission.READ_CONTACTS;
-
-/**
- * A login screen that offers login via email/password.
- */
 public class SignUpActivity extends AppCompatActivity {
-
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private UserSignUpTask mSignUpTask = null;
 
     // UI references.
@@ -76,17 +42,16 @@ public class SignUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.sign_up_username);
-        mEmailView = (EditText) findViewById(R.id.sign_up_email);
-        mPasswordView = (EditText) findViewById(R.id.sign_up_password);
-        mNameView = (EditText) findViewById(R.id.sign_up_name);
+        mUsernameView = findViewById(R.id.sign_up_username);
+        mEmailView = findViewById(R.id.sign_up_email);
+        mPasswordView = findViewById(R.id.sign_up_password);
+        mNameView = findViewById(R.id.sign_up_name);
 
-        Button mSignUpButton = (Button) findViewById(R.id.sign_up_button);
+        Button mSignUpButton = findViewById(R.id.sign_up_button);
         mSignUpButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(mSignUpFormView.getWindowToken(), 0);
+                ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(mSignUpFormView.getWindowToken(),0);
                 attemptSignUp();
             }
         });
@@ -104,11 +69,6 @@ public class SignUpActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
     private void attemptSignUp() {
         if (mSignUpTask != null) {
             return;
@@ -177,22 +137,21 @@ public class SignUpActivity extends AppCompatActivity {
     }
 
     private boolean isEmailValid(String email) {
-        return email.contains("@");
+        return Constants.VALID_EMAIL_ADDRESS_REGEX.matcher(email).find();
     }
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
+
     private boolean isUsernameValid(String username) {
-        return true;
+        return Constants.VALID_USERNAME_REGEX.matcher(username).find();
     }
 
     private boolean isNameValid(String name) {
         return true;
     }
-    /**
-     * Shows the progress UI and hides the login form.
-     */
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -226,10 +185,6 @@ public class SignUpActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
     public class UserSignUpTask extends AsyncTask<Void, Void, User> {
 
         private final String mEmail;
@@ -248,17 +203,19 @@ public class SignUpActivity extends AppCompatActivity {
 
         @Override
         protected User doInBackground(Void... params) {
+            Response response = null;
             try {
-                Response response = DatabaseAPIController.getInstance().getAPI().register(mUsername, mPassword, mEmail, mName).execute();
-                if (response.body() != null)
-                    mUser = (User) response.body();
-                else
-                    mMessage += response.message();
+                response = DatabaseAPIController.getInstance().getAPI().register(mUsername, mPassword,mEmail,mName).execute();
             } catch (IOException e) {
                 mMessage += e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1);
-            } finally {
-                return mUser;
             }
+            if (response != null)
+                if(response.body() != null)
+                    mUser = (User) response.body();
+                else if (response.code() == 409)
+                    mMessage = getString(R.string.error_existed_user);
+
+            return mUser;
         }
 
         @Override

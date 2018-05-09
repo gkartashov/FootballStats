@@ -1,5 +1,6 @@
 package com.example.jg.footballstats;
 
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -13,12 +14,14 @@ public class LaunchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
 
-        final Intent intent = new Intent(this, LoginActivity.class);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                startActivity(intent);
+               // if (AccountManager.get(LaunchActivity.this).getAccountsByType("com.example.jg.footballstats.auth").length == 0)
+                 startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                //else
+                    //startActivity(new Intent(LaunchActivity.this,MainActivity.class));
                 finish();
             }
         }, 500);

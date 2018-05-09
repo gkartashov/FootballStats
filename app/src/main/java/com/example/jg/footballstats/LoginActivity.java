@@ -1,8 +1,11 @@
 package com.example.jg.footballstats;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -24,35 +27,27 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.jg.footballstats.db.User;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Response;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via login/password.
- */
 public class LoginActivity extends AppCompatActivity {
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
+    private UserLoginTask mLoginTask = null;
 
-    // UI references.
     private EditText mUsernameView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -62,10 +57,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        // Set up the login form.
-        mUsernameView = (EditText) findViewById(R.id.login_username);
 
-        mPasswordView = (EditText) findViewById(R.id.login_password);
+        mUsernameView = findViewById(R.id.login_username);
+
+        mPasswordView = findViewById(R.id.login_password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -77,10 +72,11 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        Button mSignInButton = (Button) findViewById(R.id.sign_in_button);
+        Button mSignInButton = findViewById(R.id.sign_in_button);
         mSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                ((InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(mLoginFormView.getWindowToken(),0);
                 attemptLogin();
             }
         });
@@ -106,7 +102,7 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
+        if (mLoginTask != null) {
             return;
         }
 
@@ -151,17 +147,16 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(username, password);
-            mAuthTask.execute((Void) null);
+            mLoginTask = new UserLoginTask(username, password);
+            mLoginTask.execute((Void) null);
         }
-    }
-
-    private boolean isUsernameValid(String username) {
-        return true;
     }
 
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
+    }
+    private boolean isUsernameValid(String username) {
+        return Constants.VALID_USERNAME_REGEX.matcher(username).find();
     }
 
     /**
@@ -204,55 +199,62 @@ public class LoginActivity extends AppCompatActivity {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class UserLoginTask extends AsyncTask<Void, Void, User> {
 
-        private final String mUsername;
         private final String mPassword;
+        private final String mUsername;
+        private String mMessage = "";
+        private User mUser = null;
 
         UserLoginTask(String username, String password) {
-            mUsername = username;
             mPassword = password;
+            mUsername = username;
         }
 
         @Override
-        protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-
+        protected User doInBackground(Void... params) {
+            Response response = null;
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
+                response = DatabaseAPIController.getInstance().getAPI().login(mUsername, mPassword).execute();
+            } catch (IOException e) {
+                mMessage += e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1);
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mUsername)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+            if (response != null)
+                if(response.body() != null) {
+                    mUser = (User) response.body();
+                    /*AccountManager accountManager = AccountManager.get(LoginActivity.this);
+                    Account account = new Account(mUsername,"com.example.jg.footballstats.auth");
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable("userdata",mUser);
+                    accountManager.addAccountExplicitly(account,mPassword,bundle);*/
                 }
-            }
+                else if (response.code() == 403)
+                    mMessage = getString(R.string.error_invalid_credentials);
 
-            // TODO: register the new account here.
-            return true;
+            return mUser;
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+        protected void onPostExecute(final User user) {
+            mLoginTask = null;
             showProgress(false);
 
-            if (success) {
+            if (user != null) {
+                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                intent.putExtra("user",mUser);
+                startActivity(intent);
                 finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+            }
+            else {
+                Snackbar mSnackbar = Snackbar.make(mLoginFormView,mMessage,Snackbar.LENGTH_LONG);
+                mSnackbar.show();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            mLoginTask = null;
+            mUser = null;
             showProgress(false);
         }
     }

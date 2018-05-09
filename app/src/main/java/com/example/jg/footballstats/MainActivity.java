@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
 
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 
 
@@ -35,6 +37,11 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
 
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
+
+        if (getIntent().getParcelableExtra("user") != null) {
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setText(((User) getIntent().getParcelableExtra("user")).getName());
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setText(((User) getIntent().getParcelableExtra("user")).getEmail());
+        }
 
         fragmentManager = getSupportFragmentManager();
 
@@ -83,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                         Log.i("BackStack entries ",fragmentManager.getBackStackEntryAt(i).getName());
                     break;
                 case R.id.nav_exit:
-                    System.exit(0);
+                    finishAndRemoveTask();
                 default:
                     for(Fragment f: fragmentManager.getFragments())
                         if (f != null)

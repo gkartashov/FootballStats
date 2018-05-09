@@ -1,6 +1,9 @@
 package com.example.jg.footballstats.db;
 
-public class User {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User implements Parcelable {
     private String username;
     private String password;
     private String email;
@@ -48,4 +51,36 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.username);
+        dest.writeString(this.password);
+        dest.writeString(this.email);
+        dest.writeString(this.name);
+    }
+
+    protected User(Parcel in) {
+        this.username = in.readString();
+        this.password = in.readString();
+        this.email = in.readString();
+        this.name = in.readString();
+    }
+
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel source) {
+            return new User(source);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
 }
