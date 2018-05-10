@@ -9,11 +9,20 @@ import com.thoughtbot.expandablerecyclerview.viewholders.ChildViewHolder;
 
 public class EventViewHolder extends AbstractExpandableItemViewHolder {
     public TextView homeTextView, awayTextView, dateTextView, timeTextView;
+    private int listId;
     public EventViewHolder(View itemView) {
         super(itemView);
         homeTextView = itemView.findViewById(R.id.home_team);
         awayTextView = itemView.findViewById(R.id.away_team);
         dateTextView = itemView.findViewById(R.id.date);
         timeTextView = itemView.findViewById(R.id.time);
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
     }
 }

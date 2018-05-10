@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class DatabaseAPIController {
     private static Retrofit retrofit;
     private static DatabaseAPI databaseAPI;
-    private static String url = "http://192.168.0.10:3000";
+    private static String url = "http://192.168.0.10:8080";
     private static final DatabaseAPIController ourInstance = new DatabaseAPIController();
 
     private DatabaseAPIController() {

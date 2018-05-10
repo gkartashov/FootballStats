@@ -5,12 +5,15 @@
     android:orientation="vertical"
     android:layout_height="60dp"
     android:clickable="true"
+    android:background="?android:attr/selectableItemBackground"
     android:focusable="true"
-    android:background="#CCC">
+    >
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/league_name"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="16dp"
+        android:background="@color/listItemsColor"
         android:text="League A"
         android:ellipsize="end"
         android:maxLines="1"

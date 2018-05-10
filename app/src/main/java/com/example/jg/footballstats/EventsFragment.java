@@ -2,12 +2,14 @@ package com.example.jg.footballstats;
 
 
 import android.content.Context;
+
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.CalendarContract;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,15 +23,19 @@ import android.view.ViewGroup;
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.example.jg.footballstats.fixtures.EventsList;
 import com.example.jg.footballstats.fixtures.League;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
+
+import static com.example.jg.footballstats.Constants.SPORT_ID;
 
 public class EventsFragment extends Fragment {
 
@@ -37,15 +43,30 @@ public class EventsFragment extends Fragment {
         void onItemSelect(EventEntry eventEntry);
     }
 
+    public class RefreshingHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    refreshExpandableRecyclerView();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private static RefreshingHandler mHandler;
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView mRecyclerView;
-    private LeagueAdapter leagueAdapter;
-    private RecyclerViewExpandableItemManager expandableItemManager;
+    private RecyclerView.Adapter mWrappedAdapter;
+    private LeagueAdapter mAdapter;
+    private RecyclerViewExpandableItemManager mExpandableItemManager;
     private APIController apiController = APIController.getInstance();
-    private OnItemSelectListener onItemSelectListener;
-    private long since;
+    private EventsRefreshTask mEventsRefreshTask;
 
     private List<League> leaguesList = new ArrayList<>();
+    private long since;
 
     public EventsFragment() {
 
@@ -55,7 +76,7 @@ public class EventsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onItemSelectListener = (OnItemSelectListener) context;
+            OnItemSelectListener onItemSelectListener = (OnItemSelectListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
                     + " must implement OnHeadlineSelectedListener");
@@ -67,20 +88,24 @@ public class EventsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
         setHasOptionsMenu(true);
-        /*eventAdapter = new EventAdapter(eventsList, new IOnItemClickListener() {
-            @Override
-            public void onItemClick(EventEntry item) {
-                onItemSelectListener.onItemSelect(item);
-            }
-        });*/
+
         mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
+        animator.setSupportsChangeAnimations(false);
+        mRecyclerView.setItemAnimator(animator);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
-        expandableItemManager = new RecyclerViewExpandableItemManager(null);
-        leagueAdapter = new LeagueAdapter(leaguesList);
-        mRecyclerView.setAdapter(expandableItemManager.createWrappedAdapter(leagueAdapter));
-        expandableItemManager.attachRecyclerView(mRecyclerView);
+
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mAdapter = new LeagueAdapter(leaguesList);
+        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+        mRecyclerView.setAdapter(mWrappedAdapter);
+
+        mHandler = new RefreshingHandler();
+
+        mExpandableItemManager.attachRecyclerView(mRecyclerView);
         swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         onRefreshListener.onRefresh();
@@ -110,91 +135,138 @@ public class EventsFragment extends Fragment {
         }
     };
 
-    public Callback<EventsList> apiCallback = new Callback<EventsList>() {
-        @Override
-        public void onResponse(Call<EventsList> call, Response<EventsList> response) {
-            EventsList el = response.body();
-            if (el != null)
-                if (since == 0)
-                    eventsListInitializer(el);
-            //else
-                //eventsListRefresh(response.body());
-
-            //expandableItemManager.no;
-            swipeRefreshLayout.setRefreshing(false);
-        }
-
-        @Override
-        public void onFailure(Call<EventsList> call, Throwable t) {
-            t.printStackTrace();
-            swipeRefreshLayout.setRefreshing(false);
-        }
-    };
-
     private void fetchFixtures() {
-        if (since == 0)
-            apiController.getAPI().getFixtures(29).enqueue(apiCallback);
-        else
-            apiController.getAPI().getFixturesSince(29, since).enqueue(apiCallback);
+        if (mEventsRefreshTask == null) {
+                mEventsRefreshTask = new EventsRefreshTask();
+                mEventsRefreshTask.execute((Void) null);
+        }
     }
 
-    private List<EventEntry> eventsFilter(List<EventEntry> eventEntries, int leagueId) {
-        List<EventEntry> finalList = new ArrayList<>();
-        List<EventEntry> eventEntriesForRemove = new ArrayList<EventEntry>();
-        for (EventEntry e : eventEntries)
+    private boolean filterEvents(League l) {
+        List<EventEntry> eventEntriesForRemove = new ArrayList<>();
+        for (EventEntry e : l.getEvents()) {
             for (ExclusionTags ex : ExclusionTags.values())
                 if (e.getHome().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
                         e.getAway().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
                         e.isStarted() && e.getParentId() == 0 ||
                         !e.isStarted() && e.getParentId() != 0 ||
-                        e.isFinished())// ||
-                        //e.getStatus() == "H")// ||
-                        //e.getParentId() == 0)
+                        e.isFinished())
                     eventEntriesForRemove.add(e);
                 else
-                    e.setLeagueId(leagueId);
-        eventEntries.removeAll(eventEntriesForRemove);
-        finalList.addAll(eventEntries);
-        finalList.sort(new Comparator<EventEntry>() {
-            @Override
-            public int compare(EventEntry o1, EventEntry o2) {
-                return o1.toLocalTime().compareTo(o2.toLocalTime());
-            }
-        });
-        return finalList;
+                    e.setLeagueId(l.getId());
+        }
+        l.getEvents().removeAll(eventEntriesForRemove);
+        if (l.getEvents().size() > 0) {
+            mAdapter.addListIdToChild(l);
+            return true;
+        }
+        return false;
     }
 
-    /*private void eventsListRefresh(EventsList eventsList) {
-        List<EventEntry> finalList = eventsFilter(eventsList);
-        List<EventEntry> targetList = eventAdapter.getList();
-        for(EventEntry eventEntry:finalList)
-            if (targetList.contains(eventEntry)) {
-                int index = targetList.indexOf(eventEntry);
-                eventAdapter.set(index,eventEntry);
-            }
-            else
-                eventAdapter.add(eventEntry);
-        eventAdapter.sort();
-        since = eventsList.getLast();
-    }*/
+    private void filterLeagues() {
+        List<League> leaguesForRemove = new ArrayList<>();
+        for (League l:leaguesList)
+            if (l.getName().contains(ExclusionTags.CORNERS.getDescription()) ||
+                    l.getName().contains(ExclusionTags.BOOKINGS.getDescription()) ||
+                    !filterEvents(l))
+                leaguesForRemove.add(l);
+        leaguesList.removeAll(leaguesForRemove);
 
-    private void eventsListInitializer(EventsList eventsList) {
-        /*for(com.example.jg.footballstats.fixtures.League l:eventsList.getLeague()) {
-            leaguesList.add(new League(l.getName(), eventsFilter(l.getEvents(),l.getId())));
-        }
+    }
+
+    private void sortLeagues() {
         leaguesList.sort(new Comparator<League>() {
             @Override
             public int compare(League o1, League o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
+                return o1.getName().compareTo(o2.getName());
             }
-        });*/
-        leaguesList = eventsList.getLeague();
-        //eventAdapter.addAll(eventsFilter(eventsList));
-        //eventAdapter.sort();
-        since = eventsList.getLast();
+        });
     }
 
-    private void sampleDataInit() {
+    private void sortEvents() {
+        for (League l:leaguesList)
+            l.getEvents().sort(new Comparator<EventEntry>() {
+                @Override
+                public int compare(EventEntry o1, EventEntry o2) {
+                    return o1.toLocalTime().compareTo(o2.toLocalTime());
+                }
+            });
+    }
 
+    private void refreshLeaguesList(EventsList eventsList) {
+        List<League> updates = eventsList.getLeague();
+        int leagueIndex, eventIndex;
+        for(League l:updates)
+            if ((leagueIndex = leaguesList.indexOf(l)) > 0) {
+                List<EventEntry> updatesEvents = l.getEvents();
+                for (EventEntry e: updatesEvents)
+                    if ((eventIndex = leaguesList.get(leagueIndex).getEvents().indexOf(l)) > 0) {
+                        leaguesList.get(leagueIndex).getEvents().set(eventIndex,e);
+                    }
+                    else
+                        leaguesList.get(leagueIndex).addEvent(e);
+            }
+            else
+                leaguesList.add(l);
+        since = eventsList.getLast();
+        eventListProcessing();
+    }
+
+    private void initializeLeaguesList(EventsList eventsList) {
+        since = eventsList.getLast();
+        leaguesList = eventsList.getLeague();
+        eventListProcessing();
+    }
+
+    private void eventListProcessing() {
+        filterLeagues();
+        sortLeagues();
+        sortEvents();
+    }
+
+    private void refreshExpandableRecyclerView() {
+        WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+        mExpandableItemManager.release();
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+
+        mAdapter = new LeagueAdapter(new ArrayList<League>());
+        mAdapter.addAllGroups(leaguesList);
+
+        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+        mRecyclerView.setAdapter(mWrappedAdapter);
+        mWrappedAdapter.notifyDataSetChanged();
+        mExpandableItemManager.attachRecyclerView(mRecyclerView);
+    }
+
+    public class EventsRefreshTask extends AsyncTask<Void, Void, Void> {
+        public EventsRefreshTask() {
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Response response = null;
+            try {
+                response = apiController.getAPI().getFixturesSince(SPORT_ID, since).execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (response != null) {
+                if (since == 0)
+                    initializeLeaguesList((EventsList) response.body());
+                else
+                    refreshLeaguesList((EventsList) response.body());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final Void nothing) {
+            mEventsRefreshTask = null;
+            mHandler.sendEmptyMessage(0);
+            swipeRefreshLayout.setRefreshing(false);
+
+        }
     }
 }
+

@@ -10,10 +10,9 @@ import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface DatabaseAPI {
-    @GET("/auth")
+    @GET("/footballbets/auth")
     Call<User> login(@Query("username") String username, @Query("password") String password);
-
     @FormUrlEncoded
-    @POST("/auth")
+    @POST("/footballbets/auth")
     Call<User> register(@Field("username") String username, @Field("password") String password, @Field("email") String email, @Field("name") String name);
 }

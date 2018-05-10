@@ -19,6 +19,7 @@ public class EventEntry implements Parcelable {
     @SerializedName("id")
     @Expose
     private int id;
+    private int listId;
     @SerializedName("parentId")
     @Expose
     private int parentId;
@@ -170,6 +171,14 @@ public class EventEntry implements Parcelable {
 
     public void setLeagueId(int leagueId) {
         this.leagueId = leagueId;
+    }
+
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
     }
 
     public DateTime toLocalTime() {

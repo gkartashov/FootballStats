@@ -240,9 +240,8 @@ public class LoginActivity extends AppCompatActivity {
             showProgress(false);
 
             if (user != null) {
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                intent.putExtra("user",mUser);
-                startActivity(intent);
+                Constants.USER = mUser;
+                startActivity(new Intent(LoginActivity.this,MainActivity.class));
                 finish();
             }
             else {

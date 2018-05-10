@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,6 +14,7 @@ public class League {
     @SerializedName("id")
     @Expose
     private int id;
+    private int listId;
     @SerializedName("name")
     @Expose
     private String name;
@@ -57,13 +60,28 @@ public class League {
         return events.get(index);
     }
 
-    public static void sort(List<EventEntry> events) {
-        if (events.size() > 0)
-            Collections.sort(events, new Comparator<EventEntry>() {
-                @Override
-                public int compare(EventEntry o1, EventEntry o2) {
-                    return o1.toLocalTime().compareTo(o2.toLocalTime());
-                }
-            });
+    public int getListId() {
+        return listId;
+    }
+
+    public void setListId(int listId) {
+        this.listId = listId;
+    }
+
+    public void addEvent(EventEntry eventEntry) {
+        events.add(eventEntry);
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        League league = (League) o;
+        return id == league.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
     }
 }

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.jg.footballstats.db.User;
@@ -38,9 +39,18 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
 
-        if (getIntent().getParcelableExtra("user") != null) {
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setText(((User) getIntent().getParcelableExtra("user")).getName());
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setText(((User) getIntent().getParcelableExtra("user")).getEmail());
+        navigationView.getHeaderView(0).findViewById(R.id.navigation_logout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setBackStackEmpty("");
+                Constants.USER = null;
+                startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                finish();
+            }
+        });
+        if (Constants.USER != null) {
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setText(Constants.USER.getName());
+            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setText(Constants.USER.getEmail());
         }
 
         fragmentManager = getSupportFragmentManager();
@@ -69,13 +79,17 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                                 .commit();
                     break;
                 case R.id.nav_logout:
-                    getSupportActionBar().setTitle(item.getTitle());
+                    setBackStackEmpty("");
+                    Constants.USER = null;
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    finish();
+                    /*getSupportActionBar().setTitle(item.getTitle());
                     setBackStackEmpty("sample_fragment");
                     if (fragmentManager.findFragmentByTag("sample_fragment") == null)
                         fragmentManager.beginTransaction()
                                 .replace(R.id.main_layout, new FirstFragment(), "sample_fragment")
                                 .addToBackStack("sample_fragment")
-                                .commit();
+                                .commit();*/
                     break;
                 case R.id.nav_charts:
                     startActivity(new Intent(MainActivity.this, InnerActivity.class).putExtra("caption",item.getTitle()));
@@ -159,11 +173,15 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
 
     private void setBackStackEmpty(String entryName) {
         int backStackSize = fragmentManager.getBackStackEntryCount();
-        while (backStackSize > 0) {
-            if (fragmentManager.getBackStackEntryAt(--backStackSize).getName() != entryName)
+        if (entryName == "")
+            while (backStackSize-- > 0)
                 fragmentManager.popBackStackImmediate();
-            else
-                break;
-        }
+        else
+            while (backStackSize > 0) {
+                if (fragmentManager.getBackStackEntryAt(--backStackSize).getName() != entryName)
+                    fragmentManager.popBackStackImmediate();
+                else
+                    break;
+            }
     }
 }

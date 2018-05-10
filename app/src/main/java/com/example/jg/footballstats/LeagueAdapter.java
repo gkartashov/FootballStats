@@ -5,18 +5,33 @@ import android.view.ViewGroup;
 
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.example.jg.footballstats.fixtures.League;
-import com.example.jg.footballstats.odds.WagerViewHolder;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter;
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup;
 
 import java.util.List;
 
 public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolder, EventViewHolder> {
+    private static class IdGenerator {
+        int mIdGroup;
+        int mIdChild;
+
+        public int nextGroup() {
+            final int id = mIdGroup;
+            mIdGroup += 1;
+            return id;
+        }
+
+        public int nextChild() {
+            final int id = mIdChild;
+            mIdChild += 1;
+            return id;
+        }
+    }
+    private IdGenerator mIdGenerator;
     private List<League> leaguesList;
 
     public LeagueAdapter(List<League> leaguesList) {
         this.leaguesList = leaguesList;
+        mIdGenerator = new IdGenerator();
         setHasStableIds(true);
     }
 
@@ -37,7 +52,7 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return leaguesList.get(groupPosition).getEvents().get(childPosition).getId();
+        return leaguesList.get(groupPosition).getEvents().get(childPosition).getListId();
     }
 
     @Override
@@ -54,6 +69,7 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
     public void onBindGroupViewHolder(LeagueViewHolder holder, int groupPosition, int viewType) {
         League league = leaguesList.get(groupPosition);
         holder.leagueTextView.setText(league.getName());
+        //holder.setListId(league.getListId());
     }
 
     @Override
@@ -63,10 +79,22 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
         holder.awayTextView.setText(eventEntry.getAway());
         holder.dateTextView.setText(eventEntry.getDate());
         holder.timeTextView.setText(eventEntry.getTime());
+       // holder.setListId(eventEntry.getListId());
     }
 
     @Override
     public boolean onCheckCanExpandOrCollapseGroup(LeagueViewHolder holder, int groupPosition, int x, int y, boolean expand) {
         return true;
+    }
+
+    public void addListIdToChild(League l) {
+        for (EventEntry e: l.getEvents())
+            e.setListId(mIdGenerator.nextChild());
+    }
+    public void addAllGroups(List<League> list) {
+        for (League l: list) {
+            l.setListId(mIdGenerator.nextGroup());
+            leaguesList.add(l);
+        }
     }
 }

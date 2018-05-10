@@ -19,9 +19,9 @@ public class LaunchActivity extends AppCompatActivity {
             @Override
             public void run() {
                // if (AccountManager.get(LaunchActivity.this).getAccountsByType("com.example.jg.footballstats.auth").length == 0)
-                 startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                 //startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
                 //else
-                    //startActivity(new Intent(LaunchActivity.this,MainActivity.class));
+                    startActivity(new Intent(LaunchActivity.this,MainActivity.class));
                 finish();
             }
         }, 500);

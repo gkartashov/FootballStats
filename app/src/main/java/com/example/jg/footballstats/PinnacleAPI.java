@@ -2,6 +2,7 @@ package com.example.jg.footballstats;
 
 import com.example.jg.footballstats.fixtures.EventsList;
 import com.example.jg.footballstats.odds.OddsList;
+import com.example.jg.footballstats.other.Sports;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -22,4 +23,7 @@ public interface PinnacleAPI {
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
     @GET("/v1/odds")
     Call<OddsList> getOddsSince(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds, @Query("oddsFormat") String oddsFormat, @Query("since") long since, @Query("eventIds") int eventIds);
+    @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
+    @GET("/v2/sports")
+    Call<Sports> getSports();
 }
