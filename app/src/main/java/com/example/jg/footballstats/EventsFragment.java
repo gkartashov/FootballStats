@@ -62,6 +62,7 @@ public class EventsFragment extends Fragment {
     private RecyclerView.Adapter mWrappedAdapter;
     private LeagueAdapter mAdapter;
     private RecyclerViewExpandableItemManager mExpandableItemManager;
+    private OnItemSelectListener onItemSelectListener;
     private APIController apiController = APIController.getInstance();
     private EventsRefreshTask mEventsRefreshTask;
 
@@ -76,10 +77,10 @@ public class EventsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            OnItemSelectListener onItemSelectListener = (OnItemSelectListener) context;
+            onItemSelectListener = (OnItemSelectListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement OnItemSelectListener");
         }
     }
 
@@ -89,27 +90,34 @@ public class EventsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
         setHasOptionsMenu(true);
 
-        mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+            mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
-        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+            final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
 
-        animator.setSupportsChangeAnimations(false);
-        mRecyclerView.setItemAnimator(animator);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+            animator.setSupportsChangeAnimations(false);
+            mRecyclerView.setItemAnimator(animator);
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
-        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new LeagueAdapter(leaguesList);
-        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
-        mRecyclerView.setAdapter(mWrappedAdapter);
+            mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+            mAdapter = new LeagueAdapter(leaguesList, clickListener);
+            mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+            mRecyclerView.setAdapter(mWrappedAdapter);
+            mExpandableItemManager.attachRecyclerView(mRecyclerView);
 
-        mHandler = new RefreshingHandler();
+            mHandler = new RefreshingHandler();
+            swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
+            swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+            if (leaguesList.size() == 0)
+                onRefreshListener.onRefresh();
 
-        mExpandableItemManager.attachRecyclerView(mRecyclerView);
-        swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-        onRefreshListener.onRefresh();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle("Upcoming games");
     }
 
     @Override
@@ -126,6 +134,13 @@ public class EventsFragment extends Fragment {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    public IOnItemClickListener clickListener = new IOnItemClickListener() {
+        @Override
+        public void onItemClick(EventEntry item) {
+            onItemSelectListener.onItemSelect(item);
+        }
+    };
 
     public OnRefreshListener onRefreshListener = new OnRefreshListener() {
         @Override
@@ -229,7 +244,7 @@ public class EventsFragment extends Fragment {
         mExpandableItemManager.release();
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
-        mAdapter = new LeagueAdapter(new ArrayList<League>());
+        mAdapter = new LeagueAdapter(new ArrayList<League>(),clickListener);
         mAdapter.addAllGroups(leaguesList);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);

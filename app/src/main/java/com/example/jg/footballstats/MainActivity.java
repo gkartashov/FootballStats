@@ -14,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 
 
@@ -83,13 +82,6 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                     Constants.USER = null;
                     startActivity(new Intent(MainActivity.this,LoginActivity.class));
                     finish();
-                    /*getSupportActionBar().setTitle(item.getTitle());
-                    setBackStackEmpty("sample_fragment");
-                    if (fragmentManager.findFragmentByTag("sample_fragment") == null)
-                        fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, new FirstFragment(), "sample_fragment")
-                                .addToBackStack("sample_fragment")
-                                .commit();*/
                     break;
                 case R.id.nav_charts:
                     startActivity(new Intent(MainActivity.this, InnerActivity.class).putExtra("caption",item.getTitle()));

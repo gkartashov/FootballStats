@@ -2,12 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/event_odd_layout"
-    style="@style/Widget.AppCompat.Button.Colored"
     android:layout_width="match_parent"
     android:layout_height="60dp"
     android:clickable="true"
     android:focusable="true"
-    android:backgroundTint="#00DD00">
+    android:padding="10dp"
+    android:background="?android:attr/selectableItemBackground">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/odd_type"
@@ -16,6 +16,8 @@
         android:layout_height="match_parent"
         android:text="Handicap"
         android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:gravity="center|start" />
 
     <android.support.v7.widget.AppCompatTextView

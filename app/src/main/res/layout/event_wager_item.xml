@@ -2,17 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/Widget.AppCompat.Button.Colored"
     android:orientation="vertical"
     android:layout_height="60dp"
     android:clickable="true"
     android:focusable="true"
-    android:backgroundTint="@color/colorPrimary">
+    android:background="?android:attr/selectableItemBackground">
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/wager_type"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="Handicap"
+        android:background="@color/listItemsColor"
         android:textSize="20sp"
         android:gravity="center" />
 </LinearLayout>

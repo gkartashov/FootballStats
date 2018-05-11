@@ -4,7 +4,7 @@ package com.example.jg.footballstats;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -27,6 +27,10 @@ import com.example.jg.footballstats.odds.TeamTotal;
 import com.example.jg.footballstats.odds.Total;
 import com.example.jg.footballstats.odds.Wager;
 import com.example.jg.footballstats.odds.WagerAdapter;
+import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
+import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
+import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +47,9 @@ public class EventFragment extends Fragment {
     private APIController apiController = APIController.getInstance();
     private List<Wager> wagers = new ArrayList<>();
     private RecyclerView recyclerView;
-    private WagerAdapter recyclerAdapter;
+    private RecyclerView.Adapter mWrappedAdapter;
+    private WagerAdapter mAdapter;
+    private RecyclerViewExpandableItemManager mExpandableItemManager;
     private TextView scoreHome, scoreAway, date, home, away;
     private View rootView;
     private EventEntry event;
@@ -100,7 +106,7 @@ public class EventFragment extends Fragment {
             }
     };
 
-    private void viewInitialization() throws NullPointerException {
+    private void viewInitialization() {
         setHasOptionsMenu(true);
 
         recyclerView = rootView.findViewById(R.id.event_recycler_view);
@@ -110,9 +116,18 @@ public class EventFragment extends Fragment {
         catch (NullPointerException e) {
             throw new NullPointerException("Application context error: unable to get context from main activity.");
         }
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerAdapter = new WagerAdapter(wagers);
-        recyclerView.setAdapter(recyclerAdapter);
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+
+        animator.setSupportsChangeAnimations(false);
+        recyclerView.setItemAnimator(animator);
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mAdapter = new WagerAdapter(wagers);
+        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+        recyclerView.setAdapter(mWrappedAdapter);
+        mExpandableItemManager.attachRecyclerView(recyclerView);
+
         try {
             event = getArguments().getParcelable("event");
         }
@@ -144,8 +159,17 @@ public class EventFragment extends Fragment {
                 }
             }, 5000);
         }
-        recyclerAdapter = new WagerAdapter(wagers);
-        recyclerView.setAdapter(recyclerAdapter);
+        WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+        mExpandableItemManager.release();
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+
+        mAdapter = new WagerAdapter(new ArrayList<Wager>());
+        mAdapter.addAllGroups(wagers);
+
+        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+        recyclerView.setAdapter(mWrappedAdapter);
+        mWrappedAdapter.notifyDataSetChanged();
+        mExpandableItemManager.attachRecyclerView(recyclerView);
     }
 
     private void betsAcceptingRestrictionInitialization() {
@@ -162,9 +186,9 @@ public class EventFragment extends Fragment {
     }
 
     private void getOdds() {
-        if (since == 0)
-            apiController.getAPI().getOdds(29, event.getLeagueId(),"Decimal",event.getId()).enqueue(oddsListCallback);
-        else
+        //if (since == 0)
+            //apiController.getAPI().getOdds(29, event.getLeagueId(),"Decimal",event.getId()).enqueue(oddsListCallback);
+        //else
             apiController.getAPI().getOddsSince(29, event.getLeagueId(),"Decimal", since, event.getId()).enqueue(oddsListCallback);
     }
 
@@ -206,7 +230,9 @@ public class EventFragment extends Fragment {
                 moneylineList.add(new Odd("First team to win", moneyline.getHome()));
                 moneylineList.add(new Odd("Draw", moneyline.getDraw()));
                 moneylineList.add(new Odd("Second team to win", moneyline.getAway()));
-                wagers.add(new Wager(periodString + "Moneyline",moneylineList));
+                Wager wager = new Wager(periodString + "Moneyline",moneylineList);
+                mAdapter.addListIdToChild(wager);
+                wagers.add(wager);
             }
             if (handicaps != null) {
                 List<Odd> handicapList = new ArrayList<>();
@@ -227,7 +253,9 @@ public class EventFragment extends Fragment {
                         return o1.getType().compareTo(o2.getType());
                     }
                 });
-                wagers.add(new Wager(periodString + "Handicap", handicapList));
+                Wager wager = new Wager(periodString + "Handicap", handicapList);
+                mAdapter.addListIdToChild(wager);
+                wagers.add(wager);
             }
             if (totals != null) {
                 List<Odd> totalsList = new ArrayList<>();
@@ -235,20 +263,26 @@ public class EventFragment extends Fragment {
                     totalsList.add(new Odd("Over " + t.getStringPoints(), t.getOver()));
                     totalsList.add(new Odd("Under " + t.getStringPoints(), t.getUnder()));
                 }
-                wagers.add(new Wager(periodString + "Total",totalsList));
+                Wager wager = new Wager(periodString + "Total",totalsList);
+                mAdapter.addListIdToChild(wager);
+                wagers.add(wager);
             }
             if (teamTotals != null) {
                 if (teamTotals.getHome() != null) {
                     List<Odd> firstTeamTotal = new ArrayList<>();
                     firstTeamTotal.add(new Odd("Over " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getOver()));
                     firstTeamTotal.add(new Odd("Under " + teamTotals.getHome().getStringPoints(), teamTotals.getHome().getUnder()));
-                    wagers.add(new Wager(periodString + "First team total", firstTeamTotal));
+                    Wager wager = new Wager(periodString + "First team total", firstTeamTotal);
+                    mAdapter.addListIdToChild(wager);
+                    wagers.add(wager);
                 }
                 if (teamTotals.getAway() != null) {
                     List<Odd> secondTeamTotal = new ArrayList<>();
                     secondTeamTotal.add(new Odd("Over " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getOver()));
                     secondTeamTotal.add(new Odd("Under " + teamTotals.getAway().getStringPoints(), teamTotals.getAway().getUnder()));
-                    wagers.add(new Wager(periodString + "Second team total", secondTeamTotal));
+                    Wager wager =new Wager(periodString + "Second team total", secondTeamTotal);
+                    mAdapter.addListIdToChild(wager);
+                    wagers.add(wager);
                 }
             }
             ++periodNumber;

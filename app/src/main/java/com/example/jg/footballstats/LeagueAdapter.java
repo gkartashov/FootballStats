@@ -1,5 +1,7 @@
 package com.example.jg.footballstats;
 
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -28,9 +30,11 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
     }
     private IdGenerator mIdGenerator;
     private List<League> leaguesList;
+    private final IOnItemClickListener listener;
 
-    public LeagueAdapter(List<League> leaguesList) {
+    public LeagueAdapter(List<League> leaguesList, IOnItemClickListener listener) {
         this.leaguesList = leaguesList;
+        this.listener = listener;
         mIdGenerator = new IdGenerator();
         setHasStableIds(true);
     }
@@ -69,17 +73,24 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
     public void onBindGroupViewHolder(LeagueViewHolder holder, int groupPosition, int viewType) {
         League league = leaguesList.get(groupPosition);
         holder.leagueTextView.setText(league.getName());
-        //holder.setListId(league.getListId());
     }
 
     @Override
     public void onBindChildViewHolder(EventViewHolder holder, int groupPosition, int childPosition, int viewType) {
-        EventEntry eventEntry = leaguesList.get(groupPosition).getEvents().get(childPosition);
+        final EventEntry eventEntry = leaguesList.get(groupPosition).getEvents().get(childPosition);
+        holder.bind(eventEntry,listener);
+        if (eventEntry.isStarted()) {
+            holder.dateTextView.setText("LIVE");
+            holder.dateTextView.setTextColor(Color.RED);
+            holder.dateTextView.setTypeface(null, Typeface.BOLD);
+        } else {
+            holder.dateTextView.setText(eventEntry.getDate());
+            holder.dateTextView.setTextColor(holder.timeTextView.getTextColors());
+            holder.dateTextView.setTypeface(null, Typeface.NORMAL);
+        }
         holder.homeTextView.setText(eventEntry.getHome());
         holder.awayTextView.setText(eventEntry.getAway());
-        holder.dateTextView.setText(eventEntry.getDate());
         holder.timeTextView.setText(eventEntry.getTime());
-       // holder.setListId(eventEntry.getListId());
     }
 
     @Override

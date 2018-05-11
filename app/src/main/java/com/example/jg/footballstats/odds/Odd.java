@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Odd implements Parcelable {
+    private int id;
     private String type;
     private double coefficient;
 
@@ -22,12 +23,21 @@ public class Odd implements Parcelable {
     public double getCoefficient() {
         return coefficient;
     }
+
     public String getStringCoefficient() {
         return Double.toString(coefficient);
     }
 
     public void setCoefficient(double coefficient) {
         this.coefficient = coefficient;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

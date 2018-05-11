@@ -6,12 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".EventFragment"
-    android:background="#EEE">
+    tools:context=".EventFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#000">
+        android:background="@color/headerColor">
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,7 +19,7 @@
             android:id="@+id/event_start_time"
             android:text="28 nov 2018 21:00"
             android:gravity="center"
-            android:textColor="#FFF"/>
+            />
     </LinearLayout>
 
 
@@ -29,7 +28,7 @@
     android:layout_height="60dp"
     android:orientation="horizontal"
     android:layout_gravity="center"
-    android:background="#111">
+    android:background="@color/headerColor">
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -44,7 +43,6 @@
             android:id="@+id/event_home"
             android:text="Real Madrid Real Real Madrid Real"
             android:textSize="22sp"
-            android:textColor="#FFF"
             android:ellipsize="end"
             android:maxLines="1"/>
 
@@ -54,7 +52,6 @@
             android:id="@+id/event_away"
             android:text="Bayern Munich"
             android:textSize="22sp"
-            android:textColor="#FFF"
             android:ellipsize="end"
             android:maxLines="1"/>
     </LinearLayout>
@@ -71,16 +68,14 @@
             android:id="@+id/event_home_score"
             android:text="0"
             android:textSize="22sp"
-            android:gravity="end"
-            android:textColor="#FFF"/>
+            android:gravity="end" />
         <android.support.v7.widget.AppCompatTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/event_away_score"
             android:text="0"
             android:textSize="22sp"
-            android:gravity="end"
-            android:textColor="#FFF"/>
+            android:gravity="end" />
     </LinearLayout>
 </LinearLayout>
 
@@ -89,8 +84,7 @@
     <LinearLayout
         android:id="@+id/event_recycler_view_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#FFF">
+        android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/event_recycler_view"
             android:layout_width="match_parent"

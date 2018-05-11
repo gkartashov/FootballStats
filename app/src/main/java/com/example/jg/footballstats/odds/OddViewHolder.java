@@ -1,20 +1,20 @@
-package com.example.jg.footballstats;
+package com.example.jg.footballstats.odds;
 
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.jg.footballstats.IOnItemClickListener;
+import com.example.jg.footballstats.R;
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemViewHolder;
 
-public class EventViewHolder extends AbstractExpandableItemViewHolder {
-    public TextView homeTextView, awayTextView, dateTextView, timeTextView;
+public class OddViewHolder extends AbstractExpandableItemViewHolder {
+    public TextView oddType, oddCoefficient;
 
-    public EventViewHolder(View itemView) {
+    public OddViewHolder(View itemView) {
         super(itemView);
-        homeTextView = itemView.findViewById(R.id.home_team);
-        awayTextView = itemView.findViewById(R.id.away_team);
-        dateTextView = itemView.findViewById(R.id.date);
-        timeTextView = itemView.findViewById(R.id.time);
+        oddType = itemView.findViewById(R.id.odd_type);
+        oddCoefficient = itemView.findViewById(R.id.odd_coefficient);
     }
 
     public void bind(final EventEntry item, final IOnItemClickListener listener){
