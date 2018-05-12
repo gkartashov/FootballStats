@@ -3,14 +3,13 @@ package com.example.jg.footballstats.odds;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.jg.footballstats.IOnItemClickListener;
 import com.example.jg.footballstats.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 
 import java.util.List;
 
 public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder, OddViewHolder> {
-
-
     private static class IdGenerator {
         int mIdGroup;
         int mIdChild;
@@ -29,8 +28,10 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
     }
     private WagerAdapter.IdGenerator mIdGenerator;
     private List<Wager> wagerList;
-    public WagerAdapter(List<Wager> wagerList) {
+    private IOnItemClickListener listener;
+    public WagerAdapter(List<Wager> wagerList, IOnItemClickListener listener) {
         this.wagerList = wagerList;
+        this.listener = listener;
         mIdGenerator = new WagerAdapter.IdGenerator();
         setHasStableIds(true);
     }
@@ -74,7 +75,7 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
     @Override
     public void onBindChildViewHolder(OddViewHolder holder, int groupPosition, int childPosition, int viewType) {
         final Odd odd = wagerList.get(groupPosition).getOddList().get(childPosition);
-        //holder.bind(eventEntry,listener);
+        holder.bind(odd,listener);
         holder.oddType.setText(odd.getType());
         holder.oddCoefficient.setText(odd.getStringCoefficient());
     }

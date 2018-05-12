@@ -2,14 +2,32 @@ package com.example.jg.footballstats.db;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 
-public class User implements Parcelable {
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okio.BufferedSink;
+
+public class User extends RequestBody implements Parcelable {
     private String username;
     private String password;
     private String email;
     private String name;
 
     public User() {
+
+    }
+
+    @Nullable
+    @Override
+    public MediaType contentType() {
+        return null;
+    }
+
+    @Override
+    public void writeTo(BufferedSink sink) throws IOException {
 
     }
 

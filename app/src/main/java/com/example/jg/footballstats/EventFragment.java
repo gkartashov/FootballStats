@@ -3,6 +3,8 @@ package com.example.jg.footballstats;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.ContactsContract;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +19,9 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.jg.footballstats.db.Bet;
+import com.example.jg.footballstats.db.Event;
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.example.jg.footballstats.odds.Moneyline;
 import com.example.jg.footballstats.odds.Odd;
@@ -35,11 +40,16 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Multipart;
 
 
 public class EventFragment extends Fragment {
@@ -100,10 +110,42 @@ public class EventFragment extends Fragment {
 
             @Override
             public void onFailure(Call<OddsList> call, Throwable t) {
-                if (since == 0) {
+                //if (since == 0) {
                     betsAcceptingRestrictionInitialization();
-                }
+                //}
             }
+    };
+
+    public IOnItemClickListener clickListener = new IOnItemClickListener<Odd>() {
+        @Override
+        public void onItemClick(Odd item) {
+            DatabaseAPIController.getInstance().getAPI().getUserBetHistory(Constants.USER.getUsername()).enqueue(new Callback<List<Bet>>() {
+                @Override
+                public void onResponse(Call<List<Bet>> call, Response<List<Bet>> response) {
+                    Snackbar mSnackbar = Snackbar.make(rootView,response.body().toString(),Snackbar.LENGTH_LONG);
+                    mSnackbar.show();
+                }
+
+                @Override
+                public void onFailure(Call<List<Bet>> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });
+            //Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),0,0);
+            //Bet bet = new Bet(Constants.USER,e,"Moneyline",item.getType(),item.getType(),item.getCoefficient());
+            /*DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    Snackbar mSnackbar = Snackbar.make(rootView,"Sosite rabotaet",Snackbar.LENGTH_LONG);
+                    mSnackbar.show();
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
+            });*/
+        }
     };
 
     private void viewInitialization() {
@@ -123,7 +165,7 @@ public class EventFragment extends Fragment {
         recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new WagerAdapter(wagers);
+        mAdapter = new WagerAdapter(wagers, clickListener);
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         recyclerView.setAdapter(mWrappedAdapter);
         mExpandableItemManager.attachRecyclerView(recyclerView);
@@ -163,7 +205,7 @@ public class EventFragment extends Fragment {
         mExpandableItemManager.release();
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
-        mAdapter = new WagerAdapter(new ArrayList<Wager>());
+        mAdapter = new WagerAdapter(new ArrayList<Wager>(), clickListener);
         mAdapter.addAllGroups(wagers);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);

@@ -135,7 +135,7 @@ public class EventsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    public IOnItemClickListener clickListener = new IOnItemClickListener() {
+    public IOnItemClickListener clickListener = new IOnItemClickListener<EventEntry>() {
         @Override
         public void onItemClick(EventEntry item) {
             onItemSelectListener.onItemSelect(item);

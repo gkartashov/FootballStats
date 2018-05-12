@@ -17,7 +17,7 @@ public class OddViewHolder extends AbstractExpandableItemViewHolder {
         oddCoefficient = itemView.findViewById(R.id.odd_coefficient);
     }
 
-    public void bind(final EventEntry item, final IOnItemClickListener listener){
+    public void bind(final Odd item, final IOnItemClickListener listener){
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
