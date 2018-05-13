@@ -3,6 +3,7 @@ package com.example.jg.footballstats;
 import com.example.jg.footballstats.fixtures.EventsList;
 import com.example.jg.footballstats.odds.OddsList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
@@ -22,4 +23,7 @@ public interface PinnacleAPI {
     @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
     @GET("/v1/odds")
     Call<OddsList> getOddsSince(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds, @Query("oddsFormat") String oddsFormat, @Query("since") long since, @Query("eventIds") int eventIds);
+    @Headers("Authorization: Basic R0s5MDcyOTU6IWpvemVmMjAwMA==")
+    @GET("/v1/fixtures/settled")
+    Call<ResponseBody> getSettledFixtures(@Query("sportId") int sportId, @Query("leagueIds") int leagueIds);
 }

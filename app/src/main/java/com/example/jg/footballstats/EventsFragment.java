@@ -43,7 +43,7 @@ public class EventsFragment extends Fragment {
         void onItemSelect(EventEntry eventEntry);
     }
 
-    public class RefreshingHandler extends Handler {
+    private class RefreshingHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -90,26 +90,26 @@ public class EventsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_events, container, false);
         setHasOptionsMenu(true);
 
-            mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
-            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
+        mRecyclerView = rootView.findViewById(R.id.events_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 
-            final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
+        final GeneralItemAnimator animator = new RefactoredDefaultItemAnimator();
 
-            animator.setSupportsChangeAnimations(false);
-            mRecyclerView.setItemAnimator(animator);
-            mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+        animator.setSupportsChangeAnimations(false);
+        mRecyclerView.setItemAnimator(animator);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
-            mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-            mAdapter = new LeagueAdapter(leaguesList, clickListener);
-            mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
-            mRecyclerView.setAdapter(mWrappedAdapter);
-            mExpandableItemManager.attachRecyclerView(mRecyclerView);
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mAdapter = new LeagueAdapter(leaguesList, clickListener);
+        mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
+        mRecyclerView.setAdapter(mWrappedAdapter);
+        mExpandableItemManager.attachRecyclerView(mRecyclerView);
 
-            mHandler = new RefreshingHandler();
-            swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
-            swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-            if (leaguesList.size() == 0)
-                onRefreshListener.onRefresh();
+        mHandler = new RefreshingHandler();
+        swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
+        if (leaguesList.size() == 0)
+            onRefreshListener.onRefresh();
 
         return rootView;
     }
@@ -212,7 +212,7 @@ public class EventsFragment extends Fragment {
         List<League> updates = eventsList.getLeague();
         int leagueIndex, eventIndex;
         for(League l:updates)
-            if ((leagueIndex = leaguesList.indexOf(l)) > 0) {
+            if ((leagueIndex = leaguesList.indexOf(l)) >= 0) {
                 List<EventEntry> updatesEvents = l.getEvents();
                 for (EventEntry e: updatesEvents)
                     if ((eventIndex = leaguesList.get(leagueIndex).getEvents().indexOf(l)) > 0) {

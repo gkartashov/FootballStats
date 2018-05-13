@@ -77,14 +77,17 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                                 .addToBackStack("events_fragment")
                                 .commit();
                     break;
-                case R.id.nav_logout:
-                    setBackStackEmpty("");
-                    Constants.USER = null;
-                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
-                    finish();
-                    break;
                 case R.id.nav_charts:
                     startActivity(new Intent(MainActivity.this, InnerActivity.class).putExtra("caption",item.getTitle()));
+                    break;
+                case R.id.nav_history:
+                    getSupportActionBar().setTitle(item.getTitle());
+                    setBackStackEmpty("history_fragment");
+                    if (fragmentManager.findFragmentByTag("history_fragment") == null)
+                        fragmentManager.beginTransaction()
+                                .replace(R.id.main_layout, new BetHistoryFragment(), "history_fragment")
+                                .addToBackStack("history_fragment")
+                                .commit();
                     break;
                 case R.id.nav_stack:
                     getSupportActionBar().setTitle(item.getTitle());
@@ -94,6 +97,12 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                         Log.i("FM entries", f.getTag());
                     for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i)
                         Log.i("BackStack entries ",fragmentManager.getBackStackEntryAt(i).getName());
+                    break;
+                case R.id.nav_logout:
+                    setBackStackEmpty("");
+                    Constants.USER = null;
+                    startActivity(new Intent(MainActivity.this,LoginActivity.class));
+                    finish();
                     break;
                 case R.id.nav_exit:
                     finishAndRemoveTask();
@@ -131,8 +140,10 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         if (fragmentManager.findFragmentByTag("event_fragment") != null) {
             setHomeIconEnabled();
         }
-        if (fragmentManager.getBackStackEntryCount() == 1)
+        if (fragmentManager.getBackStackEntryCount() == 1) {
             toolbar.setTitle("Football Stats");
+            setNavigationViewUnchecked();
+        }
         super.onBackPressed();
     }
 
@@ -162,7 +173,12 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         getSupportActionBar().setHomeButtonEnabled(false);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_arrow_left_white);
     }
-
+    private void setNavigationViewUnchecked() {
+        int size = navigationView.getMenu().size();
+        for (int i = 0; i < size; i++) {
+            navigationView.getMenu().getItem(i).setChecked(false);
+        }
+    }
     private void setBackStackEmpty(String entryName) {
         int backStackSize = fragmentManager.getBackStackEntryCount();
         if (entryName == "")

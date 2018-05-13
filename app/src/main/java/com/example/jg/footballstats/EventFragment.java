@@ -37,6 +37,7 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemA
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -119,7 +120,7 @@ public class EventFragment extends Fragment {
     public IOnItemClickListener clickListener = new IOnItemClickListener<Odd>() {
         @Override
         public void onItemClick(Odd item) {
-            DatabaseAPIController.getInstance().getAPI().getUserBetHistory(Constants.USER.getUsername()).enqueue(new Callback<List<Bet>>() {
+            /*DatabaseAPIController.getInstance().getAPI().getUserBetHistory(Constants.USER.getUsername()).enqueue(new Callback<List<Bet>>() {
                 @Override
                 public void onResponse(Call<List<Bet>> call, Response<List<Bet>> response) {
                     Snackbar mSnackbar = Snackbar.make(rootView,response.body().toString(),Snackbar.LENGTH_LONG);
@@ -130,10 +131,27 @@ public class EventFragment extends Fragment {
                 public void onFailure(Call<List<Bet>> call, Throwable t) {
                     t.printStackTrace();
                 }
+            });*/
+            APIController.getInstance().getAPI().getSettledFixtures(29,event.getLeagueId()).enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    String govn = "";
+                    try {
+                        govn = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    govn += "govn";
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    t.printStackTrace();
+                }
             });
-            //Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),0,0);
-            //Bet bet = new Bet(Constants.USER,e,"Moneyline",item.getType(),item.getType(),item.getCoefficient());
-            /*DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
+            /*Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),0,0);
+            Bet bet = new Bet(Constants.USER,e,"Moneyline",item.getType(),item.getType(),item.getCoefficient());
+            DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     Snackbar mSnackbar = Snackbar.make(rootView,"Sosite rabotaet",Snackbar.LENGTH_LONG);

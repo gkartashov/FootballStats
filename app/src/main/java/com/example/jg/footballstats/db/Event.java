@@ -7,16 +7,20 @@ public class Event implements Parcelable {
     private long eventId;
     private int leagueId;
     private String starts;
+    private String home;
+    private String away;
     private int homeScore;
     private int awayScore;
 
     public Event() {
     }
 
-    public Event(long eventId, int leagueId, String starts, int homeScore, int awayScore) {
+    public Event(long eventId, int leagueId, String starts, String home, String away, int homeScore, int awayScore) {
         this.eventId = eventId;
         this.leagueId = leagueId;
         this.starts = starts;
+        this.home = home;
+        this.away = away;
         this.homeScore = homeScore;
         this.awayScore = awayScore;
     }
@@ -59,6 +63,22 @@ public class Event implements Parcelable {
 
     public void setAwayScore(int awayScore) {
         this.awayScore = awayScore;
+    }
+
+    public String getAway() {
+        return away;
+    }
+
+    public void setAway(String away) {
+        this.away = away;
+    }
+
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
     }
 
     @Override
