@@ -8,22 +8,17 @@
     android:clickable="true"
     android:focusable="true"
     android:background="?android:attr/selectableItemBackground">
-    <LinearLayout
-        android:id="@+id/history_event_status"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/border"
-        android:orientation="vertical"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="10dp"
+
         android:background="@color/listItemsColor">
         <LinearLayout
+            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="10"
+            android:layout_weight="40"
             android:orientation="vertical">
 
             <android.support.v7.widget.AppCompatTextView
@@ -48,9 +43,10 @@
         </LinearLayout>
 
         <LinearLayout
+            android:padding="10dp"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="5"
             android:orientation="vertical"
             android:gravity="end">
 
@@ -69,5 +65,12 @@
                 tools:text="0" />
 
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/history_event_status"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/border"
+            android:orientation="vertical"/>
     </LinearLayout>
 </LinearLayout>

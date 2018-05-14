@@ -75,6 +75,7 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
     @Override
     public void onBindChildViewHolder(OddViewHolder holder, int groupPosition, int childPosition, int viewType) {
         final Odd odd = wagerList.get(groupPosition).getOddList().get(childPosition);
+        wagerList.get(groupPosition).getOddList().get(childPosition).setWagerType(wagerList.get(groupPosition).getTitle());
         holder.bind(odd,listener);
         holder.oddType.setText(odd.getType());
         holder.oddCoefficient.setText(odd.getStringCoefficient());

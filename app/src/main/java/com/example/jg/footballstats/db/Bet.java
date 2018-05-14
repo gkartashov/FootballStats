@@ -13,13 +13,14 @@ public class Bet {
     public Bet() {
     }
 
-    public Bet(User user, Event event, String betType, String betName, String pick, double coefficient) {
+    public Bet(User user, Event event, String betType, String betName, String pick, double coefficient, int status) {
         this.user = user;
         this.event = event;
         this.betType = betType;
         this.betName = betName;
         this.pick = pick;
         this.coefficient = coefficient;
+        this.status = status;
     }
 
     public int getBetId() {

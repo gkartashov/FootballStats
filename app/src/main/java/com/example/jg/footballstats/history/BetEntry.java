@@ -10,23 +10,29 @@ import java.util.Objects;
 public class BetEntry implements Parcelable {
     private int id;
     private int leagueId;
+    private long eventId;
     private int betId;
     private String home;
     private String away;
     private int homeScore;
     private int awayScore;
+    private int homeScoreHT;
+    private int awayScoreHT;
     private BetDetails betDetails;
 
     public BetEntry() {
     }
 
-    public BetEntry(int betId, int leagueId, String home, String away, int homeScore, int awayScore, BetDetails betDetails) {
+    public BetEntry(int betId, int leagueId, long eventId, String home, String away, int homeScore, int awayScore, int homeScoreHT, int awayScoreHT, BetDetails betDetails) {
         this.betId = betId;
         this.leagueId = leagueId;
+        this.eventId = eventId;
         this.home = home;
         this.away = away;
         this.homeScore = homeScore;
         this.awayScore = awayScore;
+        this.homeScoreHT = homeScoreHT;
+        this.awayScoreHT = awayScoreHT;
         this.betDetails = betDetails;
     }
 
@@ -85,8 +91,29 @@ public class BetEntry implements Parcelable {
     public void setBetDetails(BetDetails betDetails) {
         this.betDetails = betDetails;
     }
+
+    public int getHomeScoreHT() {
+        return homeScoreHT;
+    }
+
+    public void setHomeScoreHT(int homeScoreHT) {
+        this.homeScoreHT = homeScoreHT;
+    }
+
+    public int getAwayScoreHT() {
+        return awayScoreHT;
+    }
+
+    public void setAwayScoreHT(int awayScoreHT) {
+        this.awayScoreHT = awayScoreHT;
+    }
+
     public boolean isExpired() {
         return (betDetails.toLocalTime().toDateTime().plusHours(24).isBefore(LocalDateTime.now().toDateTime()));
+    }
+
+    public boolean isFinished() {
+        return (betDetails.toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
     }
 
     public int getLeagueId() {
@@ -105,12 +132,20 @@ public class BetEntry implements Parcelable {
         this.betId = betId;
     }
 
+    public long getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(long eventId) {
+        this.eventId = eventId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BetEntry betEntry = (BetEntry) o;
-        return betId == betEntry.betId && betDetails.getStatus().equals(betEntry.betDetails.getStatus());
+        return betId == betEntry.betId && betDetails.getStatus() == betEntry.betDetails.getStatus();
     }
 
     @Override

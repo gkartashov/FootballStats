@@ -12,16 +12,18 @@ public class BetDetails implements Parcelable {
     private int id;
     private String starts;
     private String betType;
+    private String betName;
     private String pick;
     private double coefficient;
-    private String status;
+    private int status;
 
     public BetDetails() {
     }
 
-    public BetDetails(String starts, String betType, String pick, double coefficient, String status) {
+    public BetDetails(String starts, String betType, String betName, String pick, double coefficient, int status) {
         this.starts = starts;
         this.betType = betType;
+        this.betName = betName;
         this.pick = pick;
         this.coefficient = coefficient;
         this.status = status;
@@ -71,12 +73,32 @@ public class BetDetails implements Parcelable {
         this.coefficient = coefficient;
     }
 
-    public String getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getStringStatus() {
+        switch (status) {
+            case 0:
+                return "In play";
+            case 1:
+                return "Won";
+            case 2:
+                return "Lost";
+            default:
+                return "Deleted";
+        }
+    }
+    public String getBetName() {
+        return betName;
+    }
+
+    public void setBetName(String betName) {
+        this.betName = betName;
     }
 
     public DateTime toLocalTime() {
@@ -113,7 +135,7 @@ public class BetDetails implements Parcelable {
         dest.writeString(this.betType);
         dest.writeString(this.pick);
         dest.writeDouble(this.coefficient);
-        dest.writeString(this.status);
+        dest.writeInt(this.status);
     }
 
     protected BetDetails(Parcel in) {
@@ -122,7 +144,7 @@ public class BetDetails implements Parcelable {
         this.betType = in.readString();
         this.pick = in.readString();
         this.coefficient = in.readDouble();
-        this.status = in.readString();
+        this.status = in.readInt();
     }
 
     public static final Parcelable.Creator<BetDetails> CREATOR = new Parcelable.Creator<BetDetails>() {

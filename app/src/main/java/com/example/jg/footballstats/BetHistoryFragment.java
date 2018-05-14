@@ -10,6 +10,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -24,6 +25,8 @@ import com.example.jg.footballstats.fixtures.League;
 import com.example.jg.footballstats.history.BetDetails;
 import com.example.jg.footballstats.history.BetEntry;
 import com.example.jg.footballstats.history.BetEntryAdapter;
+import com.example.jg.footballstats.history.BetResult;
+import com.example.jg.footballstats.history.Period;
 import com.h6ah4i.android.widget.advrecyclerview.animator.GeneralItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemAnimator;
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
@@ -31,7 +34,10 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
 
 import retrofit2.Response;
 
@@ -82,6 +88,8 @@ public class BetHistoryFragment extends Fragment {
 
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(animator);
+
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
         mAdapter = new BetEntryAdapter(betsList);
@@ -142,35 +150,113 @@ public class BetHistoryFragment extends Fragment {
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
     }
 
-    private List<BetEntry> betListToBetEntryList(List<Bet> betArrayList) {
+    private List<BetEntry> betListToBetEntryList(List<Bet> betArrayList, BetResult betResult) {
         List<BetEntry> betEntries = new ArrayList<>();
         if (betArrayList.size() != 0) {
 
             for (Bet b:betArrayList) {
                 Event event = b.getEvent();
-                betEntries.add(new BetEntry(b.getBetId(),
+                BetEntry betEntry = new BetEntry(b.getBetId(),
                         event.getLeagueId(),
+                        event.getEventId(),
                         event.getHome(),
                         event.getAway(),
                         event.getHomeScore(),
                         event.getAwayScore(),
-                        new BetDetails(event.getStarts(),b.getBetType(),b.getPick(),b.getCoefficient(),b.getStatus() == 0 ? "In play" : (b.getStatus() == 1 ? "Won" : "Lost"))));
+                        event.getHomeHTScore(),
+                        event.getAwayHTScore(),
+                        new BetDetails(event.getStarts(),b.getBetType(),b.getBetName(),b.getPick(),b.getCoefficient(),b.getStatus()));
+                int leagueIndex, eventIndex;
+                if ((leagueIndex = betResult.getLeagues().indexOf(new com.example.jg.footballstats.history.League(event.getLeagueId()))) >= 0 &&
+                        (eventIndex = betResult.getLeagues().get(leagueIndex).getEvents().indexOf(new com.example.jg.footballstats.history.Event(event.getEventId()))) >= 0) {
+                    List<Period> periods = betResult.getLeagues().get(leagueIndex).getEvents().get(eventIndex).getPeriods();
+                    switch (periods.size()) {
+                        case 1: {
+                            Period p = periods.get(0);
+                            if (p.getNumber() == 1 && (p.getStatus() == 1 || p.getStatus() == 2) && p.getCancellationReason() == null) {
+                                betEntry.setHomeScore(p.getTeam1Score());
+                                betEntry.setHomeScoreHT(p.getTeam1Score());
+                                betEntry.setAwayScore(p.getTeam2Score());
+                                betEntry.setAwayScoreHT(p.getTeam2Score());
+                            }
+                            break;
+                        }
+                        case 2:
+                            for (Period p : periods)
+                                if ((p.getStatus() == 1 || p.getStatus() == 2) && p.getCancellationReason() == null) {
+                                    if (p.getNumber() == 0) {
+                                        betEntry.setHomeScore(p.getTeam1Score());
+                                        betEntry.setAwayScore(p.getTeam2Score());
+                                    } else {
+                                        betEntry.setHomeScoreHT(p.getTeam1Score());
+                                        betEntry.setAwayScoreHT(p.getTeam2Score());
+                                    }
+
+                                }
+                            break;
+                        default:
+                            break;
+                    }
+
+                }
+                betEntries.add(betEntry);
             }
 
         }
         return betEntries;
     }
-    private void refreshHistory(List<Bet> betArrayList) {
-        if (betsList.size() == 0)
-            betsList = betListToBetEntryList(betArrayList);
-        else {
-            int betIndex;
-            for(BetEntry b:betListToBetEntryList(betArrayList))
-                if ((betIndex = betsList.indexOf(b)) >= 0)
-                    betsList.set(betIndex,b);
-                else
-                    betsList.add(b);
+
+    private List<Bet> betEntryListToBetList(List<BetEntry> betEntries) {
+        List<Bet> betList = new ArrayList<>();
+        if (betEntries.size() != 0) {
+            for (BetEntry be : betEntries) {
+                betList.add(new Bet(Constants.USER,
+                        new Event(be.getEventId(),
+                                be.getLeagueId(),
+                                be.getBetDetails().getStarts(),
+                                be.getHome(),
+                                be.getAway(),
+                                be.getHomeScore(),
+                                be.getAwayScore(),
+                                be.getHomeScoreHT(),
+                                be.getAwayScoreHT()),
+                        be.getBetDetails().getBetType(),
+                        be.getBetDetails().getBetName(),
+                        be.getBetDetails().getPick(),
+                        be.getBetDetails().getCoefficient(),
+                        be.getBetDetails().getStatus()));
+            }
         }
+        return betList;
+    }
+
+    private void refreshHistory(List<Bet> betArrayList, BetResult betResult) {
+        if (betResult.getLeagues() != null)
+            if (betsList.size() == 0) {
+                betsList = betListToBetEntryList(betArrayList, betResult);
+                for (BetEntry b: betsList)
+                    BetsCalculator.CalculateBet(b);
+            }
+            else {
+                int betIndex;
+                for(BetEntry b:betListToBetEntryList(betArrayList,betResult)) {
+                    BetsCalculator.CalculateBet(b);
+                    if ((betIndex = betsList.indexOf(b)) >= 0)
+                        betsList.set(betIndex, b);
+                    else
+                        betsList.add(b);
+                }
+                since = betResult.getLast();
+            }
+
+    }
+
+    private Set<Integer> getLeaguesIdArray(List<Bet> bets) {
+        HashSet<Integer> leagues = new HashSet<>();
+        if (bets.size() > 0)
+            for (Bet b:bets)
+                leagues.add(b.getEvent().getLeagueId());
+        return leagues;
     }
 
     public class HistoryRefreshTask extends AsyncTask<Void, Void, Void> {
@@ -180,14 +266,20 @@ public class BetHistoryFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            Response response = null;
             try {
-                response = dbController.getAPI().getUserBetHistory(Constants.USER.getUsername()).execute();
+                Response responseDb = dbController.getAPI().getUserBetHistory(Constants.USER.getUsername()).execute();
+                Response responsePinnacle;
+                if (since == 0)
+                    responsePinnacle = apiController.getAPI().getSettledFixtures(Constants.SPORT_ID,getLeaguesIdArray((List<Bet>) responseDb.body())).execute();
+                else
+                    responsePinnacle = apiController.getAPI().getSettledFixturesSince(Constants.SPORT_ID,getLeaguesIdArray((List<Bet>) responseDb.body()),since).execute();
+                if (responseDb != null && responsePinnacle != null) {
+                    List<Bet> betList = (List<Bet>) responseDb.body();
+                    BetResult betResult = (BetResult) responsePinnacle.body();
+                    refreshHistory(betList,betResult);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-            if (response != null) {
-                refreshHistory((List<Bet>)response.body());
             }
             return null;
         }

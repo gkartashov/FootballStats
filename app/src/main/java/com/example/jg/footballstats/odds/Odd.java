@@ -6,6 +6,7 @@ import android.os.Parcelable;
 public class Odd implements Parcelable {
     private int id;
     private String type;
+    private String wagerType;
     private double coefficient;
 
     public Odd(String type, double coefficient) {
@@ -38,6 +39,14 @@ public class Odd implements Parcelable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getWagerType() {
+        return wagerType;
+    }
+
+    public void setWagerType(String wagerType) {
+        this.wagerType = wagerType;
     }
 
     @Override

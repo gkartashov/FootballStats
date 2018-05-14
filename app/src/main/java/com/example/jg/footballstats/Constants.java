@@ -12,5 +12,7 @@ public final class Constants {
             Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$");
     public static final Pattern VALID_USERNAME_REGEX =
             Pattern.compile("^[a-zA-Z0-9._-]{3,}$");
+    public static final Pattern DOUBLE_REGEX =
+            Pattern.compile("(\\d+.?\\d+)");
     public static final int SPORT_ID = 29;
 }

@@ -1,6 +1,8 @@
 package com.example.jg.footballstats.history;
 
 import java.util.List;
+import java.util.Objects;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -8,16 +10,20 @@ public class Event {
 
     @SerializedName("id")
     @Expose
-    private int id;
+    private long id;
     @SerializedName("periods")
     @Expose
     private List<Period> periods = null;
 
-    public int getId() {
+    public Event(long id) {
+        this.id = id;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -29,4 +35,17 @@ public class Event {
         this.periods = periods;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        return id == event.id;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id);
+    }
 }

@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -66,6 +67,7 @@ public class EventFragment extends Fragment {
     private EventEntry event;
     private List<Period> periods = new ArrayList<>();
     private long since = 0;
+    private int homeScore = 0, awayScore = 0;
     public EventFragment() {
 
     }
@@ -132,7 +134,7 @@ public class EventFragment extends Fragment {
                     t.printStackTrace();
                 }
             });*/
-            APIController.getInstance().getAPI().getSettledFixtures(29,event.getLeagueId()).enqueue(new Callback<ResponseBody>() {
+            /*APIController.getInstance().getAPI().getSettledFixtures(29,event.getLeagueId()).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     String govn = "";
@@ -148,13 +150,22 @@ public class EventFragment extends Fragment {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     t.printStackTrace();
                 }
-            });
-            /*Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),0,0);
-            Bet bet = new Bet(Constants.USER,e,"Moneyline",item.getType(),item.getType(),item.getCoefficient());
+            });*/
+            String betName = null;
+            String pick = item.getType();
+            if (!item.getWagerType().contains("Moneyline")) {
+                Matcher m = Constants.DOUBLE_REGEX.matcher(item.getType());
+                if (m.find()) {
+                    pick = m.group(0);
+                    betName = item.getType().split(pick)[0].trim();
+                }
+            }
+            Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),0,0,0,0);
+            Bet bet = new Bet(Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),0);
             DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Snackbar mSnackbar = Snackbar.make(rootView,"Sosite rabotaet",Snackbar.LENGTH_LONG);
+                    Snackbar mSnackbar = Snackbar.make(rootView,"Done!",Snackbar.LENGTH_LONG);
                     mSnackbar.show();
                 }
 
@@ -162,7 +173,7 @@ public class EventFragment extends Fragment {
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     t.printStackTrace();
                 }
-            });*/
+            });
         }
     };
 
@@ -205,10 +216,10 @@ public class EventFragment extends Fragment {
     }
 
     private void oddsListInitialization(OddsList oddsList) {
-        String eventHomeScore = Integer.toString(oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore());
-        String eventAwayScore =  Integer.toString(oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore());
-        scoreHome.setText(eventHomeScore);
-        scoreAway.setText(eventAwayScore);
+        homeScore = oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore();
+        awayScore = oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore();
+        scoreHome.setText(Integer.toString(homeScore));
+        scoreAway.setText(Integer.toString(awayScore));
         recyclerView.setVisibility(View.VISIBLE);
         if (event.isStarted()) {
             setHasOptionsMenu(false);
@@ -294,10 +305,14 @@ public class EventFragment extends Fragment {
                 mAdapter.addListIdToChild(wager);
                 wagers.add(wager);
             }
-            if (handicaps != null) {
+            /*if (handicaps != null) {
                 List<Odd> handicapList = new ArrayList<>();
+                int ballDifference = Math.abs(homeScore - awayScore);
+
                 for(Spread s:handicaps) {
                     String homeTeam ="", awayTeam = "";
+                    if (ballDifference != 0)
+                        s.setHdp(s.getHdp() + ballDifference);
                     if (s.getHdp() < 0) {
                         homeTeam = "-";
                         s.setHdp(Math.abs(s.getHdp()));
@@ -316,7 +331,7 @@ public class EventFragment extends Fragment {
                 Wager wager = new Wager(periodString + "Handicap", handicapList);
                 mAdapter.addListIdToChild(wager);
                 wagers.add(wager);
-            }
+            }*/
             if (totals != null) {
                 List<Odd> totalsList = new ArrayList<>();
                 for(Total t:totals) {

@@ -1,5 +1,6 @@
 package com.example.jg.footballstats.history;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -68,10 +69,14 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
     @Override
     public void onBindGroupViewHolder(BetEntryViewHolder holder, int groupPosition, int viewType) {
         BetEntry betEntry = betList.get(groupPosition);
+        if (betEntry.getBetDetails().getStatus() == 1)
+            holder.statusIndicator.setBackgroundColor(Color.GREEN);
+        if (betEntry.getBetDetails().getStatus() == 2)
+            holder.statusIndicator.setBackgroundColor(Color.RED);
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
         holder.homeScoreTitle.setText(betEntry.getStringHomeScore());
-        holder.awayScoreTitle.setText(betEntry.getStringHomeScore());
+        holder.awayScoreTitle.setText(betEntry.getStringAwayScore());
     }
 
     @Override
@@ -81,7 +86,12 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         holder.betTypeTitle.setText(betDetails.getBetType());
         holder.pickTitle.setText(betDetails.getPick());
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
-        holder.statusTitle.setText(betDetails.getStatus());
+        holder.statusTitle.setText(betDetails.getStringStatus());
+        if (betDetails.getStatus() == 1)
+            holder.statusTitle.setTextColor(Color.GREEN);
+        if (betDetails.getStatus() == 2)
+            holder.statusTitle.setTextColor(Color.RED);
+
     }
 
     @Override
