@@ -1,6 +1,8 @@
 package com.example.jg.footballstats.history;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -26,11 +28,12 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
             return id;
         }
     }
-
+    private Context context;
     private BetEntryAdapter.IdGenerator mIdGenerator;
     private List<BetEntry> betList;
 
-    public BetEntryAdapter(List<BetEntry> betList) {
+    public BetEntryAdapter(Context context, List<BetEntry> betList) {
+        this.context = context;
         this.betList = betList;
         mIdGenerator = new BetEntryAdapter.IdGenerator();
         setHasStableIds(true);
@@ -70,13 +73,15 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
     public void onBindGroupViewHolder(BetEntryViewHolder holder, int groupPosition, int viewType) {
         BetEntry betEntry = betList.get(groupPosition);
         if (betEntry.getBetDetails().getStatus() == 1)
-            holder.statusIndicator.setBackgroundColor(Color.GREEN);
+            holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.winColor));
         if (betEntry.getBetDetails().getStatus() == 2)
-            holder.statusIndicator.setBackgroundColor(Color.RED);
+            holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.lossColor));
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
         holder.homeScoreTitle.setText(betEntry.getStringHomeScore());
         holder.awayScoreTitle.setText(betEntry.getStringAwayScore());
+        holder.homeScoreHTTitle.setText(betEntry.getStringHomeHTScore());
+        holder.awayScoreHTTitle.setText(betEntry.getStringAwayHTScore());
     }
 
     @Override
@@ -84,13 +89,13 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         BetDetails betDetails = betList.get(groupPosition).getBetDetails();
         holder.dateTitle.setText(betDetails.getTime());
         holder.betTypeTitle.setText(betDetails.getBetType());
-        holder.pickTitle.setText(betDetails.getPick());
+        holder.pickTitle.setText(betDetails.getBetName() == null ? betDetails.getPick() : betDetails.getBetName() + " " + betDetails.getPick());
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
         holder.statusTitle.setText(betDetails.getStringStatus());
         if (betDetails.getStatus() == 1)
-            holder.statusTitle.setTextColor(Color.GREEN);
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.winColor));
         if (betDetails.getStatus() == 2)
-            holder.statusTitle.setTextColor(Color.RED);
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.lossColor));
 
     }
 

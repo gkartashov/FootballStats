@@ -100,7 +100,7 @@ public class EventsFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new LeagueAdapter(leaguesList, clickListener);
+        mAdapter = new LeagueAdapter(getContext(),leaguesList, clickListener);
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         mRecyclerView.setAdapter(mWrappedAdapter);
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
@@ -244,7 +244,7 @@ public class EventsFragment extends Fragment {
         mExpandableItemManager.release();
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
-        mAdapter = new LeagueAdapter(new ArrayList<League>(),clickListener);
+        mAdapter = new LeagueAdapter(getContext(), new ArrayList<League>(),clickListener);
         mAdapter.addAllGroups(leaguesList);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);

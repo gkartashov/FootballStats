@@ -106,7 +106,8 @@ public class EventFragment extends Fragment {
                     onFailure(call, new Throwable("Invalid events number"));
                 else {
                     if (isPeriodsRefreshed(oddsList.getLeagues().get(0).getEvents().get(0).getPeriods(), oddsList.getLast()))
-                        refreshData();
+                        refreshData(oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore(),
+                                oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore());
                     oddsListInitialization(oddsList);
                 }
             }
@@ -161,7 +162,7 @@ public class EventFragment extends Fragment {
                 }
             }
             Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),0,0,0,0);
-            Bet bet = new Bet(Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),0);
+            Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),0);
             DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -216,8 +217,6 @@ public class EventFragment extends Fragment {
     }
 
     private void oddsListInitialization(OddsList oddsList) {
-        homeScore = oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore();
-        awayScore = oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore();
         scoreHome.setText(Integer.toString(homeScore));
         scoreAway.setText(Integer.toString(awayScore));
         recyclerView.setVisibility(View.VISIBLE);
@@ -257,10 +256,7 @@ public class EventFragment extends Fragment {
     }
 
     private void getOdds() {
-        //if (since == 0)
-            //apiController.getAPI().getOdds(29, event.getLeagueId(),"Decimal",event.getId()).enqueue(oddsListCallback);
-        //else
-            apiController.getAPI().getOddsSince(29, event.getLeagueId(),"Decimal", since, event.getId()).enqueue(oddsListCallback);
+        apiController.getAPI().getOddsSince(29, event.getLeagueId(),"Decimal", since, event.getId()).enqueue(oddsListCallback);
     }
 
     private boolean isPeriodsRefreshed(List<Period> newPeriods, long lastUpdate) {
@@ -281,7 +277,9 @@ public class EventFragment extends Fragment {
         return isRefreshed;
     }
 
-    private void refreshData() {
+    private void refreshData(int homeScore, int awayScore) {
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
         String periodString;
         int periodNumber = 0;
         wagers.clear();
@@ -305,20 +303,30 @@ public class EventFragment extends Fragment {
                 mAdapter.addListIdToChild(wager);
                 wagers.add(wager);
             }
-            /*if (handicaps != null) {
+            if (handicaps != null) {
                 List<Odd> handicapList = new ArrayList<>();
-                int ballDifference = Math.abs(homeScore - awayScore);
+                int ballDifference = homeScore - awayScore;
 
                 for(Spread s:handicaps) {
                     String homeTeam ="", awayTeam = "";
-                    if (ballDifference != 0)
-                        s.setHdp(s.getHdp() + ballDifference);
-                    if (s.getHdp() < 0) {
-                        homeTeam = "-";
-                        s.setHdp(Math.abs(s.getHdp()));
+                    //s.setHdp(ballDifference - s.getHdp());
+
+                    if (ballDifference > 0) {
+                        if (s.getHdp() < 0)
+                            homeTeam = "-";
+                        else if (s.getHdp() > 0)
+                            awayTeam = "-";
+                        s.setHdp(ballDifference - s.getHdp());
                     }
-                    else
-                        awayTeam = "-";
+                    else if (ballDifference < 0) {
+                        if (s.getHdp() > 0)
+                            awayTeam = "-";
+                        else if (s.getHdp() < 0)
+                            homeTeam = "-";
+                        s.setHdp(s.getHdp() - ballDifference);
+                    }
+                    if (!homeTeam.equals("") || !awayTeam.equals(""))
+                        s.setHdp(Math.abs(s.getHdp()));
                     handicapList.add(new Odd("First team " + homeTeam  + s.getStringHdp(), s.getHome()));
                     handicapList.add(new Odd("Second team " + awayTeam + s.getStringHdp(), s.getAway()));
                 }
@@ -331,7 +339,7 @@ public class EventFragment extends Fragment {
                 Wager wager = new Wager(periodString + "Handicap", handicapList);
                 mAdapter.addListIdToChild(wager);
                 wagers.add(wager);
-            }*/
+            }
             if (totals != null) {
                 List<Odd> totalsList = new ArrayList<>();
                 for(Total t:totals) {

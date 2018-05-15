@@ -29,4 +29,6 @@ public interface DatabaseAPI {
     Call<ResponseBody> placeBet(@Body() Bet bet);
     @GET("/bet_history")
     Call<List<Bet>> getUserBetHistory(@Query("username") String username);
+    @POST("/bet_history")
+    Call<ResponseBody> updateDb(@Body() List<Bet> betList);
 }

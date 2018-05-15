@@ -1,7 +1,9 @@
 package com.example.jg.footballstats;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -28,11 +30,13 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
             return id;
         }
     }
+    private Context context;
     private IdGenerator mIdGenerator;
     private List<League> leaguesList;
     private final IOnItemClickListener listener;
 
-    public LeagueAdapter(List<League> leaguesList, IOnItemClickListener listener) {
+    public LeagueAdapter(Context context, List<League> leaguesList, IOnItemClickListener listener) {
+        this.context = context;
         this.leaguesList = leaguesList;
         this.listener = listener;
         mIdGenerator = new IdGenerator();
@@ -81,7 +85,7 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
         holder.bind(eventEntry,listener);
         if (eventEntry.isStarted()) {
             holder.dateTextView.setText("LIVE");
-            holder.dateTextView.setTextColor(Color.RED);
+            holder.dateTextView.setTextColor(ContextCompat.getColor(context,R.color.lossColor));
             holder.dateTextView.setTypeface(null, Typeface.BOLD);
         } else {
             holder.dateTextView.setText(eventEntry.getDate());

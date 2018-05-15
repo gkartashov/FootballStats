@@ -3,6 +3,10 @@ package com.example.jg.footballstats.db;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+
 public class Event implements Parcelable {
     private long eventId;
     private int leagueId;
@@ -11,20 +15,20 @@ public class Event implements Parcelable {
     private String away;
     private int homeScore;
     private int awayScore;
-    private int homeHTScore;
-    private int awayHTScore;
+    private int homeScoreHT;
+    private int awayScoreHT;
 
     public Event() {
     }
 
-    public Event(long eventId, int leagueId, String starts, String home, String away, int homeScore, int awayScore, int homeHTScore, int awayHTScore) {
+    public Event(long eventId, int leagueId, String starts, String home, String away, int homeScore, int awayScore, int homeScoreHT, int awayScoreHT) {
         this.eventId = eventId;
         this.leagueId = leagueId;
         this.starts = starts;
         this.home = home;
         this.away = away;
-        this.homeHTScore = homeHTScore;
-        this.awayHTScore = awayHTScore;
+        this.homeScoreHT = homeScoreHT;
+        this.awayScoreHT = awayScoreHT;
         this.homeScore = homeScore;
         this.awayScore = awayScore;
     }
@@ -53,6 +57,22 @@ public class Event implements Parcelable {
         this.starts = starts;
     }
 
+    public String getHome() {
+        return home;
+    }
+
+    public void setHome(String home) {
+        this.home = home;
+    }
+
+    public String getAway() {
+        return away;
+    }
+
+    public void setAway(String away) {
+        this.away = away;
+    }
+
     public int getHomeScore() {
         return homeScore;
     }
@@ -69,36 +89,27 @@ public class Event implements Parcelable {
         this.awayScore = awayScore;
     }
 
-    public String getAway() {
-        return away;
+    public int getHomeScoreHT() {
+        return homeScoreHT;
     }
 
-    public void setAway(String away) {
-        this.away = away;
+    public void setHomeScoreHT(int homeScoreHT) {
+        this.homeScoreHT = homeScoreHT;
     }
 
-    public String getHome() {
-        return home;
+    public int getAwayScoreHT() {
+        return awayScoreHT;
     }
 
-    public void setHome(String home) {
-        this.home = home;
+    public void setAwayScoreHT(int awayScoreHT) {
+        this.awayScoreHT = awayScoreHT;
     }
 
-    public int getHomeHTScore() {
-        return homeHTScore;
-    }
-
-    public void setHomeHTScore(int homeHTScore) {
-        this.homeHTScore = homeHTScore;
-    }
-
-    public int getAwayHTScore() {
-        return awayHTScore;
-    }
-
-    public void setAwayHTScore(int awayHTScore) {
-        this.awayHTScore = awayHTScore;
+    public DateTime toLocalTime() {
+        return DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")
+                .parseDateTime(starts)
+                .withZoneRetainFields(DateTimeZone.UTC)
+                .withZone(DateTimeZone.getDefault());
     }
 
     @Override

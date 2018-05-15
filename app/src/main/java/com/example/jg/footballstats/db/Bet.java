@@ -1,5 +1,7 @@
 package com.example.jg.footballstats.db;
 
+import org.joda.time.LocalDateTime;
+
 public class Bet {
     private int betId;
     private User user;
@@ -13,7 +15,8 @@ public class Bet {
     public Bet() {
     }
 
-    public Bet(User user, Event event, String betType, String betName, String pick, double coefficient, int status) {
+    public Bet(int betId, User user, Event event, String betType, String betName, String pick, double coefficient, int status) {
+        this.betId = betId;
         this.user = user;
         this.event = event;
         this.betType = betType;
@@ -85,5 +88,13 @@ public class Bet {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean isFinished() {
+        return (event.toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
+    }
+
+    public boolean isFirstHalfFinished() {
+        return (event.toLocalTime().toDateTime().plusMinutes(55).isBefore(LocalDateTime.now().toDateTime()));
     }
 }

@@ -96,6 +96,14 @@ public class BetEntry implements Parcelable {
         return homeScoreHT;
     }
 
+    public String getStringHomeHTScore() {
+        return Integer.toString(homeScoreHT);
+    }
+
+    public String getStringAwayHTScore() {
+        return Integer.toString(awayScoreHT);
+    }
+
     public void setHomeScoreHT(int homeScoreHT) {
         this.homeScoreHT = homeScoreHT;
     }
@@ -114,6 +122,10 @@ public class BetEntry implements Parcelable {
 
     public boolean isFinished() {
         return (betDetails.toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
+    }
+
+    public boolean isFirstHalfFinished() {
+        return (betDetails.toLocalTime().toDateTime().plusMinutes(55).isBefore(LocalDateTime.now().toDateTime()));
     }
 
     public int getLeagueId() {
