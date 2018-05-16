@@ -3,7 +3,6 @@ package com.example.jg.footballstats;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,7 +20,6 @@ import android.widget.TextView;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.Event;
-import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.example.jg.footballstats.odds.Moneyline;
 import com.example.jg.footballstats.odds.Odd;
@@ -37,22 +35,16 @@ import com.h6ah4i.android.widget.advrecyclerview.animator.RefactoredDefaultItemA
 import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandableItemManager;
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Multipart;
-
 
 public class EventFragment extends Fragment {
 
@@ -108,7 +100,7 @@ public class EventFragment extends Fragment {
                     if (isPeriodsRefreshed(oddsList.getLeagues().get(0).getEvents().get(0).getPeriods(), oddsList.getLast()))
                         refreshData(oddsList.getLeagues().get(0).getEvents().get(0).getHomeScore(),
                                 oddsList.getLeagues().get(0).getEvents().get(0).getAwayScore());
-                    oddsListInitialization(oddsList);
+                    oddsListInitialization();
                 }
             }
 
@@ -123,35 +115,6 @@ public class EventFragment extends Fragment {
     public IOnItemClickListener clickListener = new IOnItemClickListener<Odd>() {
         @Override
         public void onItemClick(Odd item) {
-            /*DatabaseAPIController.getInstance().getAPI().getUserBetHistory(Constants.USER.getUsername()).enqueue(new Callback<List<Bet>>() {
-                @Override
-                public void onResponse(Call<List<Bet>> call, Response<List<Bet>> response) {
-                    Snackbar mSnackbar = Snackbar.make(rootView,response.body().toString(),Snackbar.LENGTH_LONG);
-                    mSnackbar.show();
-                }
-
-                @Override
-                public void onFailure(Call<List<Bet>> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });*/
-            /*APIController.getInstance().getAPI().getSettledFixtures(29,event.getLeagueId()).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    String govn = "";
-                    try {
-                        govn = response.body().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    govn += "govn";
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
-                }
-            });*/
             String betName = null;
             String pick = item.getType();
             if (!item.getWagerType().contains("Moneyline")) {
@@ -216,7 +179,7 @@ public class EventFragment extends Fragment {
         scoreAway = rootView.findViewById(R.id.event_away_score);
     }
 
-    private void oddsListInitialization(OddsList oddsList) {
+    private void oddsListInitialization() {
         scoreHome.setText(Integer.toString(homeScore));
         scoreAway.setText(Integer.toString(awayScore));
         recyclerView.setVisibility(View.VISIBLE);
@@ -309,24 +272,20 @@ public class EventFragment extends Fragment {
 
                 for(Spread s:handicaps) {
                     String homeTeam ="", awayTeam = "";
-                    //s.setHdp(ballDifference - s.getHdp());
-
                     if (ballDifference > 0) {
-                        if (s.getHdp() < 0)
-                            homeTeam = "-";
-                        else if (s.getHdp() > 0)
-                            awayTeam = "-";
+                        homeTeam = "-";
                         s.setHdp(ballDifference - s.getHdp());
                     }
                     else if (ballDifference < 0) {
-                        if (s.getHdp() > 0)
-                            awayTeam = "-";
-                        else if (s.getHdp() < 0)
-                            homeTeam = "-";
+                        awayTeam = "-";
                         s.setHdp(s.getHdp() - ballDifference);
+                    } else {
+                        if (s.getHdp() < 0.0)
+                            homeTeam = "-";
+                        else if (s.getHdp() > 0.0)
+                            awayTeam = "-";
                     }
-                    if (!homeTeam.equals("") || !awayTeam.equals(""))
-                        s.setHdp(Math.abs(s.getHdp()));
+                    s.setHdp(Math.abs(s.getHdp()));
                     handicapList.add(new Odd("First team " + homeTeam  + s.getStringHdp(), s.getHome()));
                     handicapList.add(new Odd("Second team " + awayTeam + s.getStringHdp(), s.getAway()));
                 }

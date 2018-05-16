@@ -2,15 +2,12 @@ package com.example.jg.footballstats;
 
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 
 import com.db.chart.model.Bar;
 import com.db.chart.model.BarSet;
-import com.db.chart.model.ChartSet;
 import com.db.chart.model.LineSet;
 import com.db.chart.view.ChartView;
 

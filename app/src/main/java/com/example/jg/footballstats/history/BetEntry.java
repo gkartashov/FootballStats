@@ -157,7 +157,7 @@ public class BetEntry implements Parcelable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BetEntry betEntry = (BetEntry) o;
-        return betId == betEntry.betId && betDetails.getStatus() == betEntry.betDetails.getStatus();
+        return betId == betEntry.betId;
     }
 
     @Override

@@ -5,13 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,8 +19,6 @@ import android.view.ViewGroup;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.Event;
-import com.example.jg.footballstats.fixtures.EventsList;
-import com.example.jg.footballstats.fixtures.League;
 import com.example.jg.footballstats.history.BetDetails;
 import com.example.jg.footballstats.history.BetEntry;
 import com.example.jg.footballstats.history.BetEntryAdapter;
@@ -35,17 +31,11 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.regex.Matcher;
 
 import retrofit2.Response;
-
-import static com.example.jg.footballstats.Constants.SPORT_ID;
-
 
 public class BetHistoryFragment extends Fragment {
     private class RefreshingHandler extends Handler {
@@ -243,7 +233,7 @@ public class BetHistoryFragment extends Fragment {
         if (betsList.size() == 0) {
             betsList = betListToBetEntryList(betArrayList, betResult);
             for (BetEntry b: betsList)
-                if (b.getBetDetails().getStatus() == 0) {
+                if (b.getBetDetails().getStatus() == 0 && (b.isFirstHalfFinished() || b.isFinished())) {
                     BetsCalculator.CalculateBet(b);
                     updateList.add(b);
                 }
@@ -251,12 +241,14 @@ public class BetHistoryFragment extends Fragment {
         else {
             int betIndex;
             for(BetEntry b:betListToBetEntryList(betArrayList,betResult)) {
-                if (b.getBetDetails().getStatus() == 0) {
+                if (b.getBetDetails().getStatus() == 0 && (b.isFirstHalfFinished() || b.isFinished())) {
                     BetsCalculator.CalculateBet(b);
                     updateList.add(b);
                 }
                 if ((betIndex = betsList.indexOf(b)) >= 0) {
-                    if (betsList.get(betIndex).getBetDetails().getStatus() < b.getBetDetails().getStatus())
+                    if (betsList.get(betIndex).getBetDetails().getStatus() <= b.getBetDetails().getStatus() ||
+                            betsList.get(betIndex).getHomeScore() + betsList.get(betIndex).getAwayScore() != b.getHomeScore() + b.getAwayScore() ||
+                            betsList.get(betIndex).getHomeScoreHT() + betsList.get(betIndex).getAwayScoreHT() != b.getHomeScoreHT() + b.getAwayScoreHT())
                         betsList.set(betIndex, b);
                 }
                 else
@@ -287,10 +279,7 @@ public class BetHistoryFragment extends Fragment {
                 Response responsePinnacle = null;
                 Set<Integer> leaguesId = getLeaguesIdArray((List<Bet>) responseDb.body());
                 if (leaguesId.size() > 0)
-                    //if (since == 0)
-                        responsePinnacle = apiController.getAPI().getSettledFixtures(Constants.SPORT_ID,leaguesId).execute();
-                    //else
-                        //responsePinnacle = apiController.getAPI().getSettledFixturesSince(Constants.SPORT_ID,leaguesId,since).execute();
+                    responsePinnacle = apiController.getAPI().getSettledFixtures(Constants.SPORT_ID,leaguesId).execute();
                 if (responseDb != null) {
                     List<Bet> betList = (List<Bet>) responseDb.body();
                     BetResult betResult = responsePinnacle == null ? null :(BetResult) responsePinnacle.body();
@@ -319,9 +308,7 @@ public class BetHistoryFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Response responseDb = dbController.getAPI().updateDb(betEntryListToBetList(updateList)).execute();
-                //if (responseDb != null)
-                    //Snackbar.make(rootView,"DB has been successfully updated!",Snackbar.LENGTH_LONG).show();
+                dbController.getAPI().updateDb(betEntryListToBetList(updateList)).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }
