@@ -144,140 +144,77 @@ public class BetsCalculator {
         }
     }
 
+    private static Pair<Boolean,Double> totalHelper(String betName, int totalGoals, double totalPick, double coefficient) {
+        if (totalGoals > totalPick)
+            return betName.equals("Over") ? new Pair<>(true, coefficient) : new Pair<>(false, 0.0);
+        else if (totalGoals == totalPick)
+            return new Pair<>(true, 1.0);
+        else
+            return betName.equals("Over") ? new Pair<>(false, 0.0) : new Pair<>(true, coefficient);
+    }
+
+    /*private static Pair<Boolean,Double> total05Helper(String betName, int totalGoals, double totalPick, double coefficient) {
+        if (totalGoals > totalPick)
+            return betName.equals("Over") ? new Pair<>(true, coefficient) : new Pair<>(false, 0.0);
+        else
+            return betName.equals("Over") ? new Pair<>(false, 0.0) : new Pair<>(true, coefficient);
+    }*/
+
     private static void betTotalsCalculation(BetEntry betEntry, double totalPick, int totalGoals, double totalPickType, double totalPickGoals) {
-        switch (betEntry.getBetDetails().getBetName()) {
-            case "Over":
-                //total over .0
-                if (totalPickType == 0.0)
-                    if (totalGoals > totalPick)
-                        betEntry.getBetDetails().setStatus(1);
-                    else if (totalGoals == totalPick) {
-                        betEntry.getBetDetails().setStatus(1);
-                        betEntry.getBetDetails().setCoefficient(1.0);
-                    } else
-                        betEntry.getBetDetails().setStatus(2);
-                //total over .5
-                if (totalPickType == 5.0)
-                    if (totalGoals > totalPick)
-                        betEntry.getBetDetails().setStatus(1);
-                    else
-                        betEntry.getBetDetails().setStatus(2);
-                //total over .25
-                if (totalPickType == 2.5) {
-                    boolean firstPart = true, secondPart = true;
-                    double coef1 = betEntry.getBetDetails().getCoefficient(), coef2 = coef1;
-                    if (totalGoals > totalPickGoals + 0.5)
-                        secondPart = true;
-                    else {
-                        secondPart = false;
-                        coef2 = 0.0;
-                    }
-                    if (secondPart)
-                        betEntry.getBetDetails().setStatus(1);
-                    else {
-                        if (totalGoals > totalPickGoals)
-                            firstPart = true;
-                        else if (totalGoals == totalPickGoals) {
-                            firstPart = true;
-                            coef1 = 1.0;
-                        } else {
-                            firstPart = false;
-                            coef1 = 0.0;
-                        }
-                    }
-                    if (firstPart)
-                        betEntry.getBetDetails().setStatus(1);
-                    else
-                        betEntry.getBetDetails().setStatus(2);
-                }
-                //total over .75
-                if (totalPickType == 7.5) {
-                    boolean firstPart = true, secondPart = true;
-                    double coef1 = betEntry.getBetDetails().getCoefficient(), coef2 = coef1;
-                    if (totalGoals > totalPickGoals + 1.0)
-                        secondPart = true;
-                    else if (totalGoals == totalPickGoals + 1.0) {
-                        secondPart = true;
-                        coef2 = 1.0;
-                    } else {
-                        secondPart = firstPart = false;
-                        coef2 = coef1 = 0.0;
-                    }
-
-                    if (secondPart)
-                        betEntry.getBetDetails().setStatus(1);
-                    else
-                        betEntry.getBetDetails().setStatus(2);
-                }
-                break;
-            case "Under":
-                //total under .0
-                if (totalPickType == 0.0)
-                    if (totalGoals < totalPick)
-                        betEntry.getBetDetails().setStatus(1);
-                    else if (totalGoals == totalPick) {
-                        betEntry.getBetDetails().setStatus(1);
-                        betEntry.getBetDetails().setCoefficient(1.0);
-                    } else
-                        betEntry.getBetDetails().setStatus(2);
-                //total under .5
-                if (totalPickType == 5.0)
-                    if (totalGoals < totalPick)
-                        betEntry.getBetDetails().setStatus(1);
-                    else
-                        betEntry.getBetDetails().setStatus(2);
-                //total under .25
-                if (totalPickType == 2.5) {
-                    boolean firstPart = true, secondPart = true;
-                    double coef1 = betEntry.getBetDetails().getCoefficient(), coef2 = coef1;
-                    if (totalGoals < totalPickGoals + 0.5)
-                        secondPart = true;
-                    else {
-                        secondPart = firstPart = false;
-                        coef2 = coef1 = 0.0;
-                    }
-                    if (!secondPart)
-                        betEntry.getBetDetails().setStatus(2);
-                    else {
-                        if (totalGoals < totalPickGoals)
-                            firstPart = true;
-                        else if (totalGoals == totalPickGoals) {
-                            firstPart = true;
-                            coef1 = 1.0;
-                        }
-                        betEntry.getBetDetails().setStatus(1);
-                    }
-
-                }
-                //total under .75
-                if (totalPickType == 7.5) {
-                    boolean firstPart = true, secondPart = true;
-                    double coef1 = betEntry.getBetDetails().getCoefficient(), coef2 = coef1;
-                    if (totalGoals < totalPickGoals + 1.0)
-                        secondPart = true;
-                    else if (totalGoals == totalPickGoals + 1.0) {
-                        secondPart = true;
-                        coef2 = 1.0;
-                    } else {
-                        secondPart = firstPart = false;
-                        coef2 = coef1 = 0.0;
-                    }
-                    if (!secondPart)
-                        betEntry.getBetDetails().setStatus(2);
-                    else {
-                        if (totalGoals < totalPickGoals + 0.5)
-                            firstPart = true;
-                        else {
-                            firstPart = false;
-                            coef1 = 0.0;
-                        }
-                        betEntry.getBetDetails().setStatus(1);
-                    }
-                    break;
-                }
-            default:
-                break;
+        String betName = betEntry.getBetDetails().getBetName();
+        double coef = betEntry.getBetDetails().getCoefficient();
+        Pair <Boolean,Double> result;
+        //total over .0 and total over .5
+        if (totalPickType == 0.0 || totalPickType == 5.0) {
+            result = totalHelper(betName,totalGoals,totalPick,coef);
+            betEntry.getBetDetails().setStatus(result.first ? 1 : 2);
+            betEntry.getBetDetails().setCoefficient(result.second);
         }
+        //total over .25
+        if (totalPickType == 2.5) {
+            if (betName.equals("Over"))
+                result = totalHelper(betName,totalGoals,totalPickGoals + 0.5,coef);
+            else
+                result = totalHelper(betName,totalGoals, totalPickGoals,coef);
+            if (result.first) {
+                betEntry.getBetDetails().setStatus(1);
+                betEntry.getBetDetails().setCoefficient(result.second);
+            } else {
+                Pair<Boolean,Double> secondPart = null;
+                if (betName.equals("Over"))
+                    secondPart = totalHelper(betName, totalGoals, totalPickGoals, coef);
+                else
+                    secondPart = totalHelper(betName, totalGoals, totalPickGoals + 0.5, coef);
+                if (secondPart.first) {
+                    betEntry.getBetDetails().setStatus(1);
+                    betEntry.getBetDetails().setCoefficient(result.second);
+                } else
+                    betEntry.getBetDetails().setStatus(2);
+            }
+        }
+        //total over .75
+        if (totalPickType == 7.5) {
+            if (betName.equals("Over"))
+                result = totalHelper(betName, totalGoals, totalPickGoals + 1.0, coef);
+            else
+                result = totalHelper(betName, totalGoals, totalPickGoals + 0.5, coef);
+            if (result.first) {
+                betEntry.getBetDetails().setStatus(1);
+                betEntry.getBetDetails().setCoefficient(result.second);
+            } else {
+                Pair<Boolean, Double> secondPart = null;
+                if (betName.equals("Over"))
+                    secondPart = totalHelper(betName, totalGoals, totalPickGoals + 0.5, coef);
+                else
+                    secondPart = totalHelper(betName, totalGoals, totalPickGoals + 1.0, coef);
+                if (secondPart.first) {
+                    betEntry.getBetDetails().setStatus(1);
+                    betEntry.getBetDetails().setCoefficient(result.second);
+                } else
+                    betEntry.getBetDetails().setStatus(2);
+            }
+        }
+
     }
 
     private static void betHandicapCalculation(BetEntry betEntry, double handicapPick, int homeScore, int awayScore, double handicapPickType, double totalPickGoals) {
