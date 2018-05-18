@@ -10,12 +10,13 @@ public class Bet {
     private String betName;
     private String pick;
     private double coefficient;
+    private double realCoefficient;
     private int status;
 
     public Bet() {
     }
 
-    public Bet(int betId, User user, Event event, String betType, String betName, String pick, double coefficient, int status) {
+    public Bet(int betId, User user, Event event, String betType, String betName, String pick, double coefficient, double realCoefficient, int status) {
         this.betId = betId;
         this.user = user;
         this.event = event;
@@ -23,6 +24,7 @@ public class Bet {
         this.betName = betName;
         this.pick = pick;
         this.coefficient = coefficient;
+        this.realCoefficient = realCoefficient;
         this.status = status;
     }
 
@@ -88,6 +90,14 @@ public class Bet {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public double getRealCoefficient() {
+        return realCoefficient;
+    }
+
+    public void setRealCoefficient(double realCoefficient) {
+        this.realCoefficient = realCoefficient;
     }
 
     public boolean isFinished() {

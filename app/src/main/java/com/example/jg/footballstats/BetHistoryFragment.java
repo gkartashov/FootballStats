@@ -161,7 +161,7 @@ public class BetHistoryFragment extends Fragment {
                         event.getAwayScore(),
                         event.getHomeScoreHT(),
                         event.getAwayScoreHT(),
-                        new BetDetails(event.getStarts(),b.getBetType(),b.getBetName(),b.getPick(),b.getCoefficient(),b.getStatus()));
+                        new BetDetails(event.getStarts(),b.getBetType(),b.getBetName(),b.getPick(),b.getCoefficient(),b.getRealCoefficient(),b.getStatus()));
                 if (betResult != null && betResult.getLeagues() != null) {
                     int leagueIndex, eventIndex;
                     if ((leagueIndex = betResult.getLeagues().indexOf(new com.example.jg.footballstats.history.League(event.getLeagueId()))) >= 0 &&
@@ -223,6 +223,7 @@ public class BetHistoryFragment extends Fragment {
                         be.getBetDetails().getBetName(),
                         be.getBetDetails().getPick(),
                         be.getBetDetails().getCoefficient(),
+                        be.getBetDetails().getRealCoefficient(),
                         be.getBetDetails().getStatus()));
             }
         }

@@ -125,12 +125,11 @@ public class EventFragment extends Fragment {
                 }
             }
             Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),0,0,0,0);
-            Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),0);
+            Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),item.getCoefficient(),0);
             DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Snackbar mSnackbar = Snackbar.make(rootView,"Done!",Snackbar.LENGTH_LONG);
-                    mSnackbar.show();
+                    Snackbar.make(rootView,"Done!",Snackbar.LENGTH_LONG).show();
                 }
 
                 @Override

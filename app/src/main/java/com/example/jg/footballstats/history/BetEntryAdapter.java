@@ -74,8 +74,10 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         BetEntry betEntry = betList.get(groupPosition);
         if (betEntry.getBetDetails().getStatus() == 1)
             holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.winColor));
-        if (betEntry.getBetDetails().getStatus() == 2)
+        else if (betEntry.getBetDetails().getStatus() == 2)
             holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.lossColor));
+        else
+            holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.primaryLightColor));
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
         holder.homeScoreTitle.setText(betEntry.getStringHomeScore());
@@ -91,11 +93,14 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         holder.betTypeTitle.setText(betDetails.getBetType());
         holder.pickTitle.setText(betDetails.getBetName() == null ? betDetails.getPick() : betDetails.getBetName() + " " + betDetails.getPick());
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
+        holder.realCoefficientTitle.setText(betDetails.getStringRealCoefficient());
         holder.statusTitle.setText(betDetails.getStringStatus());
         if (betDetails.getStatus() == 1)
             holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.winColor));
-        if (betDetails.getStatus() == 2)
+        else if (betDetails.getStatus() == 2)
             holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.lossColor));
+        else
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.primaryTextColor));
 
     }
 
@@ -111,6 +116,7 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
     public void addAllGroups(List<BetEntry> list) {
         for (BetEntry b : list) {
             b.setId(mIdGenerator.nextGroup());
+            b.getBetDetails().setId(mIdGenerator.nextChild());
             betList.add(b);
         }
     }
