@@ -10,12 +10,15 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.Event;
@@ -45,6 +48,9 @@ public class BetHistoryFragment extends Fragment {
                 case 0:
                     refreshExpandableRecyclerView();
                     break;
+                case -1:
+                    betsAcceptingRestrictionInitialization();
+                    break;
                 default:
                     break;
             }
@@ -63,7 +69,6 @@ public class BetHistoryFragment extends Fragment {
     private BetHistoryFragment.HistoryRefreshTask mHistoryRefreshTask;
     private BetHistoryFragment.DbRefreshTask mUpdateDbTask;
 
-    private List<BetEntry> betsList = new ArrayList<>();
     private List<BetEntry> updateList = new ArrayList<>();
     private long since;
 
@@ -88,7 +93,7 @@ public class BetHistoryFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new BetEntryAdapter(getContext(), betsList);
+        mAdapter = new BetEntryAdapter(getContext(), Constants.BETS_LIST);
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         mRecyclerView.setAdapter(mWrappedAdapter);
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
@@ -96,10 +101,21 @@ public class BetHistoryFragment extends Fragment {
         mHandler = new BetHistoryFragment.RefreshingHandler();
         mSwipeRefreshLayout = rootView.findViewById(R.id.history_swipe_refresh_layout);
         mSwipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-        if (betsList.size() == 0)
+        if (Constants.BETS_LIST.size() == 0)
             onRefreshListener.onRefresh();
 
         return rootView;
+    }
+
+    private void betsAcceptingRestrictionInitialization() {
+        LinearLayout linearLayout = rootView.findViewById(R.id.history_recycler_view_layout);
+        mRecyclerView.setVisibility(View.GONE);
+        TextView textView = new TextView(getContext());
+        textView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT));
+        textView.setText("No bets yet");
+        textView.setGravity(Gravity.CENTER);
+        linearLayout.addView(textView);
+        linearLayout.invalidate();
     }
 
     @Override
@@ -138,12 +154,13 @@ public class BetHistoryFragment extends Fragment {
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
         mAdapter = new BetEntryAdapter(getContext(), new ArrayList<BetEntry>());
-        mAdapter.addAllGroups(betsList);
+        mAdapter.addAllGroups(Constants.BETS_LIST);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         mRecyclerView.setAdapter(mWrappedAdapter);
         mWrappedAdapter.notifyDataSetChanged();
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
+        mRecyclerView.setVisibility(View.VISIBLE);
     }
 
     private List<BetEntry> betListToBetEntryList(List<Bet> betArrayList, BetResult betResult) {
@@ -231,9 +248,9 @@ public class BetHistoryFragment extends Fragment {
     }
 
     private void refreshHistory(List<Bet> betArrayList, BetResult betResult) {
-        if (betsList.size() == 0) {
-            betsList = betListToBetEntryList(betArrayList, betResult);
-            for (BetEntry b: betsList)
+        if (Constants.BETS_LIST.size() == 0) {
+            Constants.BETS_LIST = betListToBetEntryList(betArrayList, betResult);
+            for (BetEntry b: Constants.BETS_LIST)
                 if (b.getBetDetails().getStatus() == 0 && (b.isFirstHalfFinished() || b.isFinished())) {
                     BetsCalculator.CalculateBet(b);
                     updateList.add(b);
@@ -246,14 +263,14 @@ public class BetHistoryFragment extends Fragment {
                     BetsCalculator.CalculateBet(b);
                     updateList.add(b);
                 }
-                if ((betIndex = betsList.indexOf(b)) >= 0) {
-                    if (betsList.get(betIndex).getBetDetails().getStatus() <= b.getBetDetails().getStatus() ||
-                            betsList.get(betIndex).getHomeScore() + betsList.get(betIndex).getAwayScore() != b.getHomeScore() + b.getAwayScore() ||
-                            betsList.get(betIndex).getHomeScoreHT() + betsList.get(betIndex).getAwayScoreHT() != b.getHomeScoreHT() + b.getAwayScoreHT())
-                        betsList.set(betIndex, b);
+                if ((betIndex = Constants.BETS_LIST.indexOf(b)) >= 0) {
+                    if (Constants.BETS_LIST.get(betIndex).getBetDetails().getStatus() <= b.getBetDetails().getStatus() ||
+                            Constants.BETS_LIST.get(betIndex).getHomeScore() + Constants.BETS_LIST.get(betIndex).getAwayScore() != b.getHomeScore() + b.getAwayScore() ||
+                            Constants.BETS_LIST.get(betIndex).getHomeScoreHT() + Constants.BETS_LIST.get(betIndex).getAwayScoreHT() != b.getHomeScoreHT() + b.getAwayScoreHT())
+                        Constants.BETS_LIST.set(betIndex, b);
                 }
                 else
-                    betsList.add(b);
+                    Constants.BETS_LIST.add(0,b);
             }
             since = betResult == null ? 0 :betResult.getLast();
         }
@@ -268,13 +285,14 @@ public class BetHistoryFragment extends Fragment {
         return leagues;
     }
 
-    public class HistoryRefreshTask extends AsyncTask<Void, Void, Void> {
+    public class HistoryRefreshTask extends AsyncTask<Void, Void, Boolean> {
         public HistoryRefreshTask() {
 
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Boolean doInBackground(Void... params) {
+            boolean isRefreshed = true;
             try {
                 Response responseDb = dbController.getAPI().getUserBetHistory(Constants.USER.getUsername()).execute();
                 Response responsePinnacle = null;
@@ -285,19 +303,26 @@ public class BetHistoryFragment extends Fragment {
                     List<Bet> betList = (List<Bet>) responseDb.body();
                     BetResult betResult = responsePinnacle == null ? null :(BetResult) responsePinnacle.body();
                     refreshHistory(betList,betResult);
-                }
-                mUpdateDbTask = new BetHistoryFragment.DbRefreshTask();
-                mUpdateDbTask.execute((Void) null);
+                    mUpdateDbTask = new BetHistoryFragment.DbRefreshTask();
+                    mUpdateDbTask.execute((Void) null);
+                } else
+                    isRefreshed = false;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return isRefreshed;
         }
 
         @Override
-        protected void onPostExecute(final Void nothing) {
+        protected void onPostExecute(final Boolean isRefreshed) {
             mHistoryRefreshTask = null;
-            mHandler.sendEmptyMessage(0);
+            if (isRefreshed)
+                if (Constants.BETS_LIST.isEmpty())
+                    mHandler.sendEmptyMessage(-1);
+                else
+                    mHandler.sendEmptyMessage(0);
+            else
+                mHandler.sendEmptyMessage(-1);
             mSwipeRefreshLayout.setRefreshing(false);
         }
     }

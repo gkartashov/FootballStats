@@ -224,13 +224,14 @@ public class SignUpActivity extends AppCompatActivity {
             showProgress(false);
 
             if (user != null) {
+                Constants.USER = mUser;
+                Constants.EVENTS_LIST.clear();
+                Constants.BETS_LIST.clear();
                 startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                 finish();
             }
-            else {
-                Snackbar mSnackbar = Snackbar.make(mSignUpFormView,mMessage,Snackbar.LENGTH_LONG);
-                mSnackbar.show();
-            }
+            else
+                Snackbar.make(mSignUpFormView,mMessage,Snackbar.LENGTH_LONG).show();
         }
 
         @Override

@@ -66,7 +66,6 @@ public class EventsFragment extends Fragment {
     private APIController apiController = APIController.getInstance();
     private EventsRefreshTask mEventsRefreshTask;
 
-    private List<League> leaguesList = new ArrayList<>();
     private long since;
 
     public EventsFragment() {
@@ -100,7 +99,7 @@ public class EventsFragment extends Fragment {
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new LeagueAdapter(getContext(),leaguesList, clickListener);
+        mAdapter = new LeagueAdapter(getContext(),Constants.EVENTS_LIST, clickListener);
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         mRecyclerView.setAdapter(mWrappedAdapter);
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
@@ -108,7 +107,7 @@ public class EventsFragment extends Fragment {
         mHandler = new RefreshingHandler();
         swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
-        if (leaguesList.size() == 0)
+        if (Constants.EVENTS_LIST.size() == 0)
             onRefreshListener.onRefresh();
 
         return rootView;
@@ -180,17 +179,17 @@ public class EventsFragment extends Fragment {
 
     private void filterLeagues() {
         List<League> leaguesForRemove = new ArrayList<>();
-        for (League l:leaguesList)
+        for (League l : Constants.EVENTS_LIST)
             if (l.getName().contains(ExclusionTags.CORNERS.getDescription()) ||
                     l.getName().contains(ExclusionTags.BOOKINGS.getDescription()) ||
                     !filterEvents(l))
                 leaguesForRemove.add(l);
-        leaguesList.removeAll(leaguesForRemove);
+        Constants.EVENTS_LIST.removeAll(leaguesForRemove);
 
     }
 
     private void sortLeagues() {
-        leaguesList.sort(new Comparator<League>() {
+        Constants.EVENTS_LIST.sort(new Comparator<League>() {
             @Override
             public int compare(League o1, League o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -199,7 +198,7 @@ public class EventsFragment extends Fragment {
     }
 
     private void sortEvents() {
-        for (League l:leaguesList)
+        for (League l : Constants.EVENTS_LIST)
             l.getEvents().sort(new Comparator<EventEntry>() {
                 @Override
                 public int compare(EventEntry o1, EventEntry o2) {
@@ -211,25 +210,25 @@ public class EventsFragment extends Fragment {
     private void refreshLeaguesList(EventsList eventsList) {
         List<League> updates = eventsList.getLeague();
         int leagueIndex, eventIndex;
-        for(League l:updates)
-            if ((leagueIndex = leaguesList.indexOf(l)) >= 0) {
+        for(League l : updates)
+            if ((leagueIndex = Constants.EVENTS_LIST.indexOf(l)) >= 0) {
                 List<EventEntry> updatesEvents = l.getEvents();
                 for (EventEntry e: updatesEvents)
-                    if ((eventIndex = leaguesList.get(leagueIndex).getEvents().indexOf(l)) > 0) {
-                        leaguesList.get(leagueIndex).getEvents().set(eventIndex,e);
+                    if ((eventIndex = Constants.EVENTS_LIST.get(leagueIndex).getEvents().indexOf(l)) > 0) {
+                        Constants.EVENTS_LIST.get(leagueIndex).getEvents().set(eventIndex,e);
                     }
                     else
-                        leaguesList.get(leagueIndex).addEvent(e);
+                        Constants.EVENTS_LIST.get(leagueIndex).addEvent(e);
             }
             else
-                leaguesList.add(l);
+                Constants.EVENTS_LIST.add(l);
         since = eventsList.getLast();
         eventListProcessing();
     }
 
     private void initializeLeaguesList(EventsList eventsList) {
         since = eventsList.getLast();
-        leaguesList = eventsList.getLeague();
+        Constants.EVENTS_LIST = eventsList.getLeague();
         eventListProcessing();
     }
 
@@ -245,7 +244,7 @@ public class EventsFragment extends Fragment {
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
         mAdapter = new LeagueAdapter(getContext(), new ArrayList<League>(),clickListener);
-        mAdapter.addAllGroups(leaguesList);
+        mAdapter.addAllGroups(Constants.EVENTS_LIST);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         mRecyclerView.setAdapter(mWrappedAdapter);

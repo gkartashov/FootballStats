@@ -1,11 +1,17 @@
 package com.example.jg.footballstats;
 
 import com.example.jg.footballstats.db.User;
+import com.example.jg.footballstats.fixtures.League;
+import com.example.jg.footballstats.history.BetEntry;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Constants {
     public static User USER = null;
+    public static List<BetEntry> BETS_LIST = new ArrayList<>();
+    public static List<League> EVENTS_LIST = new ArrayList<>();
     public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
     public static final Pattern VALID_PASSWORD_REGEX =

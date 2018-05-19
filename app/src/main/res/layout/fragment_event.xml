@@ -79,8 +79,6 @@
     </LinearLayout>
 </LinearLayout>
 
-
-
     <LinearLayout
         android:id="@+id/event_recycler_view_layout"
         android:layout_width="match_parent"

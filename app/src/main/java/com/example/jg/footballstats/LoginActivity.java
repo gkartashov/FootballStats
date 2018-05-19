@@ -225,13 +225,13 @@ public class LoginActivity extends AppCompatActivity {
 
             if (user != null) {
                 Constants.USER = mUser;
+                Constants.EVENTS_LIST.clear();
+                Constants.BETS_LIST.clear();
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
                 finish();
             }
-            else {
-                Snackbar mSnackbar = Snackbar.make(mLoginFormView,mMessage,Snackbar.LENGTH_LONG);
-                mSnackbar.show();
-            }
+            else
+                Snackbar.make(mLoginFormView,mMessage,Snackbar.LENGTH_LONG).show();
         }
 
         @Override

@@ -89,7 +89,7 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
     @Override
     public void onBindChildViewHolder(BetDetailsViewHolder holder, int groupPosition, int childPosition, int viewType) {
         BetDetails betDetails = betList.get(groupPosition).getBetDetails();
-        holder.dateTitle.setText(betDetails.getTime());
+        holder.dateTitle.setText(betDetails.getStartDateTime());
         holder.betTypeTitle.setText(betDetails.getBetType());
         holder.pickTitle.setText(betDetails.getBetName() == null ? betDetails.getPick() : betDetails.getBetName() + " " + betDetails.getPick());
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
