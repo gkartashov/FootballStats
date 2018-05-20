@@ -210,6 +210,10 @@ public class EventEntry implements Parcelable {
         return (toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
     }
 
+    public boolean isLive() {
+        return isStarted() && ! isFinished();
+    }
+
     @Override
     public int describeContents() {
         return 0;

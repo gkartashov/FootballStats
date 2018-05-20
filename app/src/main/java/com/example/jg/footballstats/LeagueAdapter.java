@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.jg.footballstats.fixtures.EventEntry;
@@ -76,6 +77,7 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
     public void onBindGroupViewHolder(LeagueViewHolder holder, int groupPosition, int viewType) {
         League league = leaguesList.get(groupPosition);
         holder.leagueTextView.setText(league.getName());
+        holder.liveDot.setVisibility(league.isLive() ? View.VISIBLE : View.GONE);
     }
 
     @Override

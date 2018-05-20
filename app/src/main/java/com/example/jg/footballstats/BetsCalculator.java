@@ -4,6 +4,8 @@ import android.util.Pair;
 
 import com.example.jg.footballstats.history.BetEntry;
 
+import java.text.DecimalFormat;
+
 public class BetsCalculator {
     public static void CalculateBet(BetEntry betEntry) {
         boolean isFinished = betEntry.isFinished(), isFirstHalfFinished = betEntry.isFirstHalfFinished();
@@ -186,7 +188,7 @@ public class BetsCalculator {
             Pair<Integer,Double> firstPart, secondPart;
             firstPart = totalHelper(betName,totalGoals,totalPickGoals + 0.5,coef);
             secondPart = totalHelper(betName, totalGoals, totalPickGoals + 1.0, coef);
-            return new Pair<>((firstPart.first + secondPart.first) / 2, (firstPart.second + secondPart.second) / 2.0);
+            return new Pair<>((firstPart.first + secondPart.first) / 2, Double.parseDouble(new DecimalFormat(".####").format((firstPart.second + secondPart.second) / 2.0)));
         } else
             return new Pair<>(2,0.0);
     }
@@ -200,13 +202,13 @@ public class BetsCalculator {
         else if (hdpType == 2.5) {
             Pair<Integer,Double> firstPart, secondPart;
             firstPart = asianHandicapHelper(handicapPickGoals, betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
-            secondPart = asianHandicapHelper(handicapPickGoals > 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            secondPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
             return new Pair<>((firstPart.first + secondPart.first) / 2, (firstPart.second + secondPart.second) / 2.0);
         //handicap .75
         } else if (hdpType == 7.5) {
             Pair<Integer, Double> firstPart, secondPart;
-            firstPart = asianHandicapHelper(handicapPickGoals > 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
-            secondPart = asianHandicapHelper(handicapPickGoals > 0 ? handicapPickGoals + 1.0 : reverse(reverse(handicapPickGoals) + 1.0), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            firstPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            secondPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 1.0 : reverse(reverse(handicapPickGoals) + 1.0), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
             return new Pair<>((firstPart.first + secondPart.first) / 2, (firstPart.second + secondPart.second) / 2.0);
         } else
             return new Pair<>(2,0.0);

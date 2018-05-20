@@ -166,8 +166,10 @@ public class EventsFragment extends Fragment {
                         !e.isStarted() && e.getParentId() != 0 ||
                         e.isFinished())
                     eventEntriesForRemove.add(e);
-                else
+                else {
                     e.setLeagueId(l.getId());
+                    l.setLive(e.isLive());
+                }
         }
         l.getEvents().removeAll(eventEntriesForRemove);
         if (l.getEvents().size() > 0) {

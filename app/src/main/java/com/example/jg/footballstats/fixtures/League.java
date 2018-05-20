@@ -21,6 +21,7 @@ public class League {
     @SerializedName("events")
     @Expose
     private List<EventEntry> events = new ArrayList<>();
+    private boolean isLive = false;
 
     public League() {
     }
@@ -71,6 +72,15 @@ public class League {
     public void addEvent(EventEntry eventEntry) {
         events.add(eventEntry);
     }
+
+    public boolean isLive() {
+        return isLive;
+    }
+
+    public void setLive(boolean live) {
+        isLive = live;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

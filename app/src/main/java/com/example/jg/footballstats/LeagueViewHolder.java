@@ -7,9 +7,11 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 
 public class LeagueViewHolder extends AbstractExpandableItemViewHolder {
     public TextView leagueTextView;
+    public View liveDot;
 
     public LeagueViewHolder(View itemView) {
         super(itemView);
         leagueTextView = itemView.findViewById(R.id.league_name);
+        liveDot = itemView.findViewById(R.id.events_live_dot);
     }
 }
