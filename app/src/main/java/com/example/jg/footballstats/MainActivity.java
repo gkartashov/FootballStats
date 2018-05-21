@@ -77,8 +77,8 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                                 .addToBackStack("events_fragment")
                                 .commit();
                     break;
-                case R.id.nav_charts:
-                    startActivity(new Intent(MainActivity.this, ProfileActivity.class).putExtra("caption",item.getTitle()));
+                case R.id.nav_profile:
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                     break;
                 case R.id.nav_history:
                     getSupportActionBar().setTitle(item.getTitle());

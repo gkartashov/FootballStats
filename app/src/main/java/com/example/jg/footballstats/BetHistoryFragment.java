@@ -255,8 +255,7 @@ public class BetHistoryFragment extends Fragment {
                     BetsCalculator.CalculateBet(b);
                     updateList.add(b);
                 }
-        }
-        else {
+        } else {
             int betIndex;
             for(BetEntry b:betListToBetEntryList(betArrayList,betResult)) {
                 if (b.getBetDetails().getStatus() == 0 && (b.isFirstHalfFinished() || b.isFinished())) {
@@ -276,14 +275,7 @@ public class BetHistoryFragment extends Fragment {
         }
     }
 
-    private Set<Integer> getLeaguesIdArray(List<Bet> bets) {
-        HashSet<Integer> leagues = new HashSet<>();
-        if (bets.size() > 0)
-            for (Bet b:bets)
-                if (!b.isFinished() || b.getStatus() == 0)
-                    leagues.add(b.getEvent().getLeagueId());
-        return leagues;
-    }
+
 
     public class HistoryRefreshTask extends AsyncTask<Void, Void, Boolean> {
         public HistoryRefreshTask() {
@@ -325,7 +317,17 @@ public class BetHistoryFragment extends Fragment {
                 mHandler.sendEmptyMessage(-1);
             mSwipeRefreshLayout.setRefreshing(false);
         }
+
+        private Set<Integer> getLeaguesIdArray(List<Bet> bets) {
+            HashSet<Integer> leagues = new HashSet<>();
+            if (bets.size() > 0)
+                for (Bet b:bets)
+                    if (!b.isFinished() || b.getStatus() == 0)
+                        leagues.add(b.getEvent().getLeagueId());
+            return leagues;
+        }
     }
+
     public class DbRefreshTask extends AsyncTask<Void, Void, Void> {
         public DbRefreshTask() {
 

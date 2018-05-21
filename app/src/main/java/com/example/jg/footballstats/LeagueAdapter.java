@@ -103,13 +103,11 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
         return true;
     }
 
-    public void addListIdToChild(League l) {
-        for (EventEntry e: l.getEvents())
-            e.setListId(mIdGenerator.nextChild());
-    }
     public void addAllGroups(List<League> list) {
         for (League l: list) {
             l.setListId(mIdGenerator.nextGroup());
+            for (EventEntry e : l.getEvents())
+                e.setListId(mIdGenerator.nextChild());
             leaguesList.add(l);
         }
     }

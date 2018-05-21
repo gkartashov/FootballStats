@@ -8,9 +8,9 @@
             android:icon="@mipmap/ic_launcher"
             android:title="Upcoming games" />
         <item
-            android:id="@+id/nav_charts"
+            android:id="@+id/nav_profile"
             android:icon="@mipmap/ic_launcher_round"
-            android:title="Charts"
+            android:title="Stats charts"
             android:checkable="false"/>
         <item
             android:id="@+id/nav_history"

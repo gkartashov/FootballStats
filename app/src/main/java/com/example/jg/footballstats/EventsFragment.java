@@ -168,12 +168,13 @@ public class EventsFragment extends Fragment {
                     eventEntriesForRemove.add(e);
                 else {
                     e.setLeagueId(l.getId());
-                    l.setLive(e.isLive());
+                    if (e.isLive())
+                        l.setLive(true);
                 }
         }
         l.getEvents().removeAll(eventEntriesForRemove);
         if (l.getEvents().size() > 0) {
-            mAdapter.addListIdToChild(l);
+            //mAdapter.addListIdToChild(l);
             return true;
         }
         return false;
@@ -212,18 +213,22 @@ public class EventsFragment extends Fragment {
     private void refreshLeaguesList(EventsList eventsList) {
         List<League> updates = eventsList.getLeague();
         int leagueIndex, eventIndex;
-        for(League l : updates)
+        for(League l : updates) {
+            l.setLive(false);
             if ((leagueIndex = Constants.EVENTS_LIST.indexOf(l)) >= 0) {
                 List<EventEntry> updatesEvents = l.getEvents();
-                for (EventEntry e: updatesEvents)
-                    if ((eventIndex = Constants.EVENTS_LIST.get(leagueIndex).getEvents().indexOf(l)) > 0) {
-                        Constants.EVENTS_LIST.get(leagueIndex).getEvents().set(eventIndex,e);
-                    }
-                    else
+                for (EventEntry e : updatesEvents) {
+                    if ((eventIndex = Constants.EVENTS_LIST.get(leagueIndex).getEvents().indexOf(e)) >= 0) {
+                        e.setListId(Constants.EVENTS_LIST.get(leagueIndex).getEvents().get(eventIndex).getListId());
+                        Constants.EVENTS_LIST.get(leagueIndex).getEvents().set(eventIndex, e);
+                    } else
                         Constants.EVENTS_LIST.get(leagueIndex).addEvent(e);
-            }
-            else
+                    if (e.isLive())
+                        Constants.EVENTS_LIST.get(leagueIndex).setLive(true);
+                }
+            } else
                 Constants.EVENTS_LIST.add(l);
+        }
         since = eventsList.getLast();
         eventListProcessing();
     }
