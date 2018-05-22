@@ -28,5 +28,6 @@
     <string name="error_invalid_name">This name is invalid</string>
     <string name="error_existed_user">"User with this username already exists"</string>
     <string name="error_invalid_credentials">"Invalid username or password"</string>
+    <string name="error_server_unreachable">"Server unreachable"</string>
 
 </resources>

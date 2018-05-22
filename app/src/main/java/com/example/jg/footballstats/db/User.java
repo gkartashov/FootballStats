@@ -15,9 +15,22 @@ public class User extends RequestBody implements Parcelable {
     private String password;
     private String email;
     private String name;
+    private int win;
+    private int loss;
+    private int total_events;
 
     public User() {
 
+    }
+
+    public User(String username, String password, String email, String name, int win, int loss, int total_events) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.name = name;
+        this.win = win;
+        this.loss = loss;
+        this.total_events = total_events;
     }
 
     @Nullable
@@ -29,13 +42,6 @@ public class User extends RequestBody implements Parcelable {
     @Override
     public void writeTo(BufferedSink sink) throws IOException {
 
-    }
-
-    public User(String username, String password, String email, String name) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.name = name;
     }
 
     public String getUsername() {
@@ -68,6 +74,30 @@ public class User extends RequestBody implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getWin() {
+        return win;
+    }
+
+    public void setWin(int win) {
+        this.win = win;
+    }
+
+    public int getLoss() {
+        return loss;
+    }
+
+    public void setLoss(int loss) {
+        this.loss = loss;
+    }
+
+    public int getTotal_events() {
+        return total_events;
+    }
+
+    public void setTotal_events(int total_events) {
+        this.total_events = total_events;
     }
 
     @Override

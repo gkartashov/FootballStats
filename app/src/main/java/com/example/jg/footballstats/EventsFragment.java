@@ -3,10 +3,12 @@ package com.example.jg.footballstats;
 
 import android.content.Context;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -29,6 +31,8 @@ import com.h6ah4i.android.widget.advrecyclerview.expandable.RecyclerViewExpandab
 import com.h6ah4i.android.widget.advrecyclerview.utils.WrapperAdapterUtils;
 
 import java.io.IOException;
+
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -259,6 +263,32 @@ public class EventsFragment extends Fragment {
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
     }
 
+    private void listToSharedPref() {
+        SharedPreferences prefs = getContext().getSharedPreferences("EventsList", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        String tmp = ObjectSerializer.serialize(new ArrayList<>(Constants.EVENTS_LIST));
+        editor.putString("Events",tmp);
+        editor.putLong("Since",since);
+        editor.apply();
+    }
+
+    private boolean sharedPrefToList() {
+        SharedPreferences prefs = getContext().getSharedPreferences("EventsList", Context.MODE_PRIVATE);
+        if (Constants.EVENTS_LIST.size() == 0) {
+            if (Constants.EVENTS_LIST.size() == 0) {
+                String prefString = prefs.getString("Events", null);
+                List<League> tmpArray = (List<League>) ObjectSerializer.deserialize(prefString);
+                if (tmpArray != null)
+                    Constants.EVENTS_LIST = tmpArray;
+            }
+            if (Constants.EVENTS_LIST.size() > 0)
+                since = prefs.getLong("Since", since);
+        }
+        else
+            since = prefs.getLong("Since",since);
+        return Constants.EVENTS_LIST.size() > 0 && since != 0;
+    }
+
     public class EventsRefreshTask extends AsyncTask<Void, Void, Void> {
         public EventsRefreshTask() {
 
@@ -266,6 +296,7 @@ public class EventsFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
+            sharedPrefToList();
             Response response = null;
             try {
                 response = apiController.getAPI().getFixturesSince(SPORT_ID, since).execute();
@@ -278,6 +309,7 @@ public class EventsFragment extends Fragment {
                 else
                     refreshLeaguesList((EventsList) response.body());
             }
+
             return null;
         }
 
@@ -286,7 +318,7 @@ public class EventsFragment extends Fragment {
             mEventsRefreshTask = null;
             mHandler.sendEmptyMessage(0);
             swipeRefreshLayout.setRefreshing(false);
-
+            listToSharedPref();
         }
     }
 }

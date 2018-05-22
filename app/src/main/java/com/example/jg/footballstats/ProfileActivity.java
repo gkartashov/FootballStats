@@ -13,13 +13,9 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.interfaces.datasets.IPieDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -51,7 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         mPieChart.setHoleRadius(40f);
         mPieChart.setTransparentCircleColor(Color.BLACK);
         mPieChart.setTransparentCircleRadius(45f);
-
+        mPieChart.setRotationAngle(25);
         mPieChart.setDrawCenterText(true);
         mPieChart.setHighlightPerTapEnabled(true);
         mPieChart.setEntryLabelTextSize(14f);
@@ -60,12 +56,12 @@ public class ProfileActivity extends AppCompatActivity {
         mPieChart.getDescription().setEnabled(false);
 
         ArrayList<PieEntry> entries = new ArrayList<PieEntry>();
-        entries.add(new PieEntry(10,"Win"));
-        entries.add(new PieEntry(20,"Loss"));
+        entries.add(new PieEntry(Constants.USER.getWin(),"Won"));
+        entries.add(new PieEntry(Constants.USER.getLoss(),"Lost"));
         PieDataSet dataSet1 = new PieDataSet(entries,"W/L ratio");
         dataSet1.setSliceSpace(2f);
         dataSet1.setSelectionShift(5f);
-        dataSet1.setColors(new int[] { getColor(R.color.lossColor), getColor(R.color.winColor)});
+        dataSet1.setColors(new int[] { getColor(R.color.winColor), getColor(R.color.lossColor)});
         dataSet1.setValueLinePart1OffsetPercentage(70f);
         dataSet1.setValueLinePart1Length(0.2f);
         dataSet1.setValueLinePart2Length(0.8f);

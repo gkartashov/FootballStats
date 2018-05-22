@@ -201,11 +201,10 @@ public class BetHistoryFragment extends Fragment {
                                         if (p.getNumber() == 0) {
                                             betEntry.setHomeScore(p.getTeam1Score());
                                             betEntry.setAwayScore(p.getTeam2Score());
-                                        } else {
+                                        } else if (p.getNumber() == 1) {
                                             betEntry.setHomeScoreHT(p.getTeam1Score());
                                             betEntry.setAwayScoreHT(p.getTeam2Score());
                                         }
-
                                     }
                                 break;
                             default:

@@ -12,9 +12,10 @@ import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class EventEntry implements Parcelable {
+public class EventEntry implements Parcelable, Serializable {
 
     @SerializedName("id")
     @Expose
@@ -207,7 +208,7 @@ public class EventEntry implements Parcelable {
     }
 
     public boolean isFinished() {
-        return (toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
+        return (toLocalTime().toDateTime().plusMinutes(130).isBefore(LocalDateTime.now().toDateTime()));
     }
 
     public boolean isLive() {

@@ -1,15 +1,14 @@
 package com.example.jg.footballstats.fixtures;
 
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class League {
+public class League implements Serializable {
 
     @SerializedName("id")
     @Expose

@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                     setBackStackEmpty("events_fragment");
                     if (fragmentManager.findFragmentByTag("events_fragment") == null)
                         fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, new EventsFragment(), "events_fragment")
+                                .add(R.id.main_layout, new EventsFragment(), "events_fragment")
                                 .addToBackStack("events_fragment")
                                 .commit();
                     break;
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                     setBackStackEmpty("history_fragment");
                     if (fragmentManager.findFragmentByTag("history_fragment") == null)
                         fragmentManager.beginTransaction()
-                                .replace(R.id.main_layout, new BetHistoryFragment(), "history_fragment")
+                                .add(R.id.main_layout, new BetHistoryFragment(), "history_fragment")
                                 .addToBackStack("history_fragment")
                                 .commit();
                     break;

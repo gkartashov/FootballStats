@@ -206,14 +206,11 @@ public class LoginActivity extends AppCompatActivity {
             if (response != null)
                 if(response.body() != null) {
                     mUser = (User) response.body();
-                    /*AccountManager accountManager = AccountManager.get(LoginActivity.this);
-                    Account account = new Account(mUsername,"com.example.jg.footballstats.auth");
-                    Bundle bundle = new Bundle();
-                    bundle.putParcelable("userdata",mUser);
-                    accountManager.addAccountExplicitly(account,mPassword,bundle);*/
                 }
                 else if (response.code() == 403)
                     mMessage = getString(R.string.error_invalid_credentials);
+            else
+                mMessage = getString(R.string.error_server_unreachable);
 
             return mUser;
         }
