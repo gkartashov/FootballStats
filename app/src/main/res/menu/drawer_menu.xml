@@ -10,7 +10,7 @@
         <item
             android:id="@+id/nav_profile"
             android:icon="@mipmap/ic_launcher_round"
-            android:title="Stats charts"
+            android:title="User stats"
             android:checkable="false"/>
         <item
             android:id="@+id/nav_history"

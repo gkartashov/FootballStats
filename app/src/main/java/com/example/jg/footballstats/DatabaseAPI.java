@@ -2,6 +2,7 @@ package com.example.jg.footballstats;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.User;
+import com.example.jg.footballstats.stats.Statistics;
 
 import java.util.List;
 import okhttp3.ResponseBody;
@@ -25,4 +26,6 @@ public interface DatabaseAPI {
     Call<List<Bet>> getUserBetHistory(@Query("username") String username);
     @POST("/footballbets/bet_history")
     Call<ResponseBody> updateDb(@Body() List<Bet> betList);
+    @GET("/footballbets/bet_stats")
+    Call<Statistics> getStats(@Query("username") String username);
 }

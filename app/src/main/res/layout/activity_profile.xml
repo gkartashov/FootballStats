@@ -13,7 +13,17 @@
         android:layout_height="?android:attr/actionBarSize"
         android:theme="@style/ToolBarStyle" />
 
+    <ProgressBar
+        android:id="@+id/profile_progress_bar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginBottom="8dp"
+        android:visibility="gone" />
+
     <ScrollView
+        android:id="@+id/profile_stats_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
         <RelativeLayout
@@ -32,23 +42,144 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="2dp"
                     app:civ_circle_background_color="#FFF"
-                    android:src="@drawable/ic_man_user"/>
+                    android:src="@drawable/profile_logo"/>
 
                 <TextView
                     android:id="@+id/profile_username"
-                    android:layout_width="wrap_content"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/profile_logo"
                     android:layout_marginStart="10dp"
-                    android:text="govn"/>
-                <TextView
-                    android:id="@+id/profile_email"
-                    android:layout_width="wrap_content"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="center"
+                    android:text="username"/>
+
+                <LinearLayout
+                    android:id="@+id/profile_total_bets_layout"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/profile_username"
+                    android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:text="govn@govn.com"/>
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/profile_logo">
+                    <TextView
+                        android:id="@+id/profile_total_bets_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:text="Total bets:"/>
+                    <TextView
+                        android:id="@+id/profile_total_bets"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="50"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/profile_in_play_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/profile_logo"
+                    android:layout_below="@+id/profile_total_bets_layout">
+                    <TextView
+                        android:id="@+id/profile_in_play_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:text="Bets in play:"/>
+                    <TextView
+                        android:id="@+id/profile_in_play"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="100"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/profile_returned_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/profile_logo"
+                    android:layout_below="@+id/profile_in_play_layout">
+                    <TextView
+                        android:id="@+id/profile_returned_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:text="Returned bets:"/>
+                    <TextView
+                        android:id="@+id/profile_returned"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:text="200"/>
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/profile_roi_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/profile_logo"
+                    android:layout_below="@+id/profile_returned_layout">
+                    <TextView
+                        android:id="@+id/profile_roi_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:text="ROI:"/>
+                    <TextView
+                        android:id="@+id/profile_roi"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:gravity="end"
+                        android:text="146.6666%"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/profile_yield_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@+id/profile_logo"
+                    android:layout_below="@+id/profile_roi_layout">
+                    <TextView
+                        android:id="@+id/profile_yield_title"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:textStyle="bold"
+                        android:text="Yield:"/>
+                    <TextView
+                        android:id="@+id/profile_yield"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="end"
+                        android:text="-146.6666%"/>
+                </LinearLayout>
+
             </RelativeLayout>
             <RelativeLayout
                 android:layout_width="match_parent"

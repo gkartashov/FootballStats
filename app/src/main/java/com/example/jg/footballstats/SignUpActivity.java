@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 
+import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
@@ -227,6 +228,7 @@ public class SignUpActivity extends AppCompatActivity {
                 Constants.USER = mUser;
                 Constants.EVENTS_LIST.clear();
                 Constants.BETS_LIST.clear();
+                userToSharedPref(mUser);
                 startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                 finish();
             }
@@ -239,6 +241,13 @@ public class SignUpActivity extends AppCompatActivity {
             mSignUpTask = null;
             mUser = null;
             showProgress(false);
+        }
+
+        private void userToSharedPref(User user) {
+            SharedPreferences prefs = getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("User",ObjectSerializer.serialize(user));
+            editor.apply();
         }
     }
 }

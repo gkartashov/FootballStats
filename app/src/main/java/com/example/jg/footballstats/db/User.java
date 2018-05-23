@@ -5,12 +5,13 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
 
-public class User extends RequestBody implements Parcelable {
+public class User extends RequestBody implements Parcelable, Serializable {
     private String username;
     private String password;
     private String email;

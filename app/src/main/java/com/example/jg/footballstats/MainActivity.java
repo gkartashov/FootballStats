@@ -1,6 +1,7 @@
 package com.example.jg.footballstats;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -101,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                 case R.id.nav_logout:
                     setBackStackEmpty("");
                     Constants.USER = null;
+                    SharedPreferences preferences = getSharedPreferences("UserInfo",MODE_PRIVATE);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.remove("User");
+                    editor.apply();
                     startActivity(new Intent(MainActivity.this,LoginActivity.class));
                     finish();
                     break;

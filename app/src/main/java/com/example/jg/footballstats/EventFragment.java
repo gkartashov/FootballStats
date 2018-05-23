@@ -55,7 +55,7 @@ public class EventFragment extends Fragment {
     private WagerAdapter mAdapter;
     private RecyclerViewExpandableItemManager mExpandableItemManager;
     private TextView scoreHome, scoreAway, date, home, away;
-    private View rootView;
+    private View rootView, mMainLayout;
     private EventEntry event;
     private List<Period> periods = new ArrayList<>();
     private long since = 0;
@@ -129,7 +129,7 @@ public class EventFragment extends Fragment {
             DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Snackbar.make(rootView,"Done!",Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(mMainLayout,"Done!",Snackbar.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -143,6 +143,7 @@ public class EventFragment extends Fragment {
     private void viewInitialization() {
         setHasOptionsMenu(true);
 
+        mMainLayout = getActivity().findViewById(R.id.main_layout);
         recyclerView = rootView.findViewById(R.id.event_recycler_view);
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));

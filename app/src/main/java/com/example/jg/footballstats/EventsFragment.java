@@ -162,6 +162,7 @@ public class EventsFragment extends Fragment {
 
     private boolean filterEvents(League l) {
         List<EventEntry> eventEntriesForRemove = new ArrayList<>();
+        l.setLive(false);
         for (EventEntry e : l.getEvents()) {
             for (ExclusionTags ex : ExclusionTags.values())
                 if (e.getHome().toLowerCase().contains(ex.getDescription().toLowerCase()) ||
@@ -177,11 +178,7 @@ public class EventsFragment extends Fragment {
                 }
         }
         l.getEvents().removeAll(eventEntriesForRemove);
-        if (l.getEvents().size() > 0) {
-            //mAdapter.addListIdToChild(l);
-            return true;
-        }
-        return false;
+        return l.getEvents().size() > 0;
     }
 
     private void filterLeagues() {
