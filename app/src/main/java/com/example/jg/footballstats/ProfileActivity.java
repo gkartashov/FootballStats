@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.res.TypedArrayUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -18,17 +19,26 @@ import android.widget.TextView;
 
 import com.example.jg.footballstats.stats.Statistics;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import retrofit2.Response;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -38,11 +48,12 @@ public class ProfileActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 0:
                     initializePieChart(mStatistics.getWin(),mStatistics.getLoss(),mStatistics.calculateWPRatio());
-                    mReturnedBets.setText(Long.toString(mStatistics.getTotalEvents() - mStatistics.getWin() - mStatistics.getLoss() - mStatistics.getInPlay()));
-                    mTotalBets.setText(Integer.toString(mStatistics.getTotalEvents()));
+                    initializeCoefficientChart();
+                    mReturnedBets.setText(Long.toString(mStatistics.getReturned()));
+                    mTotalBets.setText(Integer.toString(mStatistics.getTotal()));
                     mInPlayView.setText(Long.toString(mStatistics.getInPlay()));
-                    mRoiView.setText(Double.toString(mStatistics.calculateROI(100,mStatistics.getTotalEvents()))+ '%');
-                    mYieldView.setText(Double.toString(mStatistics.calculateYield(100,mStatistics.getTotalEvents()))+ '%');
+                    mRoiView.setText(Double.toString(mStatistics.calculateROI(100))+ '%');
+                    mYieldView.setText(Double.toString(mStatistics.calculateYield(100))+ '%');
                     break;
                 default:
                     break;
@@ -51,6 +62,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
     private Toolbar mToolbar;
     private PieChart mPieChart;
+    private LineChart mCoefficientChart;
     private TextView mProfileUsername;
     private View mProgressView;
     private ScrollView mProfileFormView;
@@ -174,6 +186,53 @@ public class ProfileActivity extends AppCompatActivity {
         mPieChart.invalidate();
     }
 
+
+    private void initializeCoefficientChart() {
+        mCoefficientChart = findViewById(R.id.profile_coefficient_chart);
+        ArrayList<Entry> e1 = new ArrayList<>();
+
+        List<Double> coefs = mStatistics.getCoefficients();
+        for (int i = 0; i < coefs.size(); i++) {
+            e1.add(new Entry(i, (float)((double)coefs.get(i))));
+        }
+
+        LineDataSet d1 = new LineDataSet(e1, "Coefficients");
+        d1.setLineWidth(1.5f);
+        d1.setCircleRadius(2.5f);
+        d1.setHighLightColor(Color.rgb(244, 117, 117));
+        d1.setDrawValues(false);
+
+        ArrayList<Entry> e2 = new ArrayList<Entry>();
+
+        List<Double> realCoefs = mStatistics.getRealCoefficients();
+        for (int i = 0; i < realCoefs.size(); i++) {
+
+            e2.add(new Entry(i, (float)((double)realCoefs.get(i))));
+        }
+
+        LineDataSet d2 = new LineDataSet(e2, "Real coefficients");
+        d2.setLineWidth(1.5f);
+        d2.setCircleRadius(2.5f);
+        d2.setHighLightColor(Color.rgb(244, 117, 117));
+        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+        d2.setDrawValues(false);
+
+        ArrayList<ILineDataSet> sets = new ArrayList<>();
+        sets.add(d1);
+        sets.add(d2);
+
+        LineData cd = new LineData(sets);
+
+        mCoefficientChart.getDescription().setText("Mean coefficient: ");
+        mCoefficientChart.setData(cd);
+        mCoefficientChart.setVisibleXRange(15f,15f);
+        mCoefficientChart.moveViewToX(e2.size()-15);
+        mCoefficientChart.animateX(1400, Easing.EasingOption.EaseInOutQuad);
+        mCoefficientChart.getData().setHighlightEnabled(!mCoefficientChart.getData().isHighlightEnabled());
+        mCoefficientChart.invalidate();
+
+    }
     private class ProfileRefreshAsyncTask extends AsyncTask<Void, Void, Void> {
         private String mMessage = "";
 

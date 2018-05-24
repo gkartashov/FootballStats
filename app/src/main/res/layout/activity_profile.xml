@@ -182,6 +182,7 @@
 
             </RelativeLayout>
             <RelativeLayout
+                android:id="@+id/profile_pie_wl_ratio_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@id/profile_info_layout"
@@ -190,6 +191,19 @@
                     android:id="@+id/profile_pie_wl_ratio"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:layout_marginTop="10dp"
+                    />
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/profile_coefficient_chart_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/profile_pie_wl_ratio_layout"
+                android:gravity="start">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/profile_coefficient_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
                     android:layout_marginTop="10dp"
                     />
             </RelativeLayout>
