@@ -93,7 +93,7 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         holder.betTypeTitle.setText(betDetails.getBetType());
         holder.pickTitle.setText(betDetails.getBetName() == null ? betDetails.getPick() : betDetails.getBetName() + " " + betDetails.getPick());
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
-        holder.realCoefficientTitle.setText(betDetails.getStringRealCoefficient());
+        holder.realCoefficientTitle.setText(betDetails.getRealCoefficient() == -1.0 ? betDetails.getStringCoefficient() : betDetails.getStringRealCoefficient());
         holder.statusTitle.setText(betDetails.getStringStatus());
         if (betDetails.getStatus() == 1)
             holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.winColor));

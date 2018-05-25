@@ -115,6 +115,17 @@ public class Statistics {
         return result;
     }
 
+    public double calculateAverageCoefficient() {
+        double sum = 0;
+        if(!coefficients.isEmpty()) {
+            for (int i = 0, len = coefficients.size(); i < len ; i++) {
+                sum += coefficients.get(i);
+            }
+            return formattedDouble(sum / (double)coefficients.size(),".##");
+        }
+        return sum;
+    }
+
     private double formattedDouble(double number, String pattern) {
         return Double.isNaN(number) ? 0 : Double.parseDouble(new DecimalFormat(pattern).format(number));
     }

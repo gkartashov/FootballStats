@@ -70,8 +70,6 @@ public class EventsFragment extends Fragment {
     private APIController apiController = APIController.getInstance();
     private EventsRefreshTask mEventsRefreshTask;
 
-    private long since;
-
     public EventsFragment() {
 
     }
@@ -230,12 +228,12 @@ public class EventsFragment extends Fragment {
             } else
                 Constants.EVENTS_LIST.add(l);
         }
-        since = eventsList.getLast();
+        Constants.EVENTS_LIST_SINCE = eventsList.getLast();
         eventListProcessing();
     }
 
     private void initializeLeaguesList(EventsList eventsList) {
-        since = eventsList.getLast();
+        Constants.EVENTS_LIST_SINCE = eventsList.getLast();
         Constants.EVENTS_LIST = eventsList.getLeague();
         eventListProcessing();
     }
@@ -265,25 +263,8 @@ public class EventsFragment extends Fragment {
         SharedPreferences.Editor editor = prefs.edit();
         String tmp = ObjectSerializer.serialize(new ArrayList<>(Constants.EVENTS_LIST));
         editor.putString("Events",tmp);
-        editor.putLong("Since",since);
+        editor.putLong("Since",Constants.EVENTS_LIST_SINCE);
         editor.apply();
-    }
-
-    private boolean sharedPrefToList() {
-        SharedPreferences prefs = getContext().getSharedPreferences("EventsList", Context.MODE_PRIVATE);
-        if (Constants.EVENTS_LIST.size() == 0) {
-            if (Constants.EVENTS_LIST.size() == 0) {
-                String prefString = prefs.getString("Events", null);
-                List<League> tmpArray = (List<League>) ObjectSerializer.deserialize(prefString);
-                if (tmpArray != null)
-                    Constants.EVENTS_LIST = tmpArray;
-            }
-            if (Constants.EVENTS_LIST.size() > 0)
-                since = prefs.getLong("Since", since);
-        }
-        else
-            since = prefs.getLong("Since",since);
-        return Constants.EVENTS_LIST.size() > 0 && since != 0;
     }
 
     public class EventsRefreshTask extends AsyncTask<Void, Void, Void> {
@@ -293,15 +274,14 @@ public class EventsFragment extends Fragment {
 
         @Override
         protected Void doInBackground(Void... params) {
-            sharedPrefToList();
             Response response = null;
             try {
-                response = apiController.getAPI().getFixturesSince(SPORT_ID, since).execute();
+                response = apiController.getAPI().getFixturesSince(SPORT_ID, Constants.EVENTS_LIST_SINCE).execute();
             } catch (IOException e) {
                 e.printStackTrace();
             }
             if (response != null) {
-                if (since == 0)
+                if (Constants.EVENTS_LIST_SINCE == 0)
                     initializeLeaguesList((EventsList) response.body());
                 else
                     refreshLeaguesList((EventsList) response.body());

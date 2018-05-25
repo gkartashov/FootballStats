@@ -21,4 +21,5 @@ public final class Constants {
     public static final Pattern DOUBLE_REGEX =
             Pattern.compile("-?\\d+(\\.\\d*)?");
     public static final int SPORT_ID = 29;
+    public static long EVENTS_LIST_SINCE = 0;
 }

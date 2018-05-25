@@ -1,6 +1,5 @@
 package com.example.jg.footballstats;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,10 +12,7 @@ import android.os.Bundle;
 import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.League;
 
-import java.io.IOException;
 import java.util.List;
-
-import retrofit2.Response;
 
 public class LaunchActivity extends AppCompatActivity {
 
@@ -51,22 +47,44 @@ public class LaunchActivity extends AppCompatActivity {
         setTheme(R.style.AppTheme_LauncherTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
-        mUserLoadAsyncTask = new UserLoadAsyncTask();
-        mUserLoadAsyncTask.execute(getSharedPreferences("UserInfo", Context.MODE_PRIVATE));
+        mUserLoadAsyncTask = new UserLoadAsyncTask(getSharedPreferences("UserInfo", Context.MODE_PRIVATE));
+        mUserLoadAsyncTask.execute();
     }
 
-    public class UserLoadAsyncTask extends AsyncTask<SharedPreferences, Void, Void> {
+    private boolean sharedPrefToList() {
+        SharedPreferences prefs = getSharedPreferences("EventsList", Context.MODE_PRIVATE);
+        if (Constants.EVENTS_LIST.size() == 0) {
+            if (Constants.EVENTS_LIST.size() == 0) {
+                String prefString = prefs.getString("Events", null);
+                List<League> tmpArray = (List<League>) ObjectSerializer.deserialize(prefString);
+                if (tmpArray != null)
+                    Constants.EVENTS_LIST = tmpArray;
+            }
+            if (Constants.EVENTS_LIST.size() > 0)
+                Constants.EVENTS_LIST_SINCE = prefs.getLong("Since", Constants.EVENTS_LIST_SINCE);
+        }
+        else
+            Constants.EVENTS_LIST_SINCE = prefs.getLong("Since",Constants.EVENTS_LIST_SINCE);
+        return Constants.EVENTS_LIST.size() > 0 && Constants.EVENTS_LIST_SINCE != 0;
+    }
+
+    public class UserLoadAsyncTask extends AsyncTask<Void, Void, Void> {
+
+        private SharedPreferences sharedPreferences;
+
+        UserLoadAsyncTask(SharedPreferences sharedPreferences) {
+            this.sharedPreferences = sharedPreferences;
+        }
 
         @Override
-        protected Void doInBackground(SharedPreferences... sharedPreferences) {
-            for (SharedPreferences sh : sharedPreferences) {
-                Constants.USER = (User) ObjectSerializer.deserialize(sh.getString("User", null));
-            }
+        protected Void doInBackground(Void... nothing) {
+                Constants.USER = (User) ObjectSerializer.deserialize(sharedPreferences.getString("User", null));
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            sharedPrefToList();
             mUserLoadHandler.sendEmptyMessage(Constants.USER == null ? 0 : 1);
         }
     }
