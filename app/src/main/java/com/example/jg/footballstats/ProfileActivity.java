@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -31,6 +32,7 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.io.IOException;
@@ -49,6 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
                     initializeStatistics();
                     initializePieChart(mStatistics.getWin(),mStatistics.getLoss(),mStatistics.calculateWPRatio());
                     initializeCoefficientChart();
+                    initializeIncomeChart();
                     break;
                 default:
                     break;
@@ -57,7 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
     }
     private Toolbar mToolbar;
     private PieChart mPieChart;
-    private LineChart mCoefficientChart;
+    private LineChart mCoefficientChart, mIncomeChart;
     private TextView mProfileUsername;
     private View mProgressView;
     private ScrollView mProfileFormView;
@@ -189,59 +192,160 @@ public class ProfileActivity extends AppCompatActivity {
         ArrayList<Entry> e1 = new ArrayList<>();
 
         List<Double> coefs = mStatistics.getCoefficients();
-        for (int i = 0; i < coefs.size(); i++) {
-            e1.add(new Entry(i + 1, (float)((double)coefs.get(i))));
+        if (coefs != null) {
+            if (coefs.size() == 0) {
+                coefs.add(0.0);
+                e1.add(new Entry(0, 0));
+            }
+            else
+                for (int i = 0; i < coefs.size(); i++)
+                    e1.add(new Entry(i + 1, (float) ((double) coefs.get(i))));
+
+            LineDataSet d1 = new LineDataSet(e1, "Coefficients");
+            d1.setMode(LineDataSet.Mode.CUBIC_BEZIER);
+            d1.setLineWidth(1.5f);
+            d1.setCircleRadius(2.0f);
+            d1.setHighLightColor(Color.rgb(244, 117, 117));
+            d1.setDrawValues(false);
+            d1.setDrawHighlightIndicators(false);
+
+            ArrayList<ILineDataSet> sets = new ArrayList<>();
+            sets.add(d1);
+
+            LineData cd = new LineData(sets);
+
+            mCoefficientChart = findViewById(R.id.profile_coefficient_chart);
+
+            mCoefficientChart.setData(cd);
+
+            ValueMarkerView mv = new ValueMarkerView(this, R.layout.value_marker_layout);
+            mv.setChartView(mCoefficientChart);
+
+            mCoefficientChart.setMarker(mv);
+
+            mCoefficientChart.getXAxis().setTextColor(getColor(android.R.color.primary_text_dark));
+            mCoefficientChart.getAxisLeft().setTextColor(getColor(android.R.color.primary_text_dark));
+            mCoefficientChart.getAxisRight().setTextColor(getColor(android.R.color.primary_text_dark));
+
+            mCoefficientChart.getDescription().setText("Mean coefficient: " + Double.toString(mStatistics.calculateAverageCoefficient()));
+            mCoefficientChart.getDescription().setTextColor(getColor(android.R.color.primary_text_dark));
+            mCoefficientChart.getDescription().setTextSize(10f);
+
+            float maxCoef = (float) (double) Collections.max(coefs);
+            LimitLine maxLimit = new LimitLine(maxCoef, "Max coefficient: " + Float.toString(maxCoef));
+            maxLimit.setLineWidth(2f);
+            maxLimit.setLineColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+            maxLimit.enableDashedLine(10f, 10f, 0f);
+            maxLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+            maxLimit.setTextSize(10f);
+            maxLimit.setTextStyle(Paint.Style.FILL);
+            maxLimit.setTextColor(getColor(android.R.color.primary_text_dark));
+
+            mCoefficientChart.getAxisLeft().addLimitLine(maxLimit);
+
+            mCoefficientChart.getLegend().setTextColor(getColor(android.R.color.primary_text_dark));
+            mCoefficientChart.getLegend().setTextSize(10f);
+
+            if (coefs.size() > 10) {
+                mCoefficientChart.zoom(8f, 1f, e1.get(e1.size() - 5).getX(), e1.get(e1.size() - 5).getY());
+                mCoefficientChart.moveViewToX(e1.size() - 11);
+            }
+            mCoefficientChart.animateX(1400, Easing.EasingOption.EaseInOutQuad);
+            mCoefficientChart.invalidate();
         }
-
-        LineDataSet d1 = new LineDataSet(e1, "Coefficients");
-        d1.setMode(LineDataSet.Mode.LINEAR);
-        d1.setLineWidth(1.5f);
-        d1.setCircleRadius(2.0f);
-        d1.setHighLightColor(Color.rgb(244, 117, 117));
-        d1.setDrawValues(false);
-        d1.setDrawHighlightIndicators(false);
-
-        ArrayList<ILineDataSet> sets = new ArrayList<>();
-        sets.add(d1);
-
-        LineData cd = new LineData(sets);
-
-        mCoefficientChart = findViewById(R.id.profile_coefficient_chart);
-
-        mCoefficientChart.setData(cd);
-
-        ValueMarkerView mv = new ValueMarkerView(this, R.layout.value_marker_layout);
-        mv.setChartView(mCoefficientChart);
-
-        mCoefficientChart.setMarker(mv);
-
-        mCoefficientChart.getXAxis().setTextColor(getColor(android.R.color.primary_text_dark));
-        mCoefficientChart.getAxisLeft().setTextColor(getColor(android.R.color.primary_text_dark));
-        mCoefficientChart.getAxisRight().setTextColor(getColor(android.R.color.primary_text_dark));
-
-        mCoefficientChart.getDescription().setText("Mean coefficient: " + Double.toString(mStatistics.calculateAverageCoefficient()));
-        mCoefficientChart.getDescription().setTextColor(getColor(android.R.color.primary_text_dark));
-        mCoefficientChart.getDescription().setTextSize(10f);
-
-        LimitLine llXAxis = new LimitLine((float)(double)Collections.max(coefs), "Max coefficient");
-        llXAxis.setLineWidth(2f);
-        llXAxis.setLineColor(getColor(R.color.lossColor));
-        llXAxis.enableDashedLine(10f, 10f, 0f);
-        llXAxis.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
-        llXAxis.setTextSize(10f);
-        llXAxis.setTextStyle(Paint.Style.FILL);
-        llXAxis.setTextColor(getColor(android.R.color.primary_text_dark));
-
-        mCoefficientChart.getAxisLeft().addLimitLine(llXAxis);
-
-        mCoefficientChart.getLegend().setTextColor(getColor(android.R.color.primary_text_dark));
-        mCoefficientChart.getLegend().setTextSize(10f);
-
-        mCoefficientChart.zoom(8f,1f,e1.get(e1.size()-5).getX(),e1.get(e1.size()-5).getY());
-        mCoefficientChart.moveViewToX(e1.size()-11);
-        mCoefficientChart.animateX(1400, Easing.EasingOption.EaseInOutQuad);
-        mCoefficientChart.invalidate();
     }
+
+    private void initializeIncomeChart() {
+        ArrayList<Entry> e1 = new ArrayList<>();
+
+        List<Double> income = mStatistics.calculateIncome(10000,100);
+        if (income.size() > 0) {
+            for (int i = 0; i < income.size(); i++) {
+                e1.add(new Entry(i, (float) ((double) income.get(i))));
+            }
+
+            LineDataSet d1 = new LineDataSet(e1, "Income");
+            d1.setMode(LineDataSet.Mode.LINEAR);
+            d1.setLineWidth(1.5f);
+            d1.setDrawCircles(false);
+            d1.setCircleRadius(2.0f);
+            d1.setHighLightColor(Color.rgb(244, 117, 117));
+            d1.setDrawValues(false);
+            d1.setDrawHighlightIndicators(false);
+
+            ArrayList<ILineDataSet> sets = new ArrayList<>();
+            sets.add(d1);
+
+            LineData cd = new LineData(sets);
+
+            mIncomeChart = findViewById(R.id.profile_income_chart);
+
+            mIncomeChart.setData(cd);
+
+            ValueMarkerView mv = new ValueMarkerView(this, R.layout.value_marker_layout);
+            mv.setChartView(mIncomeChart);
+
+            mIncomeChart.setMarker(mv);
+
+            mIncomeChart.getXAxis().setTextColor(getColor(android.R.color.primary_text_dark));
+            mIncomeChart.getAxisLeft().setTextColor(getColor(android.R.color.primary_text_dark));
+            mIncomeChart.getAxisRight().setTextColor(getColor(android.R.color.primary_text_dark));
+
+            mIncomeChart.getDescription().setEnabled(false);
+
+            float maxIncome = (float) (double) Collections.max(income);
+            LimitLine maxLimit = new LimitLine(maxIncome, Float.toString(maxIncome));
+            maxLimit.setLineWidth(1f);
+            maxLimit.setLineColor(ColorTemplate.VORDIPLOM_COLORS[0]);
+            maxLimit.enableDashedLine(10f, 10f, 0f);
+            maxLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+            maxLimit.setTextSize(10f);
+            maxLimit.setTextStyle(Paint.Style.FILL);
+            maxLimit.setTextColor(getColor(android.R.color.primary_text_dark));
+
+            float minIncome = (float) (double) Collections.min(income);
+            LimitLine minLimit = new LimitLine(minIncome, Float.toString(minIncome));
+            minLimit.setLineWidth(1f);
+            minLimit.setLineColor(ColorTemplate.VORDIPLOM_COLORS[4]);
+            minLimit.enableDashedLine(10f, 10f, 0f);
+            minLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+            minLimit.setTextSize(10f);
+            minLimit.setTextStyle(Paint.Style.FILL);
+            minLimit.setTextColor(getColor(android.R.color.primary_text_dark));
+
+            float startBalance = (float) (double) income.get(0);
+            LimitLine startLimit = new LimitLine(startBalance);
+            startLimit.setLineWidth(1f);
+            startLimit.setLineColor(Color.parseColor("#44FFFFFF"));
+            //startLimit.enableDashedLine(10f, 10f, 0f);
+            startLimit.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
+            startLimit.setTextSize(10f);
+            startLimit.setTextStyle(Paint.Style.FILL);
+            startLimit.setTextColor(getColor(android.R.color.primary_text_dark));
+
+            float currentBalance = (float) (double) income.get(income.size()-1);
+            LimitLine currentLimit = new LimitLine(currentBalance, "Current balance: " + Float.toString(currentBalance));
+            currentLimit.setLineWidth(1f);
+            currentLimit.setLineColor(ColorUtils.setAlphaComponent(ColorTemplate.VORDIPLOM_COLORS[1],100));
+            //startLimit.enableDashedLine(10f, 10f, 0f);
+            currentLimit.setLabelPosition(LimitLine.LimitLabelPosition.LEFT_BOTTOM);
+            currentLimit.setTextSize(10f);
+            currentLimit.setTextStyle(Paint.Style.FILL);
+            currentLimit.setTextColor(getColor(android.R.color.primary_text_dark));
+
+            mIncomeChart.getAxisLeft().addLimitLine(maxLimit);
+            mIncomeChart.getAxisLeft().addLimitLine(minLimit);
+            mIncomeChart.getAxisLeft().addLimitLine(startLimit);
+            mIncomeChart.getAxisLeft().addLimitLine(currentLimit);
+
+            mIncomeChart.getLegend().setTextColor(getColor(android.R.color.primary_text_dark));
+            mIncomeChart.getLegend().setTextSize(10f);
+
+            mIncomeChart.animateX(1000, Easing.EasingOption.EaseInOutQuad);
+            mIncomeChart.invalidate();
+        }
+    }
+
     private class ProfileRefreshAsyncTask extends AsyncTask<Void, Void, Void> {
         private String mMessage = "";
 

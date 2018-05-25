@@ -1,6 +1,7 @@
 package com.example.jg.footballstats.stats;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.annotations.Expose;
@@ -86,6 +87,16 @@ public class Statistics {
         this.returned = returned;
     }
 
+    public List<Double> calculateIncome(double bankValue, double betValue) {
+        List<Double> result = new ArrayList<>();
+        result.add(bankValue);
+        for (int i = 0, len = realCoefficients.size(); i < len ; i++) {
+            if (realCoefficients.get(i) >= 0)
+                result.add(realCoefficients.get(i) == 0 ? result.get(i) - betValue : (realCoefficients.get(i) == 1.0 ? result.get(i) : (betValue * realCoefficients.get(i) - betValue) + result.get(i)));
+        }
+        return result;
+    }
+
     public double calculateWPRatio() {
         double result = (double)win / (double)loss;
         return formattedDouble(result,".##");
@@ -101,6 +112,17 @@ public class Statistics {
         return formattedDouble(result,".##");
     }
 
+    public double calculateAverageCoefficient() {
+        double sum = 0;
+        if(!coefficients.isEmpty()) {
+            for (int i = 0, len = coefficients.size(); i < len ; i++) {
+                sum += coefficients.get(i);
+            }
+            return formattedDouble(sum / (double)coefficients.size(),".##");
+        }
+        return sum;
+    }
+
     private double income(double betValue) {
         double result = 0;
         for (double d: realCoefficients)
@@ -113,17 +135,6 @@ public class Statistics {
         for (double d: realCoefficients)
             result += d < 0 ? 0 : formattedDouble(betValue * d,".####") - betValue;
         return result;
-    }
-
-    public double calculateAverageCoefficient() {
-        double sum = 0;
-        if(!coefficients.isEmpty()) {
-            for (int i = 0, len = coefficients.size(); i < len ; i++) {
-                sum += coefficients.get(i);
-            }
-            return formattedDouble(sum / (double)coefficients.size(),".##");
-        }
-        return sum;
     }
 
     private double formattedDouble(double number, String pattern) {
