@@ -121,11 +121,11 @@ public class BetEntry implements Parcelable {
     }
 
     public boolean isFinished() {
-        return (betDetails.toLocalTime().toDateTime().plusHours(2).isBefore(LocalDateTime.now().toDateTime()));
+        return betDetails.toLocalTime().toDateTime().plusMinutes(120).isBefore(LocalDateTime.now().toDateTime()) && homeScore >= 0 && awayScore >= 0;
     }
 
     public boolean isFirstHalfFinished() {
-        return (betDetails.toLocalTime().toDateTime().plusMinutes(55).isBefore(LocalDateTime.now().toDateTime()));
+        return betDetails.toLocalTime().toDateTime().plusMinutes(55).isBefore(LocalDateTime.now().toDateTime()) && homeScoreHT >= 0 && awayScoreHT >= 0;
     }
 
     public int getLeagueId() {

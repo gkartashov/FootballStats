@@ -80,10 +80,10 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
             holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.primaryLightColor));
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
-        holder.homeScoreTitle.setText(betEntry.getStringHomeScore());
-        holder.awayScoreTitle.setText(betEntry.getStringAwayScore());
-        holder.homeScoreHTTitle.setText(betEntry.getStringHomeHTScore());
-        holder.awayScoreHTTitle.setText(betEntry.getStringAwayHTScore());
+        holder.homeScoreTitle.setText(betEntry.getHomeScore() >= 0 ? betEntry.getStringHomeScore() : "0");
+        holder.awayScoreTitle.setText(betEntry.getAwayScore() >= 0 ? betEntry.getStringAwayScore() : "0");
+        holder.homeScoreHTTitle.setText(betEntry.getHomeScoreHT() >= 0 ? betEntry.getStringHomeHTScore() : "0");
+        holder.awayScoreHTTitle.setText(betEntry.getAwayScoreHT() >= 0 ? betEntry.getStringAwayHTScore() : "0");
     }
 
     @Override
