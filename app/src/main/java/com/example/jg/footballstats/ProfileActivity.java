@@ -71,6 +71,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme : R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
         mToolbar = findViewById(R.id.inner_activity_toolbar);
@@ -142,7 +143,7 @@ public class ProfileActivity extends AppCompatActivity {
         mPieChart.setDragDecelerationFrictionCoef(0.2f);
         mPieChart.setDrawHoleEnabled(true);
         mPieChart.setCenterTextColor(getColor(android.R.color.primary_text_dark));
-        mPieChart.setHoleColor(getColor(R.color.primaryLightColor));
+        mPieChart.setHoleColor(getColor(R.color.primaryLightColorDark));
         mPieChart.setHoleRadius(44f);
         mPieChart.setTransparentCircleColor(Color.BLACK);
         mPieChart.setTransparentCircleRadius(47f);

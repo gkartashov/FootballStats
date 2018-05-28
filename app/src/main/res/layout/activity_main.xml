@@ -16,8 +16,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:theme="@style/ToolBarStyle" />
+            android:layout_height="?android:attr/actionBarSize" />
     </LinearLayout>
 
     <LinearLayout
@@ -36,5 +35,18 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/drawer_menu"
-        app:headerLayout="@layout/navigation_header"/>
+        app:headerLayout="@layout/navigation_header">
+
+            <Switch
+                android:background="@color/primaryDarkColorLight"
+                android:id="@+id/drawer_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:theme="@style/AppTheme.ThemeSwitcher"
+                android:text="@string/switch_theme_light"
+                android:layout_gravity="bottom"/>
+
+
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

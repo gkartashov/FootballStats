@@ -1,5 +1,6 @@
 package com.example.jg.footballstats.odds;
 
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.TextView;
 
@@ -10,10 +11,12 @@ import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemVie
 
 public class OddViewHolder extends AbstractExpandableItemViewHolder {
     public TextView oddType, oddCoefficient;
+    public CardView cardView;
 
     public OddViewHolder(View itemView) {
         super(itemView);
         oddType = itemView.findViewById(R.id.odd_type);
+        cardView = itemView.findViewById(R.id.event_odd_card_view);
         oddCoefficient = itemView.findViewById(R.id.odd_coefficient);
     }
 

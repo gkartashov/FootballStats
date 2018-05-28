@@ -93,6 +93,7 @@ public class LeagueAdapter extends AbstractExpandableItemAdapter<LeagueViewHolde
             holder.dateTextView.setTextColor(holder.timeTextView.getTextColors());
             holder.dateTextView.setTypeface(null, Typeface.NORMAL);
         }
+        holder.cardView.setBackgroundColor(ContextCompat.getColor(context,Constants.IS_THEME_DARK ? R.color.listItemsColorDark : R.color.primaryColorLight));
         holder.homeTextView.setText(eventEntry.getHome());
         holder.awayTextView.setText(eventEntry.getAway());
         holder.timeTextView.setText(eventEntry.getTime());

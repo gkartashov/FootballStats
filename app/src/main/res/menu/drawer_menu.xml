@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group
         android:checkableBehavior="single"
-        android:id="@+id/menu_top">
+        android:id="@+id/menu_top"
+        >
         <item
             android:id="@+id/nav_events"
             android:icon="@mipmap/ic_launcher"
@@ -25,6 +27,7 @@
             android:id="@+id/nav_stack"
             android:icon="@mipmap/ic_launcher_round"
             android:title="Backstack" />
+
     </group>
     <group
         android:checkableBehavior="single"

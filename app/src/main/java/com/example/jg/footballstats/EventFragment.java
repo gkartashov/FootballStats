@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -75,7 +76,7 @@ public class EventFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(R.drawable.ic_refresh_white_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(Constants.IS_THEME_DARK? R.drawable.ic_refresh_white_24px : R.drawable.ic_refresh_black_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -144,6 +145,8 @@ public class EventFragment extends Fragment {
         setHasOptionsMenu(true);
 
         mMainLayout = getActivity().findViewById(R.id.main_layout);
+        CardView cardViewInfo = rootView.findViewById(R.id.event_info_card_view);
+        cardViewInfo.setBackgroundColor(getActivity().getColor(Constants.IS_THEME_DARK ? R.color.primaryDarkColorDark : R.color.primaryLightColorLight));
         recyclerView = rootView.findViewById(R.id.event_recycler_view);
         try {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
@@ -155,10 +158,10 @@ public class EventFragment extends Fragment {
 
         animator.setSupportsChangeAnimations(false);
         recyclerView.setItemAnimator(animator);
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+        //recyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
-        mAdapter = new WagerAdapter(wagers, clickListener);
+        mAdapter = new WagerAdapter(getContext(), wagers, clickListener);
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
         recyclerView.setAdapter(mWrappedAdapter);
         mExpandableItemManager.attachRecyclerView(recyclerView);
@@ -196,7 +199,7 @@ public class EventFragment extends Fragment {
         mExpandableItemManager.release();
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
 
-        mAdapter = new WagerAdapter(new ArrayList<Wager>(), clickListener);
+        mAdapter = new WagerAdapter(getContext(), new ArrayList<Wager>(), clickListener);
         mAdapter.addAllGroups(wagers);
 
         mWrappedAdapter = mExpandableItemManager.createWrappedAdapter(mAdapter);
@@ -244,7 +247,6 @@ public class EventFragment extends Fragment {
         this.homeScore = homeScore;
         this.awayScore = awayScore;
         String periodString;
-        int periodNumber = 0;
         wagers.clear();
         for(Period p:periods) {
             Moneyline moneyline = p.getMoneyline();
@@ -252,7 +254,7 @@ public class EventFragment extends Fragment {
             List<Total> totals = p.getTotals();
             TeamTotal teamTotals = p.getTeamTotal();
 
-            switch(periodNumber){
+            switch(p.getNumber()){
                 case 1: periodString = "1st half "; break;
                 case 2: periodString = "2nd half "; break;
                 default: periodString = "";
@@ -327,7 +329,6 @@ public class EventFragment extends Fragment {
                     wagers.add(wager);
                 }
             }
-            ++periodNumber;
         }
     }
 }

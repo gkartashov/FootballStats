@@ -98,7 +98,7 @@ public class EventsFragment extends Fragment {
 
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(animator);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
         mAdapter = new LeagueAdapter(getContext(),Constants.EVENTS_LIST, clickListener);
@@ -108,6 +108,8 @@ public class EventsFragment extends Fragment {
 
         mHandler = new RefreshingHandler();
         swipeRefreshLayout = rootView.findViewById(R.id.events_swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeColors(getActivity().getColor(Constants.IS_THEME_DARK ? R.color.primaryColorLight : R.color.primaryColorDark));
+        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(getActivity().getColor(Constants.IS_THEME_DARK ? R.color.primaryColorDark : R.color.primaryColorLight));
         swipeRefreshLayout.setOnRefreshListener(onRefreshListener);
         if (Constants.EVENTS_LIST.size() == 0)
             onRefreshListener.onRefresh();
@@ -123,7 +125,7 @@ public class EventsFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(R.drawable.ic_refresh_white_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(Constants.IS_THEME_DARK ? R.drawable.ic_refresh_white_24px : R.drawable.ic_refresh_black_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -259,12 +261,14 @@ public class EventsFragment extends Fragment {
     }
 
     private void listToSharedPref() {
-        SharedPreferences prefs = getContext().getSharedPreferences("EventsList", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        String tmp = ObjectSerializer.serialize(new ArrayList<>(Constants.EVENTS_LIST));
-        editor.putString("Events",tmp);
-        editor.putLong("Since",Constants.EVENTS_LIST_SINCE);
-        editor.apply();
+        if (getContext() != null) {
+            SharedPreferences prefs = getContext().getSharedPreferences("EventsList", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = prefs.edit();
+            String tmp = ObjectSerializer.serialize(new ArrayList<>(Constants.EVENTS_LIST));
+            editor.putString("Events", tmp);
+            editor.putLong("Since", Constants.EVENTS_LIST_SINCE);
+            editor.apply();
+        }
     }
 
     public class EventsRefreshTask extends AsyncTask<Void, Void, Void> {

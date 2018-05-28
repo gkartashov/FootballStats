@@ -1,8 +1,11 @@
 package com.example.jg.footballstats.odds;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.jg.footballstats.Constants;
 import com.example.jg.footballstats.IOnItemClickListener;
 import com.example.jg.footballstats.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
@@ -29,7 +32,9 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
     private WagerAdapter.IdGenerator mIdGenerator;
     private List<Wager> wagerList;
     private IOnItemClickListener listener;
-    public WagerAdapter(List<Wager> wagerList, IOnItemClickListener listener) {
+    private Context context;
+    public WagerAdapter(Context context, List<Wager> wagerList, IOnItemClickListener listener) {
+        this.context = context;
         this.wagerList = wagerList;
         this.listener = listener;
         mIdGenerator = new WagerAdapter.IdGenerator();
@@ -69,7 +74,7 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
     public void onBindGroupViewHolder(WagerViewHolder holder, int groupPosition, int viewType) {
         Wager wager = wagerList.get(groupPosition);
         holder.wagerTitle.setText(wager.getTitle());
-
+        holder.cardView.setBackgroundColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.oddDarkColor : R.color.primaryColorLight));
     }
 
     @Override
@@ -78,6 +83,7 @@ public class WagerAdapter extends AbstractExpandableItemAdapter<WagerViewHolder,
         wagerList.get(groupPosition).getOddList().get(childPosition).setWagerType(wagerList.get(groupPosition).getTitle());
         holder.bind(odd,listener);
         holder.oddType.setText(odd.getType());
+        holder.cardView.setBackgroundColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.listItemsColorDark : R.color.primaryDarkColorLight));
         holder.oddCoefficient.setText(odd.getStringCoefficient());
     }
 

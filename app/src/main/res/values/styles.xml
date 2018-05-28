@@ -1,29 +1,50 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/primaryTextColor</item>
-        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="colorPrimary">@color/primaryColorDark</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorDark</item>
+        <item name="colorAccent">@color/primaryAccentColorDark</item>
+        <item name="android:statusBarColor">@color/statusBarColorDark</item>
     </style>
 
-    <style name="AppTheme.LauncherTheme" parent="AppTheme">
-        <item name="android:windowBackground">@drawable/launch_screen</item>
+    <style name="AppTheme.Light" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="colorPrimary">@color/primaryColorLight</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColorLight</item>
+        <item name="colorAccent">@color/secondaryDarkColorLight</item>
+        <item name="android:statusBarColor">@color/primaryLightColorLight</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorBackground">@color/background_light</item>
     </style>
+
+    <style name="AppTheme.LauncherTheme.Dark" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/launch_screen_dark</item>
+    </style>
+
+    <style name="AppTheme.LauncherTheme.Light" parent="AppTheme.Light">
+        <item name="android:windowBackground">@drawable/launch_screen_light</item>
+    </style>
+
+    <style name="AppTheme.ThemeSwitcher" >
+        <item name="colorControlActivated">@color/primaryDarkColorDark</item>
+        <item name="android:colorControlNormal">#FFF</item>
+        <item name="android:colorForeground">@color/primaryDarkColorLight</item>
+    </style>
+
     <style name="RecyclerViewItem">
-        <item name="android:backgroundTint">@color/listItemsColor</item>
+        <item name="android:backgroundTint">@color/listItemsColorDark</item>
     </style>
-    <style name="ToolBarStyle" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:background">@color/primaryColor</item>
-        <item name="android:textColorPrimary">@color/primaryTextColor</item>
-        <item name="android:textColorSecondary">@color/primaryTextColor</item>
+
+    <style name="AppTheme.ToolBarStyle" parent="AppTheme">
+        <item name="android:backgroundTint">@color/primaryColorDark</item>
+        <item name="android:textColorPrimary">@color/primaryTextColorDark</item>
+        <item name="android:textColorSecondary">@color/primaryTextColorDark</item>
     </style>
-    <style name="WagerTabStyle" parent="AppTheme">
-        <item name="android:colorAccent">#FF0000</item>
+
+    <style name="AppThemeLight.ToolBarStyle" parent="AppTheme.Light">
+        <item name="android:backgroundTint">@color/primaryLightColorLight</item>
+        <item name="android:textColorPrimary">@color/primaryTextColorLight</item>
+        <item name="android:textColorSecondary">@color/secondaryTextColorLight</item>
     </style>
-    <style name="OddTabStyle" parent="AppTheme">
-        <item name="android:colorPrimary">#00FF66</item>
-    </style>
+
+
 </resources>

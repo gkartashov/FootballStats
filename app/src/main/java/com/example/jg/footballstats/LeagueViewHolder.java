@@ -1,5 +1,6 @@
 package com.example.jg.footballstats;
 
+import android.support.v7.widget.CardView;
 import android.view.View;
 import android.widget.TextView;
 

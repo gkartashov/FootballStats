@@ -44,11 +44,17 @@ public class LaunchActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme_LauncherTheme);
+        getThemeFromSharedPref();
+        setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme_LauncherTheme_Dark : R.style.AppTheme_LauncherTheme_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
         mUserLoadAsyncTask = new UserLoadAsyncTask(getSharedPreferences("UserInfo", Context.MODE_PRIVATE));
         mUserLoadAsyncTask.execute();
+    }
+
+    private void getThemeFromSharedPref() {
+        SharedPreferences preferences = getSharedPreferences("Settings", Context.MODE_PRIVATE);
+        Constants.IS_THEME_DARK = preferences.getBoolean("isThemeDark",true);
     }
 
     private boolean sharedPrefToList() {

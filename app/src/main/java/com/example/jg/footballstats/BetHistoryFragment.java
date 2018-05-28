@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -82,6 +83,7 @@ public class BetHistoryFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_bet_history, container, false);
         setHasOptionsMenu(true);
 
+        ((AppCompatActivity)getActivity()).getSupportActionBar().getTitle();
         mRecyclerView = rootView.findViewById(R.id.history_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity().getApplicationContext()));
 

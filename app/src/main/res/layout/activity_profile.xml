@@ -10,8 +10,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/inner_activity_toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:theme="@style/ToolBarStyle" />
+        android:layout_height="?android:attr/actionBarSize" />
 
     <ProgressBar
         android:id="@+id/profile_progress_bar"
@@ -30,10 +29,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <RelativeLayout
+                style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/profile_info_layout"
-                android:background="@color/listItemsColor">
+                android:id="@+id/profile_info_layout">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_logo"
                     android:layout_width="80dp"
