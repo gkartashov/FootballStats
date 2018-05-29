@@ -3,21 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <group
         android:checkableBehavior="single"
-        android:id="@+id/menu_top"
-        >
+        android:id="@+id/menu_top">
         <item
             android:id="@+id/nav_events"
-            android:icon="@mipmap/ic_launcher"
-            android:title="Upcoming games" />
+            android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+            android:title="Upcoming games"
+            android:checked="false"/>
         <item
             android:id="@+id/nav_profile"
-            android:icon="@mipmap/ic_launcher_round"
+            android:icon="@drawable/ic_analytics"
             android:title="User stats"
             android:checkable="false"/>
         <item
             android:id="@+id/nav_history"
-            android:icon="@mipmap/ic_launcher"
-            android:title="Bet history" />
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Bet history"
+            android:checked="false"/>
     </group>
 
     <group
@@ -26,7 +27,8 @@
         <item
             android:id="@+id/nav_stack"
             android:icon="@mipmap/ic_launcher_round"
-            android:title="Backstack" />
+            android:title="Backstack"
+            android:checked="false"/>
 
     </group>
     <group
@@ -34,16 +36,18 @@
         android:id="@+id/menu_logout">
         <item
             android:id="@+id/nav_logout"
-            android:icon="@mipmap/ic_launcher_round"
-            android:title="Log out" />
+            android:icon="@drawable/ic_switch"
+            android:title="Switch user"
+            android:checked="false"/>
     </group>
     <group
         android:checkableBehavior="single"
         android:id="@+id/menu_exit">
         <item
             android:id="@+id/nav_exit"
-            android:icon="@mipmap/ic_launcher_round"
-            android:title="Exit" />
+            android:icon="@drawable/ic_exit"
+            android:title="Exit"
+            android:checked="false"/>
     </group>
 
 </menu>

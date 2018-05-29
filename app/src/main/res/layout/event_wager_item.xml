@@ -14,7 +14,8 @@
         android:layout_height="wrap_content"
         card_view:cardCornerRadius="0dp"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/wager_type"

@@ -5,29 +5,33 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
     <LinearLayout
-        android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        android:orientation="vertical" >
+        <LinearLayout
+            android:id="@+id/toolbar_layout"
             android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize" />
+            android:layout_height="wrap_content">
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/main_layout"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:layout_marginTop="?android:attr/actionBarSize"
-        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
-    </LinearLayout>
-
+        android:layout_gravity="left|start"
+        android:fitsSystemWindows="true">
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
@@ -49,4 +53,5 @@
 
 
     </android.support.design.widget.NavigationView>
+    </LinearLayout>
 </android.support.v4.widget.DrawerLayout>

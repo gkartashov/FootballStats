@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
@@ -21,13 +22,8 @@ public class LaunchActivity extends AppCompatActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    this.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
-                            finish();
-                        }
-                    },300);
+                    startActivity(new Intent(LaunchActivity.this,LoginActivity.class));
+                    finish();
                     break;
                 case 1:
                     startActivity(new Intent(LaunchActivity.this,MainActivity.class));
@@ -48,6 +44,11 @@ public class LaunchActivity extends AppCompatActivity {
         setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme_LauncherTheme_Dark : R.style.AppTheme_LauncherTheme_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launch);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mUserLoadAsyncTask = new UserLoadAsyncTask(getSharedPreferences("UserInfo", Context.MODE_PRIVATE));
         mUserLoadAsyncTask.execute();
     }
@@ -85,12 +86,12 @@ public class LaunchActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... nothing) {
                 Constants.USER = (User) ObjectSerializer.deserialize(sharedPreferences.getString("User", null));
+                sharedPrefToList();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            sharedPrefToList();
             mUserLoadHandler.sendEmptyMessage(Constants.USER == null ? 0 : 1);
         }
     }

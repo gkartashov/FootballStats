@@ -202,13 +202,13 @@ public class BetsCalculator {
         else if (hdpType == 2.5) {
             Pair<Integer,Double> firstPart, secondPart;
             firstPart = asianHandicapHelper(handicapPickGoals, betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
-            secondPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            secondPart = asianHandicapHelper(handicapPick >= 0 ? handicapPickGoals + 0.5 : handicapPickGoals - 0.5, betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
             return new Pair<>((firstPart.first + secondPart.first) / 2, (firstPart.second + secondPart.second) / 2.0);
         //handicap .75
         } else if (hdpType == 7.5) {
             Pair<Integer, Double> firstPart, secondPart;
-            firstPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 0.5 : reverse(reverse(handicapPickGoals) + 0.5), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
-            secondPart = asianHandicapHelper(handicapPickGoals >= 0 ? handicapPickGoals + 1.0 : reverse(reverse(handicapPickGoals) + 1.0), betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            firstPart = asianHandicapHelper(handicapPick >= 0 ? handicapPickGoals + 0.5 : handicapPickGoals - 0.5, betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
+            secondPart = asianHandicapHelper(handicapPick >= 0 ? handicapPickGoals + 1.0 : handicapPickGoals - 1.0, betName.equals("First team") ? homeScore : awayScore, betName.equals("First team") ? awayScore : homeScore, coef);
             return new Pair<>((firstPart.first + secondPart.first) / 2, (firstPart.second + secondPart.second) / 2.0);
         } else
             return new Pair<>(2,0.0);

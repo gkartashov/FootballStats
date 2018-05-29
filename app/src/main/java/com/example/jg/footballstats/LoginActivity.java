@@ -219,7 +219,6 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(final User user) {
             mLoginTask = null;
-            showProgress(false);
 
             if (user != null) {
                 Constants.USER = mUser;
@@ -227,10 +226,13 @@ public class LoginActivity extends AppCompatActivity {
                 Constants.BETS_LIST.clear();
                 userToSharedPref(mUser);
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));
+                showProgress(false);
                 finish();
+            } else {
+                showProgress(false);
+                Snackbar.make(mLoginFormView, mMessage, Snackbar.LENGTH_LONG).show();
             }
-            else
-                Snackbar.make(mLoginFormView,mMessage,Snackbar.LENGTH_LONG).show();
+
         }
 
         @Override
