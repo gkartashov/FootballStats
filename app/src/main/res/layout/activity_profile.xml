@@ -14,7 +14,6 @@
 
     <ProgressBar
         android:id="@+id/profile_progress_bar"
-        style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center"
@@ -28,11 +27,18 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <RelativeLayout
-                style="@style/TextAppearance.AppCompat.Headline"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/profile_info_layout">
+                <android.support.v7.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/profile_logo"
                     android:layout_width="80dp"
@@ -51,7 +57,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="6dp"
                     android:gravity="center"
-                    android:text="username"/>
+                    android:text=""/>
 
                 <LinearLayout
                     android:id="@+id/profile_total_bets_layout"
@@ -75,7 +81,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="50"/>
+                        android:text="0"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -100,7 +106,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="100"/>
+                        android:text="0"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -125,7 +131,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="end"
-                        android:text="200"/>
+                        android:text="0"/>
                 </LinearLayout>
 
 
@@ -151,7 +157,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
                         android:gravity="end"
-                        android:text="146.6666%"/>
+                        android:text="0.0%"/>
                 </LinearLayout>
 
                 <LinearLayout
@@ -176,9 +182,10 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:gravity="end"
-                        android:text="-146.6666%"/>
+                        android:text="0.0%"/>
                 </LinearLayout>
-
+                    </RelativeLayout>
+            </android.support.v7.widget.CardView>
             </RelativeLayout>
 
             <RelativeLayout
@@ -187,39 +194,65 @@
                 android:layout_height="match_parent"
                 android:layout_below="@id/profile_info_layout"
                 android:gravity="start">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp">
                 <com.github.mikephil.charting.charts.PieChart
                     android:id="@+id/profile_pie_wl_ratio"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"/>
+                </android.support.v7.widget.CardView>
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/profile_income_chart_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/profile_pie_wl_ratio_layout"
+                android:gravity="start">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginTop="4dp">
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/profile_income_chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_margin="8dp"
                     />
+                </android.support.v7.widget.CardView>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/profile_coefficient_chart_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@id/profile_pie_wl_ratio_layout"
+                android:layout_below="@id/profile_income_chart_layout"
                 android:gravity="start">
+                <android.support.v7.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="4dp"
+                    >
                 <com.github.mikephil.charting.charts.LineChart
                     android:id="@+id/profile_coefficient_chart"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:layout_marginTop="10dp"
+                    android:layout_margin="8dp"
                     />
-            </RelativeLayout>
-            <RelativeLayout
-                android:id="@+id/profile_income_chart_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/profile_coefficient_chart_layout"
-                android:gravity="start">
-                <com.github.mikephil.charting.charts.LineChart
-                    android:id="@+id/profile_income_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:layout_marginTop="10dp"
-                    />
+                </android.support.v7.widget.CardView>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

@@ -8,10 +8,12 @@
     <color name="listItemsColorDark">#1c1c1c</color>
     <color name="oddDarkColor">#171717</color>
 
-    <color name="winColor">#33691e</color>
+    <color name="winColor">#4CAF50</color>
     <color name="lossColor">#f44336</color>
+    <color name="statusColor">#4f4f4f</color>
 
     <color name="primaryColorLight">#fafafa</color>
+    <color name="primaryBackgroundColorLight">#e6e6e6</color>
     <color name="primaryLightColorLight">#ffffff</color>
     <color name="primaryDarkColorLight">#c7c7c7</color>
     <color name="secondaryColorLight">#212121</color>
@@ -23,4 +25,6 @@
     <color name="statusBarColorDark">#000000</color>
     <color name="background_light">#eeeeee</color>
 
+    <color name="chartIncomeColorLight">#039BE5</color>
+    <color name="chartCoeffsColorLight">#43A047</color>
 </resources>

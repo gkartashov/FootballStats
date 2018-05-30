@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -92,7 +93,7 @@ public class BetHistoryFragment extends Fragment {
         animator.setSupportsChangeAnimations(false);
         mRecyclerView.setItemAnimator(animator);
 
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
+        //mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity().getApplicationContext(), LinearLayoutManager.VERTICAL));
 
         mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
         mAdapter = new BetEntryAdapter(getContext(), Constants.BETS_LIST);

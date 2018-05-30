@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.support.annotation.AnimRes;
+import android.support.annotation.AnimatorRes;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,8 +21,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -122,7 +127,8 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         fragmentManager = getSupportFragmentManager();
 
         if (fragmentManager.getBackStackEntryCount() == 0)
-            createFragment(getString(R.string.app_name), MainScreenFragment.class.getName(), MainScreenFragment.class.getSimpleName(), R.id.main_layout);
+            createFragment(getString(R.string.app_name), MainScreenFragment.class.getName(),
+                    MainScreenFragment.class.getSimpleName(), R.id.main_layout, 0,0, android.R.anim.slide_in_left,android.R.anim.slide_out_right);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean("isDrawerOpened"))
@@ -162,15 +168,17 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.nav_events:
-                    createFragment(item.getTitle(), EventsFragment.class.getName(), EventsFragment.class.getSimpleName(), R.id.main_layout);
+                    createFragment(item.getTitle(), EventsFragment.class.getName(), EventsFragment.class.getSimpleName(), R.id.main_layout,
+                            android.R.anim.slide_in_left,android.R.anim.slide_out_right, android.R.anim.slide_in_left,android.R.anim.slide_out_right);
                     break;
                 case R.id.nav_profile:
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                     break;
                 case R.id.nav_history:
-                    createFragment(item.getTitle(), BetHistoryFragment.class.getName(), BetHistoryFragment.class.getSimpleName(), R.id.main_layout);
+                    createFragment(item.getTitle(), BetHistoryFragment.class.getName(), BetHistoryFragment.class.getSimpleName(), R.id.main_layout,
+                            android.R.anim.slide_in_left,android.R.anim.slide_out_right, android.R.anim.slide_in_left,android.R.anim.slide_out_right);
                     break;
-                case R.id.nav_stack:
+                /*case R.id.nav_stack:
                     setHomeIconEnabled();
                     getSupportActionBar().setTitle(item.getTitle());
                     Log.i("Fragment Manager fragments list size ", Integer.toString(fragmentManager.getFragments().size()));
@@ -179,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                         Log.i("FM entries", f.getTag());
                     for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i)
                         Log.i("BackStack entries ",fragmentManager.getBackStackEntryAt(i).getName());
-                    break;
+                    break;*/
                 case R.id.nav_logout:
                     setBackStackEmpty("");
                     Constants.USER = null;
@@ -263,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         bundle.putParcelable("event",eventEntry);
         mFragment.setArguments(bundle);
         fragmentManager.beginTransaction()
-                //.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_left)
                 .setCustomAnimations(android.R.anim.slide_in_left,android.R.anim.slide_out_right, android.R.anim.slide_in_left,android.R.anim.slide_out_right)
                 .replace(R.id.main_layout, mFragment,EventFragment.class.getSimpleName())
                 .addToBackStack(EventFragment.class.getSimpleName())
@@ -272,7 +279,9 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
         setBackArrowIconEnabled();
     }
 
-    private void createFragment(CharSequence title, String className, String simpleClassName, int layoutResId) {
+    private void createFragment(CharSequence title, String className, String simpleClassName, int layoutResId, @AnimatorRes @AnimRes int enter,
+                                @AnimatorRes @AnimRes int exit, @AnimatorRes @AnimRes int popEnter,
+                                @AnimatorRes @AnimRes int popExit) {
         setHomeIconEnabled();
         setBackStackEmpty(className);
         getSupportActionBar().setTitle(title);
@@ -288,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
             }
 
         fragmentManager.beginTransaction()
+                .setCustomAnimations(enter, exit, popEnter, popExit)
                 .replace(layoutResId, mFragment, simpleClassName)
                 .addToBackStack(simpleClassName)
                 .commit();

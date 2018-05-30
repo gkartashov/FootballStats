@@ -6,6 +6,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.example.jg.footballstats.Constants;
 import com.example.jg.footballstats.R;
 import com.h6ah4i.android.widget.advrecyclerview.utils.AbstractExpandableItemAdapter;
 
@@ -77,10 +78,12 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         else if (betEntry.getBetDetails().getStatus() == 2)
             holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.lossColor));
         else
-            holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,R.color.primaryLightColorDark));
+            holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,Constants.IS_THEME_DARK ? R.color.statusColor : R.color.primaryDarkColorLight));
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
         holder.homeScoreTitle.setText(betEntry.getHomeScore() >= 0 ? betEntry.getStringHomeScore() : "0");
+        holder.homeScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
+        holder.awayScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
         holder.awayScoreTitle.setText(betEntry.getAwayScore() >= 0 ? betEntry.getStringAwayScore() : "0");
         holder.homeScoreHTTitle.setText(betEntry.getHomeScoreHT() >= 0 ? betEntry.getStringHomeHTScore() : "0");
         holder.awayScoreHTTitle.setText(betEntry.getAwayScoreHT() >= 0 ? betEntry.getStringAwayHTScore() : "0");
@@ -95,12 +98,13 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
         holder.coefficientTitle.setText(betDetails.getStringCoefficient());
         holder.realCoefficientTitle.setText(betDetails.getRealCoefficient() == -1.0 ? betDetails.getStringCoefficient() : betDetails.getStringRealCoefficient());
         holder.statusTitle.setText(betDetails.getStringStatus());
+        holder.cardView.setBackgroundColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.listItemsColorDark : R.color.primaryBackgroundColorLight));
         if (betDetails.getStatus() == 1)
-            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.winColor));
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context, R.color.winColor));
         else if (betDetails.getStatus() == 2)
-            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.lossColor));
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context, R.color.lossColor));
         else
-            holder.statusTitle.setTextColor(ContextCompat.getColor(context,R.color.primaryTextColorDark));
+            holder.statusTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
 
     }
 

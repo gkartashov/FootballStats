@@ -208,7 +208,7 @@ public class EventEntry implements Parcelable, Serializable {
     }
 
     public boolean isFinished() {
-        return (toLocalTime().toDateTime().plusMinutes(130).isBefore(LocalDateTime.now().toDateTime()));
+        return (toLocalTime().toDateTime().plusMinutes(120).isBefore(LocalDateTime.now().toDateTime()));
     }
 
     public boolean isLive() {

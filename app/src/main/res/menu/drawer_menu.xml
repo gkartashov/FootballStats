@@ -21,7 +21,7 @@
             android:checked="false"/>
     </group>
 
-    <group
+    <!--<group
         android:checkableBehavior="single"
         android:id="@+id/menu_bottom">
         <item
@@ -30,7 +30,7 @@
             android:title="Backstack"
             android:checked="false"/>
 
-    </group>
+    </group>-->
     <group
         android:checkableBehavior="single"
         android:id="@+id/menu_logout">
