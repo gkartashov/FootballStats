@@ -23,6 +23,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.jg.footballstats.db.User;
@@ -40,8 +41,12 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme : R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        ImageView logo = findViewById(R.id.login_image_view);
+        logo.setImageResource(Constants.IS_THEME_DARK ? R.drawable.ic_logo_final_without_title_dark : R.drawable.ic_logo_final_without_title);
 
         mUsernameView = findViewById(R.id.login_username);
 

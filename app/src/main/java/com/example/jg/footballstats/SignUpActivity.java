@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -40,9 +41,13 @@ public class SignUpActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme : R.style.AppTheme_Light);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        // Set up the login form.
+
+        ImageView logo = findViewById(R.id.login_image_view);
+        logo.setImageResource(Constants.IS_THEME_DARK ? R.drawable.ic_logo_final_without_title_dark : R.drawable.ic_logo_final_without_title);
+
         mUsernameView = findViewById(R.id.sign_up_username);
         mEmailView = findViewById(R.id.sign_up_email);
         mPasswordView = findViewById(R.id.sign_up_password);

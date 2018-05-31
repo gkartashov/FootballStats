@@ -29,8 +29,11 @@
                         <option name="values">
                           <map>
                             <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_analytics_white" />
-                            <entry key="sourceFile" value="D:\Downloads\analytics.svg" />
+                            <entry key="height" value="134" />
+                            <entry key="outputName" value="ic_logo_final_without_title_dark" />
+                            <entry key="overrideSize" value="true" />
+                            <entry key="sourceFile" value="D:\Desktop\logo_final_without_title_dark.svg" />
+                            <entry key="width" value="120" />
                           </map>
                         </option>
                       </PersistentState>

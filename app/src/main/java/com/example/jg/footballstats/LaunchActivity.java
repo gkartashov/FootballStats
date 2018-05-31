@@ -43,7 +43,6 @@ public class LaunchActivity extends AppCompatActivity {
         getThemeFromSharedPref();
         setTheme(Constants.IS_THEME_DARK ? R.style.AppTheme_LauncherTheme_Dark : R.style.AppTheme_LauncherTheme_Light);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_launch);
     }
 
     @Override

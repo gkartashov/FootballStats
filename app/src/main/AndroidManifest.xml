@@ -30,11 +30,13 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".LaunchActivity"/>
         <activity
             android:name=".SignUpActivity"
             android:label="@string/title_activity_register"
-            android:windowSoftInputMode="stateHidden"/>
+            android:windowSoftInputMode="stateHidden"
+            android:parentActivityName=".LaunchActivity" />
     </application>
 
 </manifest>
