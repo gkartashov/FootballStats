@@ -231,7 +231,6 @@ public class SignUpActivity extends AppCompatActivity {
 
             if (user != null) {
                 Constants.USER = mUser;
-                Constants.EVENTS_LIST.clear();
                 Constants.BETS_LIST.clear();
                 userToSharedPref(mUser);
                 startActivity(new Intent(SignUpActivity.this, MainActivity.class));

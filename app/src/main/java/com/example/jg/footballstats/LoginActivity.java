@@ -227,7 +227,6 @@ public class LoginActivity extends AppCompatActivity {
 
             if (user != null) {
                 Constants.USER = mUser;
-                Constants.EVENTS_LIST.clear();
                 Constants.BETS_LIST.clear();
                 userToSharedPref(mUser);
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));

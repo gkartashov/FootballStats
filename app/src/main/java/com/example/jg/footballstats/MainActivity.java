@@ -198,6 +198,10 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                     startActivity(new Intent(MainActivity.this,LoginActivity.class));
                     finish();
                     break;
+                case R.id.nav_about:
+                    createFragment(item.getTitle(), AboutFragment.class.getName(), AboutFragment.class.getSimpleName(), R.id.main_layout,
+                            android.R.anim.slide_in_left,android.R.anim.slide_out_right, android.R.anim.slide_in_left,android.R.anim.slide_out_right);
+                    break;
                 case R.id.nav_exit:
                     finishAndRemoveTask();
                 default:
