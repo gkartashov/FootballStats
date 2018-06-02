@@ -149,12 +149,15 @@ public class EventFragment extends Fragment {
                     DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            Snackbar.make(mMainLayout,"Bet was successfully placed!",Snackbar.LENGTH_LONG).show();
+                            if (response.code() == 200)
+                                Snackbar.make(mMainLayout,"Bet was successfully placed!",Snackbar.LENGTH_LONG).show();
+                            else
+                                Snackbar.make(mMainLayout,"Can't place the bet. Try again",Snackbar.LENGTH_LONG).show();
                         }
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            t.printStackTrace();
+                            Snackbar.make(mMainLayout,"Timeout",Snackbar.LENGTH_SHORT).show();
                         }
                     });
                 }

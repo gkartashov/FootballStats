@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.example.jg.footballstats.stats.Statistics;
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -143,6 +144,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void initializePieChart(double win, double loss, double ratio) {
         mPieChart = findViewById(R.id.profile_pie_wl_ratio);
+
         mPieChart.setCenterText("W/L ratio:\n" + Double.toString(ratio));
         mPieChart.setCenterTextSize(16f);
         mPieChart.setDragDecelerationFrictionCoef(0.2f);
@@ -195,8 +197,14 @@ public class ProfileActivity extends AppCompatActivity {
         mPieChart.invalidate();
     }
 
+    private void setNoDataAvailableText(Chart chart) {
+        chart.setNoDataTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
+        chart.invalidate();
+    }
 
     private void initializeCoefficientChart() {
+        mCoefficientChart = findViewById(R.id.profile_coefficient_chart);
+
         ArrayList<Entry> e1 = new ArrayList<>();
 
         List<Double> coefs = mStatistics.getCoefficients();
@@ -223,8 +231,6 @@ public class ProfileActivity extends AppCompatActivity {
             sets.add(d1);
 
             LineData cd = new LineData(sets);
-
-            mCoefficientChart = findViewById(R.id.profile_coefficient_chart);
 
             mCoefficientChart.setData(cd);
 
@@ -271,6 +277,8 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void initializeIncomeChart() {
+        mIncomeChart = findViewById(R.id.profile_income_chart);
+
         ArrayList<Entry> e1 = new ArrayList<>();
 
         List<Double> income = mStatistics.calculateIncome(10000,100);
@@ -293,8 +301,6 @@ public class ProfileActivity extends AppCompatActivity {
             sets.add(d1);
 
             LineData cd = new LineData(sets);
-
-            mIncomeChart = findViewById(R.id.profile_income_chart);
 
             mIncomeChart.setData(cd);
 
@@ -366,7 +372,6 @@ public class ProfileActivity extends AppCompatActivity {
                 mIncomeChart.setGridBackgroundColor(ColorUtils.setAlphaComponent(getColor(R.color.primaryColorDark), 40));
             }
 
-
             mIncomeChart.animateX(1000, Easing.EasingOption.EaseInOutQuad);
             mIncomeChart.invalidate();
         }
@@ -387,8 +392,8 @@ public class ProfileActivity extends AppCompatActivity {
                 if(response.body() != null) {
                     mStatistics = (Statistics) response.body();
                 }
-                else if (response.code() == 403)
-                    mMessage = getString(R.string.error_invalid_credentials);
+                else if (response.code() == 400)
+                    mMessage = getString(R.string.error_stats_unavailable);
                 else
                     mMessage = getString(R.string.error_server_unreachable);
 
@@ -399,8 +404,12 @@ public class ProfileActivity extends AppCompatActivity {
         protected void onPostExecute(final Void nothing) {
             if (mStatistics != null) {
                 mRefreshingHandler.sendEmptyMessage(0);
-            } else
-                Snackbar.make(mProfileFormView,mMessage, Snackbar.LENGTH_LONG).show();
+            } else {
+                setNoDataAvailableText((PieChart) findViewById(R.id.profile_pie_wl_ratio));
+                setNoDataAvailableText((LineChart) findViewById(R.id.profile_income_chart));
+                setNoDataAvailableText((LineChart) findViewById(R.id.profile_coefficient_chart));
+                Snackbar.make(mProfileFormView, mMessage, Snackbar.LENGTH_LONG).show();
+            }
             mProfileRefreshAsyncTask = null;
             showProgress(false);
         }

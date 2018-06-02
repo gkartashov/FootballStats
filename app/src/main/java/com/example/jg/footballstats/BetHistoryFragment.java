@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -192,8 +193,8 @@ public class BetHistoryFragment extends Fragment {
                                 Period p = periods.get(0);
                                 if (p.getNumber() == 1 && (p.getStatus() == 1 || p.getStatus() == 2) && p.getCancellationReason() == null) {
                                     //betEntry.setHomeScore(p.getTeam1Score());
-                                    //betEntry.setHomeScoreHT(p.getTeam1Score());
-                                    betEntry.setAwayScore(p.getTeam2Score());
+                                    betEntry.setHomeScoreHT(p.getTeam1Score());
+                                    //betEntry.setAwayScore(p.getTeam2Score());
                                     betEntry.setAwayScoreHT(p.getTeam2Score());
                                 }
                                 break;
@@ -302,7 +303,7 @@ public class BetHistoryFragment extends Fragment {
                 } else
                     isRefreshed = false;
             } catch (IOException e) {
-                e.printStackTrace();
+                Snackbar.make(mSwipeRefreshLayout,e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1),Snackbar.LENGTH_LONG);
             }
             return isRefreshed;
         }

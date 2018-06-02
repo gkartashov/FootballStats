@@ -39,15 +39,14 @@
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                <de.hdodenhof.circleimageview.CircleImageView
+                <ImageView
                     android:id="@+id/profile_logo"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginBottom="2dp"
-                    app:civ_circle_background_color="#FFF"
-                    android:src="@drawable/profile_logo"/>
+                    android:src="@drawable/ic_userpic_final"/>
 
                 <TextView
                     android:id="@+id/profile_username"
