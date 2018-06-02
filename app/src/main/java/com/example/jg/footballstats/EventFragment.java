@@ -10,10 +10,12 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -47,6 +49,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static android.view.MotionEvent.ACTION_UP;
+
 public class EventFragment extends Fragment {
 
     private APIController apiController = APIController.getInstance();
@@ -56,6 +60,7 @@ public class EventFragment extends Fragment {
     private WagerAdapter mAdapter;
     private RecyclerViewExpandableItemManager mExpandableItemManager;
     private TextView scoreHome, scoreAway, date, home, away;
+    private Snackbar betConfirmation = null;
     private View rootView, mMainLayout;
     private EventEntry event;
     private List<Period> periods = new ArrayList<>();
@@ -113,36 +118,64 @@ public class EventFragment extends Fragment {
             }
     };
 
+    @Override
+    public void onDestroy() {
+        if (betConfirmation != null && betConfirmation.isShown())
+            betConfirmation.dismiss();
+        super.onDestroy();
+    }
+
     public IOnItemClickListener clickListener = new IOnItemClickListener<Odd>() {
         @Override
-        public void onItemClick(Odd item) {
-            String betName = null;
-            String pick = item.getType();
-            if (!item.getWagerType().contains("Moneyline")) {
-                Matcher m = Constants.DOUBLE_REGEX.matcher(item.getType());
-                if (m.find()) {
-                    pick = m.group(0);
-                    betName = item.getType().split(pick)[0].trim();
-                }
-            }
-            Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),-1,-1,-1,-1);
-            Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),-1,0);
-            DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    Snackbar.make(mMainLayout,"Done!",Snackbar.LENGTH_LONG).show();
-                }
+        public void onItemClick(final Odd item) {
+            if (betConfirmation != null && betConfirmation.isShown())
+                betConfirmation.dismiss();
 
+            betConfirmation = Snackbar.make(mMainLayout, "Do you really want to place the bet?",Snackbar.LENGTH_INDEFINITE);
+            betConfirmation.setAction("Confirm", new View.OnClickListener() {
                 @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    t.printStackTrace();
+                public void onClick(View v) {
+                    String betName = null;
+                    String pick = item.getType();
+                    if (!item.getWagerType().contains("Moneyline")) {
+                        Matcher m = Constants.DOUBLE_REGEX.matcher(item.getType());
+                        if (m.find()) {
+                            pick = m.group(0);
+                            betName = item.getType().split(pick)[0].trim();
+                        }
+                    }
+                    Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),-1,-1,-1,-1);
+                    Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),-1,0);
+                    DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            Snackbar.make(mMainLayout,"Bet was successfully placed!",Snackbar.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
                 }
             });
+
+            betConfirmation.setActionTextColor(getContext().getColor(R.color.primaryTextColorDark));
+            betConfirmation.show();
         }
     };
 
     private void viewInitialization() {
         setHasOptionsMenu(true);
+
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == ACTION_UP && betConfirmation != null &&betConfirmation.isShown())
+                    betConfirmation.dismiss();
+                return true;
+            }
+        });
 
         mMainLayout = getActivity().findViewById(R.id.main_layout);
         CardView cardViewInfo = rootView.findViewById(R.id.event_info_card_view);

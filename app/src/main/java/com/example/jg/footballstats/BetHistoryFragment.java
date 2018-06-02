@@ -123,7 +123,7 @@ public class BetHistoryFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(R.drawable.ic_refresh_white_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(R.id.menu_events, R.id.action_refresh, 1, "Refresh").setIcon(Constants.IS_THEME_DARK ? R.drawable.ic_refresh_white_24px : R.drawable.ic_refresh_black_24px).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -191,8 +191,8 @@ public class BetHistoryFragment extends Fragment {
                             case 1: {
                                 Period p = periods.get(0);
                                 if (p.getNumber() == 1 && (p.getStatus() == 1 || p.getStatus() == 2) && p.getCancellationReason() == null) {
-                                    betEntry.setHomeScore(p.getTeam1Score());
-                                    betEntry.setHomeScoreHT(p.getTeam1Score());
+                                    //betEntry.setHomeScore(p.getTeam1Score());
+                                    //betEntry.setHomeScoreHT(p.getTeam1Score());
                                     betEntry.setAwayScore(p.getTeam2Score());
                                     betEntry.setAwayScoreHT(p.getTeam2Score());
                                 }

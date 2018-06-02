@@ -81,12 +81,14 @@ public class BetEntryAdapter extends AbstractExpandableItemAdapter<BetEntryViewH
             holder.statusIndicator.setBackgroundColor(ContextCompat.getColor(context,Constants.IS_THEME_DARK ? R.color.statusColor : R.color.primaryDarkColorLight));
         holder.homeTitle.setText(betEntry.getHome());
         holder.awayTitle.setText(betEntry.getAway());
-        holder.homeScoreTitle.setText(betEntry.getHomeScore() >= 0 ? betEntry.getStringHomeScore() : "0");
-        holder.homeScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
-        holder.awayScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
-        holder.awayScoreTitle.setText(betEntry.getAwayScore() >= 0 ? betEntry.getStringAwayScore() : "0");
         holder.homeScoreHTTitle.setText(betEntry.getHomeScoreHT() >= 0 ? betEntry.getStringHomeHTScore() : "0");
         holder.awayScoreHTTitle.setText(betEntry.getAwayScoreHT() >= 0 ? betEntry.getStringAwayHTScore() : "0");
+        holder.homeScoreTitle.setText(betEntry.getHomeScore() >= 0 ? betEntry.getStringHomeScore() : (betEntry.getHomeScoreHT() >= 0 ? betEntry.getStringHomeHTScore() : "0"));
+        holder.awayScoreTitle.setText(betEntry.getAwayScore() >= 0 ? betEntry.getStringAwayScore() : (betEntry.getAwayScoreHT() >= 0 ? betEntry.getStringAwayHTScore() : "0"));
+        holder.homeScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
+        holder.awayScoreTitle.setTextColor(ContextCompat.getColor(context, Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
+
+
     }
 
     @Override
