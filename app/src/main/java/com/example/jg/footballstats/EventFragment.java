@@ -3,6 +3,7 @@ package com.example.jg.footballstats;
 
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.Event;
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 import com.example.jg.footballstats.odds.Moneyline;
 import com.example.jg.footballstats.odds.Odd;
@@ -133,36 +135,45 @@ public class EventFragment extends Fragment {
 
             betConfirmation = Snackbar.make(mMainLayout, "Do you really want to place the bet?",Snackbar.LENGTH_INDEFINITE);
             betConfirmation.setAction("Confirm", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String betName = null;
-                    String pick = item.getType();
-                    if (!item.getWagerType().contains("Moneyline")) {
-                        Matcher m = Constants.DOUBLE_REGEX.matcher(item.getType());
-                        if (m.find()) {
-                            pick = m.group(0);
-                            betName = item.getType().split(pick)[0].trim();
-                        }
-                    }
-                    Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),-1,-1,-1,-1);
-                    Bet bet = new Bet(0,Constants.USER,e,item.getWagerType(),betName,pick,item.getCoefficient(),-1,0);
-                    DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
                         @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            if (response.code() == 200)
-                                Snackbar.make(mMainLayout,"Bet was successfully placed!",Snackbar.LENGTH_LONG).show();
-                            else
-                                Snackbar.make(mMainLayout,"Can't place the bet. Try again",Snackbar.LENGTH_LONG).show();
-                        }
+                        public void onClick(View v) {
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    betConfirmation.dismiss();
+                                    String betName = null;
+                                    String pick = item.getType();
+                                    if (!item.getWagerType().contains("Moneyline")) {
+                                        Matcher m = Constants.DOUBLE_REGEX.matcher(item.getType());
+                                        if (m.find()) {
+                                            pick = m.group(0);
+                                            betName = item.getType().split(pick)[0].trim();
+                                        }
+                                    }
+                                    if (User.getInstance().getUsername() == null)
+                                        User.getInstance().sharedPrefToUser(getContext());
+                                    Event e = new Event(event.getId(),event.getLeagueId(),event.getStarts(),event.getHome(),event.getAway(),-1,-1,-1,-1);
+                                    Bet bet = new Bet(0,User.getInstance(),e,item.getWagerType(),betName,pick,item.getCoefficient(),-1,0);
+                                    DatabaseAPIController.getInstance().getAPI().placeBet(bet).enqueue(new Callback<ResponseBody>() {
+                                        @Override
+                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                            if (response.code() == 200) {
+                                                Snackbar.make(mMainLayout,"Bet was successfully placed!",Snackbar.LENGTH_LONG).show();
+                                            } else {
+                                                Snackbar.make(mMainLayout, "Can't place the bet. Try again", Snackbar.LENGTH_LONG).show();
+                                            }
+                                        }
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Snackbar.make(mMainLayout,"Timeout",Snackbar.LENGTH_SHORT).show();
+                                        @Override
+                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            Snackbar.make(mMainLayout,"Timeout",Snackbar.LENGTH_SHORT).show();
+                                        }
+                                    });
+                                }
+                            }, 500);
+
                         }
                     });
-                }
-            });
-
             betConfirmation.setActionTextColor(getContext().getColor(R.color.primaryTextColorDark));
             betConfirmation.show();
         }
@@ -219,6 +230,7 @@ public class EventFragment extends Fragment {
     }
 
     private void oddsListInitialization() {
+        int pos = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         scoreHome.setText(Integer.toString(homeScore));
         scoreAway.setText(Integer.toString(awayScore));
         recyclerView.setVisibility(View.VISIBLE);
@@ -232,8 +244,9 @@ public class EventFragment extends Fragment {
             }, 5000);
         }
         WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+        Parcelable expandableState = mExpandableItemManager.getSavedState();
         mExpandableItemManager.release();
-        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(expandableState);
 
         mAdapter = new WagerAdapter(getContext(), new ArrayList<Wager>(), clickListener);
         mAdapter.addAllGroups(wagers);
@@ -242,6 +255,7 @@ public class EventFragment extends Fragment {
         recyclerView.setAdapter(mWrappedAdapter);
         mWrappedAdapter.notifyDataSetChanged();
         mExpandableItemManager.attachRecyclerView(recyclerView);
+        recyclerView.getLayoutManager().scrollToPosition(pos);
     }
 
     private void betsAcceptingRestrictionInitialization() {

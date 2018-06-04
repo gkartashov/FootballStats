@@ -92,7 +92,7 @@ public class Statistics {
         result.add(bankValue);
         for (int i = 0, len = realCoefficients.size(); i < len ; i++) {
             if (realCoefficients.get(i) >= 0)
-                result.add(realCoefficients.get(i) == 0 ? result.get(i) - betValue : (realCoefficients.get(i) == 1.0 ? result.get(i) : (betValue * realCoefficients.get(i) - betValue) + result.get(i)));
+                result.add(realCoefficients.get(i) == 0 ? result.get(result.size() - 1) - betValue : (realCoefficients.get(result.size() - 1) == 1.0 ? result.get(result.size() - 1) : (betValue * realCoefficients.get(i) - betValue) + result.get(result.size() - 1)));
         }
         return result;
     }
@@ -137,7 +137,7 @@ public class Statistics {
         return result;
     }
 
-    private double formattedDouble(double number, String pattern) {
+    public static double formattedDouble(double number, String pattern) {
         return Double.isNaN(number) ? 0 : Double.parseDouble(new DecimalFormat(pattern).format(number));
     }
 }

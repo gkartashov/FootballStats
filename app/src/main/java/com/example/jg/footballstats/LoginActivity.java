@@ -226,7 +226,7 @@ public class LoginActivity extends AppCompatActivity {
             mLoginTask = null;
 
             if (user != null) {
-                Constants.USER = mUser;
+                User.getInstance().setUser(mUser.getUsername(), mUser.getPassword(), mUser.getEmail(), mUser.getName());
                 Constants.BETS_LIST.clear();
                 userToSharedPref(mUser);
                 startActivity(new Intent(LoginActivity.this,MainActivity.class));

@@ -156,9 +156,9 @@ public class BetsCalculator {
             case "First team to win":
                 return homeScore > awayScore ? new Pair<>(1,realCoef) : new Pair<>(2,0.0);
             case "Draw":
-                return homeScore > awayScore ? new Pair<>(1,realCoef) : new Pair<>(2,0.0);
+                return homeScore == awayScore ? new Pair<>(1,realCoef) : new Pair<>(2,0.0);
             case "Second team to win":
-                return homeScore > awayScore ? new Pair<>(1,realCoef) : new Pair<>(2,0.0);
+                return homeScore < awayScore ? new Pair<>(1,realCoef) : new Pair<>(2,0.0);
             default:
                 return new Pair<>(2,0.0);
         }

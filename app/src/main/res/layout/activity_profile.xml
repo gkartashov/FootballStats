@@ -7,10 +7,14 @@
     android:orientation="vertical"
     tools:context=".ProfileActivity">
 
+    <android.support.design.widget.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <android.support.v7.widget.Toolbar
         android:id="@+id/inner_activity_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize" />
+    </android.support.design.widget.AppBarLayout>
 
     <ProgressBar
         android:id="@+id/profile_progress_bar"

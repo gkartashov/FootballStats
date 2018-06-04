@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -25,6 +26,7 @@ import android.widget.TextView;
 
 import com.example.jg.footballstats.db.Bet;
 import com.example.jg.footballstats.db.Event;
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.history.BetDetails;
 import com.example.jg.footballstats.history.BetEntry;
 import com.example.jg.footballstats.history.BetEntryAdapter;
@@ -153,9 +155,11 @@ public class BetHistoryFragment extends Fragment {
     }
 
     private void refreshExpandableRecyclerView() {
+        int pos = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+        Parcelable expandableState = mExpandableItemManager.getSavedState();
         mExpandableItemManager.release();
-        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(expandableState);
 
         mAdapter = new BetEntryAdapter(getContext(), new ArrayList<BetEntry>());
         mAdapter.addAllGroups(Constants.BETS_LIST);
@@ -165,6 +169,7 @@ public class BetHistoryFragment extends Fragment {
         mWrappedAdapter.notifyDataSetChanged();
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
         mRecyclerView.setVisibility(View.VISIBLE);
+        mRecyclerView.getLayoutManager().scrollToPosition(pos);
     }
 
     private List<BetEntry> betListToBetEntryList(List<Bet> betArrayList, BetResult betResult) {
@@ -225,11 +230,13 @@ public class BetHistoryFragment extends Fragment {
     }
 
     private List<Bet> betEntryListToBetList(List<BetEntry> betEntries) {
+        if (User.getInstance().getUsername() == null)
+            User.getInstance().sharedPrefToUser(getContext());
         List<Bet> betList = new ArrayList<>();
         if (betEntries.size() != 0) {
             for (BetEntry be : betEntries) {
                 betList.add(new Bet(be.getBetId(),
-                        Constants.USER,
+                        User.getInstance(),
                         new Event(be.getEventId(),
                                 be.getLeagueId(),
                                 be.getBetDetails().getStarts(),
@@ -288,8 +295,10 @@ public class BetHistoryFragment extends Fragment {
         @Override
         protected Boolean doInBackground(Void... params) {
             boolean isRefreshed = true;
+            if (User.getInstance().getUsername() == null)
+                User.getInstance().sharedPrefToUser(getContext());
             try {
-                Response responseDb = dbController.getAPI().getUserBetHistory(Constants.USER.getUsername()).execute();
+                Response responseDb = dbController.getAPI().getUserBetHistory(User.getInstance().getUsername()).execute();
                 Response responsePinnacle = null;
                 Set<Integer> leaguesId = getLeaguesIdArray((List<Bet>) responseDb.body());
                 if (leaguesId.size() > 0)

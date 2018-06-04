@@ -1,8 +1,13 @@
 package com.example.jg.footballstats.db;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+
+import com.example.jg.footballstats.Constants;
+import com.example.jg.footballstats.ObjectSerializer;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,15 +22,29 @@ public class User extends RequestBody implements Parcelable, Serializable {
     private String email;
     private String name;
 
-    public User() {
+    private static User instance;
+
+    private User() {
 
     }
 
-    public User(String username, String password, String email, String name) {
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.name = name;
+    public static User getInstance() {
+        if (instance == null) {
+            instance = new User();
+        }
+        return instance;
+    }
+
+    public void sharedPrefToUser(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE);
+        instance = (User) ObjectSerializer.deserialize(prefs.getString("User", null));
+    }
+
+    public void setUser(String username, String password, String email, String name) {
+        instance.username = username;
+        instance.password = password;
+        instance.email = email;
+        instance.name = name;
     }
 
     @Nullable

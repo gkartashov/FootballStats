@@ -230,7 +230,7 @@ public class SignUpActivity extends AppCompatActivity {
             showProgress(false);
 
             if (user != null) {
-                Constants.USER = mUser;
+                User.getInstance().setUser(mUser.getUsername(), mUser.getPassword(), mUser.getEmail(), mUser.getName());
                 Constants.BETS_LIST.clear();
                 userToSharedPref(mUser);
                 startActivity(new Intent(SignUpActivity.this, MainActivity.class));

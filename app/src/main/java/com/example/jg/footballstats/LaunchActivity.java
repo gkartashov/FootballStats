@@ -84,14 +84,14 @@ public class LaunchActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... nothing) {
-                Constants.USER = (User) ObjectSerializer.deserialize(sharedPreferences.getString("User", null));
+                User.getInstance().sharedPrefToUser(getApplicationContext());
                 sharedPrefToList();
             return null;
         }
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            mUserLoadHandler.sendEmptyMessage(Constants.USER == null ? 0 : 1);
+            mUserLoadHandler.sendEmptyMessage(User.getInstance().getUsername() == null ? 0 : 1);
         }
     }
 }

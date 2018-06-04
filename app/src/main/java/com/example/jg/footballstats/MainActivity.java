@@ -32,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.fixtures.EventEntry;
 
 import java.util.ArrayList;
@@ -89,19 +90,17 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                 new int[] {Color.rgb(255,46,84), (Color.BLACK)});
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(navigationItemSelectedListener);
-        //navigationView.setItemTextColor(c);
-        //navigationView.setItemIconTintList(c);
-        //navigationView.setBackgroundTintList(c);
 
         navigationView.setBackgroundColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryLightColorDark : R.color.primaryColorLight));
         navigationView.setItemBackgroundResource(Constants.IS_THEME_DARK ? R.drawable.navigation_drawer_item_background_dark : R.drawable.navigation_drawer_item_background_light);
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
         navigationView.getHeaderView(0).setBackgroundColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryDarkColorDark : R.color.background_light));
-        if (Constants.USER != null) {
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setText(Constants.USER.getName());
-            ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setText(Constants.USER.getEmail());
-        }
+        if (User.getInstance().getUsername() == null)
+            User.getInstance().sharedPrefToUser(getApplicationContext());
+
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_name)).setText(User.getInstance().getName());
+        ((TextView)navigationView.getHeaderView(0).findViewById(R.id.navigation_email)).setText(User.getInstance().getEmail());
 
         Switch themeSwitch = findViewById(R.id.drawer_switch);
         themeSwitch.setChecked(Constants.IS_THEME_DARK);
@@ -190,7 +189,6 @@ public class MainActivity extends AppCompatActivity implements EventsFragment.On
                     break;*/
                 case R.id.nav_logout:
                     setBackStackEmpty("");
-                    Constants.USER = null;
                     SharedPreferences preferences = getSharedPreferences("UserInfo",MODE_PRIVATE);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.remove("User");

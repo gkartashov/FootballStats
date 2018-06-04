@@ -19,6 +19,7 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.example.jg.footballstats.db.User;
 import com.example.jg.footballstats.stats.Statistics;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.Chart;
@@ -94,8 +95,11 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileFormView = findViewById(R.id.profile_stats_view);
         mProgressView = findViewById(R.id.profile_progress_bar);
 
+        if (User.getInstance().getUsername() == null)
+            User.getInstance().sharedPrefToUser(getApplicationContext());
+
         mProfileUsername = findViewById(R.id.profile_username);
-        mProfileUsername.setText(Constants.USER.getUsername());
+        mProfileUsername.setText(User.getInstance().getUsername());
 
         refreshProfile();
     }
@@ -281,7 +285,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         ArrayList<Entry> e1 = new ArrayList<>();
 
-        List<Double> income = mStatistics.calculateIncome(10000,100);
+        List<Double> income = mStatistics.calculateIncome(100,1);
         if (income.size() > 0) {
             for (int i = 0; i < income.size(); i++) {
                 e1.add(new Entry(i, (float) ((double) income.get(i))));
@@ -313,15 +317,15 @@ public class ProfileActivity extends AppCompatActivity {
             mIncomeChart.getAxisLeft().setTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
             mIncomeChart.getAxisRight().setEnabled(false);
 
-            float currentBalance = (float) (double) income.get(income.size()-1);
+            float currentBalance = (float) (double) Statistics.formattedDouble(income.get(income.size()-1) - 100.0, ".##");
 
             mIncomeChart.getDescription().setEnabled(true);
-            mIncomeChart.getDescription().setText("Current balance: " + Float.toString(currentBalance));
+            mIncomeChart.getDescription().setText("Current income: " + Float.toString(currentBalance) + '%');
             mIncomeChart.getDescription().setTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
             mIncomeChart.getDescription().setTextSize(10f);
 
             float maxIncome = (float) (double) Collections.max(income);
-            LimitLine maxLimit = new LimitLine(maxIncome, Float.toString(maxIncome));
+            LimitLine maxLimit = new LimitLine(maxIncome, Double.toString(Statistics.formattedDouble(maxIncome - 100f,".##")) + '%');
             maxLimit.setLineWidth(1f);
             maxLimit.setLineColor(getColor(R.color.winColor));
             maxLimit.enableDashedLine(10f, 10f, 0f);
@@ -331,7 +335,7 @@ public class ProfileActivity extends AppCompatActivity {
             maxLimit.setTextColor(getColor(Constants.IS_THEME_DARK ? R.color.primaryTextColorDark : R.color.primaryTextColorLight));
 
             float minIncome = (float) (double) Collections.min(income);
-            LimitLine minLimit = new LimitLine(minIncome, Float.toString(minIncome));
+            LimitLine minLimit = new LimitLine(minIncome, Double.toString(Statistics.formattedDouble(minIncome - 100f,".##")) + '%');
             minLimit.setLineWidth(1f);
             minLimit.setLineColor(getColor(R.color.lossColor));
             minLimit.enableDashedLine(10f, 10f, 0f);
@@ -384,7 +388,7 @@ public class ProfileActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             Response response = null;
             try {
-                response = DatabaseAPIController.getInstance().getAPI().getStats(Constants.USER.getUsername()).execute();
+                response = DatabaseAPIController.getInstance().getAPI().getStats(User.getInstance().getUsername()).execute();
             } catch (IOException e) {
                 mMessage += e.getMessage().substring(0, 1).toUpperCase() + e.getMessage().substring(1);
             }

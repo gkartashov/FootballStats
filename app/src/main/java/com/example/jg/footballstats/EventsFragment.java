@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
@@ -247,9 +248,11 @@ public class EventsFragment extends Fragment {
     }
 
     private void refreshExpandableRecyclerView() {
+        int pos = ((LinearLayoutManager) mRecyclerView.getLayoutManager()).findFirstVisibleItemPosition();
         WrapperAdapterUtils.releaseAll(mWrappedAdapter);
+        Parcelable expandableState = mExpandableItemManager.getSavedState();
         mExpandableItemManager.release();
-        mExpandableItemManager = new RecyclerViewExpandableItemManager(null);
+        mExpandableItemManager = new RecyclerViewExpandableItemManager(expandableState);
 
         mAdapter = new LeagueAdapter(getContext(), new ArrayList<League>(),clickListener);
         mAdapter.addAllGroups(Constants.EVENTS_LIST);
@@ -258,6 +261,7 @@ public class EventsFragment extends Fragment {
         mRecyclerView.setAdapter(mWrappedAdapter);
         mWrappedAdapter.notifyDataSetChanged();
         mExpandableItemManager.attachRecyclerView(mRecyclerView);
+        mRecyclerView.getLayoutManager().scrollToPosition(pos);
     }
 
     private void listToSharedPref() {

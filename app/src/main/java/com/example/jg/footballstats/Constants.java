@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public final class Constants {
-    public static User USER = null;
     public static List<BetEntry> BETS_LIST = new ArrayList<>();
     public static List<League> EVENTS_LIST = new ArrayList<>();
     public static boolean IS_THEME_DARK = true;
